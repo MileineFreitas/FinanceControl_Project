@@ -1,0 +1,23 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Application/">
+    <Project Path="src/Application/FinanceControl.API/FinanceControl.Web.Api.csproj" />
+    <Project Path="src/Application/FinanceControl.Application/FinanceControl.Services.csproj" />
+  </Folder>
+  <Folder Name="/src/Crosscutting/">
+    <Project Path="src/Crosscutting/FinanceControl.Crosscutting/FinanceControl.Contracts.csproj" />
+  </Folder>
+  <Folder Name="/src/Domain/">
+    <Project Path="src/Domain/FinanceControl.Domain.Services/FinanceControl.Domain.Services.csproj" />
+    <Project Path="src/Domain/FinanceControl.Domain/FinanceControl.Domain.csproj" />
+  </Folder>
+  <Folder Name="/src/Infrastructure/">
+    <Project Path="src/Infrastructure/FinanceControl.Infrastructure/FinanceControl.Data.csproj" />
+  </Folder>
+  <Folder Name="/src/Presentation/">
+    <Project Path="src/Presentation/FinanceControl.Blazor/FinanceControl.Blazor.csproj" />
+  </Folder>
+  <Folder Name="/src/Tests/">
+    <Project Path="src/Tests/FinanceControl.Tests/FinanceControl.Tests.csproj" />
+  </Folder>
+</Solution>
