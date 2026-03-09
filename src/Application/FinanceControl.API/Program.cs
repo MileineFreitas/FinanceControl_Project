@@ -49,6 +49,8 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+
+
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
@@ -60,34 +62,5 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-/* Endpoint para testar conexão com MySQL (banco local / MySQL Workbench)
-app.MapGet("/api/test-db", async (FinanceDbContext db) =>
-{
-    try
-    {
-        var canConnect = await db.Database.CanConnectAsync();
-        return Results.Ok(new
-        {
-            success = true,
-            message = "Conexão com MySQL (FinanceControl) OK.",
-            connected = canConnect,
-            server = "localhost",
-            database = "FinanceControl"
-        });
-    }
-    catch (Exception ex)
-    {
-        return Results.Json(new
-        {
-            success = false,
-            message = "Falha ao conectar no banco.",
-            error = ex.Message,
-            hint = "Verifique: MySQL em execução, ConnectionStrings:DefaultConnection em appsettings, usuário/senha e nome do banco."
-        }, statusCode: 503);
-    }
-})
-.WithName("TestDbConnection")
-.WithTags("Health");
-*/
 
 app.Run();
