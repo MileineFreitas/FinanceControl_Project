@@ -1,0 +1,53 @@
+@page "/"
+@using System.ComponentModel.DataAnnotations
+
+@inject NavigationManager NavigationManager
+@inject AuthService AuthService
+
+<h2>Login</h2>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+<EditForm Model="loginModel" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <div class="mb-3">
+        <label class="form-label">Usuário</label>
+        <InputText class="form-control" @bind-Value="loginModel.UserName" />
+        <ValidationMessage For="@(() => loginModel.UserName)" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Senha</label>
+        <InputText type="password" class="form-control" @bind-Value="loginModel.Password" />
+        <ValidationMessage For="@(() => loginModel.Password)" />
+    </div>
+    <button type="submit" class="btn btn-primary">Entrar</button>
+</EditForm>
+
+@code {
+    private LoginModel loginModel = new();
+    private string? errorMessage;
+
+    private async Task HandleValidSubmit()
+    {
+        var result = await AuthService.LoginAsync(loginModel.UserName, loginModel.Password);
+        if (result)
+        {
+            NavigationManager.NavigateTo("/home", forceLoad: true);
+        }
+        else
+        {
+            errorMessage = "Usuário ou senha inválidos.";
+        }
+    }
+
+    public class LoginModel
+    {
+        [Required]
+        public string UserName { get; set; } = string.Empty;
+
+        [Required]
+        public string Password { get; set; } = string.Empty;
+    }
+}
