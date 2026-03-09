@@ -26,7 +26,9 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var mySqlConnection = builder.Configuration.GetConnectionString("DefaultConnection");
+string mySqlConnection = builder.Configuration.GetConnectionString("DefaultConnection");
+
+Console.WriteLine(builder.Configuration.GetConnectionString("DefaultConnection"));
 
 builder.Services.AddDbContext<FinanceDbContext>(options =>
     options.UseMySql(mySqlConnection, ServerVersion.AutoDetect(mySqlConnection)));
@@ -58,7 +60,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// Endpoint para testar conexão com MySQL (banco local / MySQL Workbench)
+/* Endpoint para testar conexão com MySQL (banco local / MySQL Workbench)
 app.MapGet("/api/test-db", async (FinanceDbContext db) =>
 {
     try
@@ -86,5 +88,6 @@ app.MapGet("/api/test-db", async (FinanceDbContext db) =>
 })
 .WithName("TestDbConnection")
 .WithTags("Health");
+*/
 
 app.Run();
