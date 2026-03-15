@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Domain\FinanceControl.Domain.Services\FinanceControl.Domain.Services.csproj" />
     <ProjectReference Include="..\\FinanceControl.Application\\FinanceControl.Services.csproj" />
     <ProjectReference Include="..\\..\\Infrastructure\\FinanceControl.Infrastructure\\FinanceControl.Data.csproj" />
   </ItemGroup>

@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Crosscutting\FinanceControl.Crosscutting\FinanceControl.Contracts.csproj" />
+    <ProjectReference Include="..\FinanceControl.Domain\FinanceControl.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

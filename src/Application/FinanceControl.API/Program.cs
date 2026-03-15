@@ -1,12 +1,15 @@
-using System.Text.Json.Serialization;
-using FinanceControl.Infrastructure.Contexts;
-using FinanceControl.Infrastructure.Repositories.Users;
-using FinanceControl.Infrastructure.Repositories.Categories;
-using FinanceControl.Infrastructure.Repositories.Transactions;
-using FinanceControl.Domain.Interfaces.Repositories.Users;
+using FinanceControl.Domain.Interfaces.AppServices.Users;
+using FinanceControl.Domain.Services.Users;
+using FinanceControl.Domain.Interfaces.DomService.Users;
 using FinanceControl.Domain.Interfaces.Repositories.Categories;
 using FinanceControl.Domain.Interfaces.Repositories.Transactions;
+using FinanceControl.Domain.Interfaces.Repositories.Users;
+using FinanceControl.Infrastructure.Contexts;
+using FinanceControl.Infrastructure.Repositories.Categories;
+using FinanceControl.Infrastructure.Repositories.Transactions;
+using FinanceControl.Infrastructure.Repositories.Users;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +37,7 @@ builder.Services.AddDbContext<FinanceDbContext>(options =>
     options.UseMySql(mySqlConnection, ServerVersion.AutoDetect(mySqlConnection)));
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserAppService, UserDomService>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 

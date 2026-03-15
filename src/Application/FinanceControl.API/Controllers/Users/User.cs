@@ -1,7 +1,9 @@
-using System.Collections.Generic;
+using FinanceControl.Contracts.Dtos.Auth;
 using FinanceControl.Domain.Entities.Users;
+using FinanceControl.Domain.Interfaces.AppServices.Users;
 using FinanceControl.Domain.Interfaces.Repositories.Users;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace FinanceControl.API.Controllers.Users;
 
@@ -10,10 +12,12 @@ namespace FinanceControl.API.Controllers.Users;
 public class UserController : ControllerBase
 {
     private readonly IUserRepository _repository;
+    private readonly IUserAppService _userAppService;
 
-    public UserController(IUserRepository repository)
+    public UserController(IUserRepository repository, IUserAppService userAppService)
     {
         _repository = repository;
+        _userAppService = userAppService;
     }
 
     [HttpGet]
@@ -33,6 +37,23 @@ public class UserController : ControllerBase
         }
         return Ok(user);
     }
+
+
+    [HttpPost("login")]
+    public ActionResult<LoginResponseDto> Login([FromBody] LoginRequestDto request)
+    {
+        if(request == null)
+        {
+            return BadRequest("Requisição inválida...");
+        }
+        var result = _userAppService.Login(request);
+        if(result == null)
+        {
+            return Unauthorized("Email ou senha inválidos...");
+        }
+        return Ok(result);
+    }
+
 
     [HttpPost]
     public ActionResult CreateUser(User user)

@@ -4,4 +4,5 @@ namespace FinanceControl.Domain.Interfaces.AppServices.Users;
 
 public interface IUserAppService
 {
+    LoginResponseDto? Login(LoginRequestDto request);
 }
