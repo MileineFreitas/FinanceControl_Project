@@ -14,4 +14,5 @@ public interface IUserRepository
     User UpdateUser(User user);
 
     User DeleteUser(int id);
+    User? GetUserByEmailAndPassword(string email, string password);
 }

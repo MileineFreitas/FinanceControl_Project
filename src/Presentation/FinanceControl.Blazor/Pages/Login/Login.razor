@@ -1,0 +1,57 @@
+﻿@page "/"
+@using System.ComponentModel.DataAnnotations
+@using FinanceControl.Blazor.Pages.Shared
+@using FinanceControl.Contracts.Dtos.Auth
+
+<Title Texto="@Title"></Title>
+
+<form class="shadow p-3">
+    <div class="mb-3">
+        <label for="exampleInputEmail1" class="form-label">Email</label>
+        <input type="email" class="form-control" id="exampleInputEmail1" placeholder="seu@email.com" aria-describedby="emailHelp">
+    </div>
+    <div class="mb-3">
+        <label for="exampleInputPassword1" class="form-label">Senha</label>
+        <input type="password" class="form-control" placeholder="senha" id="exampleInputPassword1">
+    </div>
+    <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="exampleCheck1">
+        <label class="form-check-label" for="exampleCheck1">Check me out</label>
+    </div>
+    <button type="button" @onclick="Testar" class="btn btn-primary">Entrar(testando troca de titulo)</button>
+</form>
+
+
+<div class="shadow mt-5 p-3">
+    <div class="row border rounded mt-1">
+        <div class="col border">
+            <span>Email</span>
+            <br />
+            <div class="row mt-1 p-1">@loginRequest.Email </div>
+        </div>
+        <div class="col border">
+            <span>Password</span>
+            <br />
+            <div class="row mt-1 p-1">@loginRequest.Password </div>
+        </div>
+    </div>
+</div>
+
+@code
+{
+    string Title = "Login";
+    void Mudar()
+    {
+        Title = "Salvando dados...";
+    }
+
+    LoginRequestDto loginRequest = new LoginRequestDto();
+
+    public void Testar()
+    {
+        loginRequest.Email = "julio.mattos999@gmail.com";
+        loginRequest.Password = "123";
+    }
+
+
+}

@@ -58,4 +58,11 @@ public class UserRepository : IUserRepository
         _context.SaveChanges();
         return user;
     }
+
+    public User? GetUserByEmailAndPassword(string email, string password)
+    {
+
+        return _context.Users
+            .FirstOrDefault(u => u.UserEmail == email && u.Password == password);
+    }
 }
