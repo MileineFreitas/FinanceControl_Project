@@ -27,8 +27,8 @@ public class UserDomService : IUserAppService
         return new LoginResponseDto
         {
             UserId = user.UserId,
-            Name = user.UserName,
-            Email = user.UserEmail
+            Name = user.UserName ?? string.Empty,
+            Email = user.UserEmail ?? string.Empty 
         };
     }
 }

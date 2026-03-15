@@ -1,33 +1,38 @@
 ﻿@page "/"
 @using System.ComponentModel.DataAnnotations
 @using FinanceControl.Blazor.Pages.Shared
+@using FinanceControl.Blazor.Pages.Messages
 @using FinanceControl.Contracts.Dtos.Auth
+@using System.Threading.Tasks
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 
 <Title Texto="@Title"></Title>
+<Message Menssagem="@msg"></Message>
 
-<form class="shadow p-3">
-    <div class="mb-3">
-        <label for="exampleInputEmail1" class="form-label">Email</label>
-        <input type="email" class="form-control" id="exampleInputEmail1" placeholder="seu@email.com" aria-describedby="emailHelp">
+<EditForm Model="@loginRequest" OnValidSubmit="@HandleLogin">
+    <DataAnnotationsValidator />
+    <div class="shadow p-3">
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Email</label>
+            <input type="email" @bind="loginRequest.Email" class="form-control" id="exampleInputEmail1" placeholder="seu@email.com">
+            <ValidationMessage For="@(() => loginRequest.Email)"/>
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Senha</label>
+            <input type="password" @bind="loginRequest.Password" class="form-control" placeholder="senha">
+            <ValidationMessage For="@(() => loginRequest.Password)" />
+        </div>        
+        <button type="submit"class="btn btn-primary" disabled="@isLoading">@(isLoading ? "Entrando...." : "Entrar")</button>
     </div>
-    <div class="mb-3">
-        <label for="exampleInputPassword1" class="form-label">Senha</label>
-        <input type="password" class="form-control" placeholder="senha" id="exampleInputPassword1">
-    </div>
-    <div class="mb-3 form-check">
-        <input type="checkbox" class="form-check-input" id="exampleCheck1">
-        <label class="form-check-label" for="exampleCheck1">Check me out</label>
-    </div>
-    <button type="button" @onclick="Testar" class="btn btn-primary">Entrar(testando troca de titulo)</button>
-</form>
+</EditForm>
 
 
 <div class="shadow mt-5 p-3">
+    <h2 class="text-center">Debug</h2>
     <div class="row border rounded mt-1">
         <div class="col border">
-            <span>Email</span>
+            <span>Email Digitado</span>
             <br />
             <div class="row mt-1 p-1">@loginRequest.Email </div>
         </div>
@@ -41,19 +46,54 @@
 
 @code
 {
+    private string msg = "";
     string Title = "Login";
+    private string errorMessage = string.Empty;
+    private bool isLoading = false;
     void Mudar()
     {
         Title = "Salvando dados...";
     }
 
-    LoginRequestDto loginRequest = new LoginRequestDto();
+    private LoginRequestDto loginRequest = new LoginRequestDto();
 
-    public void Testar()
+    public async Task HandleLogin()
     {
-        loginRequest.Email = "julio.mattos999@gmail.com";
-        loginRequest.Password = "123";
-    }
+        msg = "Enviando dados para API...";
+        isLoading = true;
+        errorMessage = string.Empty;
+        msg = "Enviando dados para API...";
+        try
+        {
+            var response = await Http.PostAsJsonAsync("user/login", loginRequest);
 
+            if(response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<LoginResponseDto>();
+                msg = $"Bem vindo, {result!.Name}!";
+                // Redirecionar para a página inicial ou dashboard
+                NavigationManager.NavigateTo("/home");
+            }
+            else if(response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                errorMessage = "Credenciais inválidas. Por favor, tente novamente.";
+                msg = errorMessage;
+            }
+            else
+            {
+                msg = $"Status: {response.StatusCode} - {await response.Content.ReadAsStringAsync()}";
+            }
+        }
+        catch (Exception ex)
+        {
+            
+            msg = $"Erro: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+
+    }
 
 }

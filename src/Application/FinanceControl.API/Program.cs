@@ -17,7 +17,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.WithOrigins("https://localhost:7143")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -29,7 +29,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-string mySqlConnection = builder.Configuration.GetConnectionString("DefaultConnection");
+string mySqlConnection = builder.Configuration.GetConnectionString("DefaultConnection")!;
 
 Console.WriteLine(builder.Configuration.GetConnectionString("DefaultConnection"));
 
@@ -54,16 +54,11 @@ if (app.Environment.IsDevelopment())
 }
 
 
-
 app.UseDefaultFiles();
 app.UseStaticFiles();
-
-app.UseHttpsRedirection();
-
 app.UseCors();
-
+app.UseHttpsRedirection();
 app.UseAuthorization();
-
 app.MapControllers();
 
 
