@@ -1,46 +1,52 @@
 ﻿@page "/"
 @using System.ComponentModel.DataAnnotations
 @using FinanceControl.Blazor.Pages.Shared
+@using FinanceControl.Blazor.Pages.Messages
 @using FinanceControl.Contracts.Dtos.Auth
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 
 <Title Texto="@Title"></Title>
+<Message Menssagem="@msg"></Message>
 
-<form class="shadow p-3">
-    <div class="mb-3">
-        <label for="exampleInputEmail1" class="form-label">Email</label>
-        <input type="email" class="form-control" id="exampleInputEmail1" placeholder="seu@email.com" aria-describedby="emailHelp">
-    </div>
-    <div class="mb-3">
-        <label for="exampleInputPassword1" class="form-label">Senha</label>
-        <input type="password" class="form-control" placeholder="senha" id="exampleInputPassword1">
-    </div>
-    <div class="mb-3 form-check">
-        <input type="checkbox" class="form-check-input" id="exampleCheck1">
-        <label class="form-check-label" for="exampleCheck1">Check me out</label>
-    </div>
-    <button type="button" @onclick="Testar" class="btn btn-primary">Entrar(testando troca de titulo)</button>
-</form>
+<EditForm Model="@loginRequest" OnSubmit="@HandleLogin">
+    <form class="shadow p-3">
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Email</label>
+            <input type="email" @bind="loginRequest.Email" class="form-control" id="exampleInputEmail1" placeholder="seu@email.com" aria-describedby="emailHelp">
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Senha</label>
+            <input type="password" @bind="loginRequest.Password" class="form-control" placeholder="senha" id="exampleInputPassword1">
+        </div>
+        <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="exampleCheck1">
+            <label class="form-check-label" for="exampleCheck1">Check me out</label>
+        </div>
+        <button type="submit" @onclick="Incluir" class="btn btn-primary">Coletar dados</button>
+    </form>
+</EditForm>
 
 
 <div class="shadow mt-5 p-3">
+    <h2 class="text-center">Usuarios</h2>
     <div class="row border rounded mt-1">
         <div class="col border">
             <span>Email</span>
             <br />
-            <div class="row mt-1 p-1">@loginRequest.Email </div>
+            <div class="row mt-1 p-1">@loginExibicao.Email </div>
         </div>
         <div class="col border">
             <span>Password</span>
             <br />
-            <div class="row mt-1 p-1">@loginRequest.Password </div>
+            <div class="row mt-1 p-1">@loginExibicao.Password </div>
         </div>
     </div>
 </div>
 
 @code
 {
+    private string msg = "";
     string Title = "Login";
     void Mudar()
     {
@@ -48,11 +54,27 @@
     }
 
     LoginRequestDto loginRequest = new LoginRequestDto();
+    LoginRequestDto loginExibicao = new LoginRequestDto();
+
 
     public void Testar()
     {
-        loginRequest.Email = "julio.mattos999@gmail.com";
-        loginRequest.Password = "123";
+        loginRequest.Email = "";
+        loginRequest.Password = "";
+    }
+    public void Incluir()
+    {
+        loginExibicao.Email = loginRequest.Email;
+        loginExibicao.Password = loginRequest.Password;
+        msg = "Dados Salvos";
+    }
+
+    public void HandleLogin()
+    {
+        msg = "Enviando dados para API...";
+        // Aqui você pode adicionar a lógica para enviar os dados para a API
+        // Por exemplo, usando HttpClient para fazer uma requisição POST
+        // Http.PostAsJsonAsync("sua-api-endpoint", loginRequest);
     }
 
 
