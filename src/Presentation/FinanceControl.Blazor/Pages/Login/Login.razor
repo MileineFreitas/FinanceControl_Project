@@ -12,18 +12,20 @@
 
 <EditForm Model="@loginRequest" OnValidSubmit="@HandleLogin">
     <DataAnnotationsValidator />
-    <div class="shadow p-3">
+    <div class="shadow p-3 col-10 mx-auto">
         <div class="mb-3">
             <label for="exampleInputEmail1" class="form-label">Email</label>
             <input type="email" @bind="loginRequest.Email" class="form-control" id="exampleInputEmail1" placeholder="seu@email.com">
-            <ValidationMessage For="@(() => loginRequest.Email)"/>
+            <ValidationMessage For="@(() => loginRequest.Email)" />
         </div>
         <div class="mb-3">
             <label for="exampleInputPassword1" class="form-label">Senha</label>
             <input type="password" @bind="loginRequest.Password" class="form-control" placeholder="senha">
             <ValidationMessage For="@(() => loginRequest.Password)" />
-        </div>        
-        <button type="submit"class="btn btn-primary" disabled="@isLoading">@(isLoading ? "Entrando...." : "Entrar")</button>
+        </div>
+    <div class="d-grid gap-2 col-6 mx-auto">
+        <button type="submit" class="btn btn-outline-success" disabled="@isLoading">@(isLoading ? "Entrando...." : "Entrar")</button>
+    </div>
     </div>
 </EditForm>
 
@@ -67,14 +69,14 @@
         {
             var response = await Http.PostAsJsonAsync("user/login", loginRequest);
 
-            if(response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
                 var result = await response.Content.ReadFromJsonAsync<LoginResponseDto>();
                 msg = $"Bem vindo, {result!.Name}!";
                 // Redirecionar para a página inicial ou dashboard
                 NavigationManager.NavigateTo("/home");
             }
-            else if(response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
             {
                 errorMessage = "Credenciais inválidas. Por favor, tente novamente.";
                 msg = errorMessage;
@@ -86,7 +88,7 @@
         }
         catch (Exception ex)
         {
-            
+
             msg = $"Erro: {ex.Message}";
         }
         finally
