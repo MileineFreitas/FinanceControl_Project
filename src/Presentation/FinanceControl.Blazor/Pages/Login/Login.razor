@@ -3,47 +3,88 @@
 @using FinanceControl.Blazor.Pages.Shared
 @using FinanceControl.Blazor.Pages.Messages
 @using FinanceControl.Contracts.Dtos.Auth
+@layout LoginLayout
 @using System.Threading.Tasks
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 
-<Title Texto="@Title"></Title>
-<Message Menssagem="@msg"></Message>
 
-<EditForm Model="@loginRequest" OnValidSubmit="@HandleLogin">
-    <DataAnnotationsValidator />
-    <div class="shadow p-3 col-10 mx-auto">
-        <div class="mb-3">
-            <label for="exampleInputEmail1" class="form-label">Email</label>
-            <input type="email" @bind="loginRequest.Email" class="form-control" id="exampleInputEmail1" placeholder="seu@email.com">
-            <ValidationMessage For="@(() => loginRequest.Email)" />
-        </div>
-        <div class="mb-3">
-            <label for="exampleInputPassword1" class="form-label">Senha</label>
-            <input type="password" @bind="loginRequest.Password" class="form-control" placeholder="senha">
-            <ValidationMessage For="@(() => loginRequest.Password)" />
-        </div>
-    <div class="d-grid gap-2 col-6 mx-auto">
-        <button type="submit" class="btn btn-outline-success" disabled="@isLoading">@(isLoading ? "Entrando...." : "Entrar")</button>
-    </div>
-    </div>
-</EditForm>
+<div class="login-wrapper">
 
+    <!-- LADO ESQUERDO -->
+    <div class="login-left">
 
-<div class="shadow mt-5 p-3">
-    <h2 class="text-center">Debug</h2>
-    <div class="row border rounded mt-1">
-        <div class="col border">
-            <span>Email Digitado</span>
-            <br />
-            <div class="row mt-1 p-1">@loginRequest.Email </div>
+        <div class="brand">
+            <div class="brand-icon">💰</div>
+            <span class="brand-name">FinanceControl</span>
         </div>
-        <div class="col border">
-            <span>Password</span>
-            <br />
-            <div class="row mt-1 p-1">@loginRequest.Password </div>
+
+        <div class="left-content">
+            <div class="left-title">
+                Controle suas<br />finanças com<br />precisão.
+            </div>
+
+            <p class="left-subtitle">
+                Gerencie receitas, despesas e categorias em um só lugar.
+                Simples, rápido e seguro.
+            </p>
         </div>
+
+        <div class="left-footer">
+            © 2026 FinanceControl. Todos os direitos reservados.
+        </div>
+
     </div>
+
+    <!-- LADO DIREITO -->
+    <div class="login-right">
+
+        <p class="form-eyebrow">Bem-vindo de volta</p>
+        <h1 class="form-title">Entre na sua conta</h1>
+        <Message Menssagem="@msg"></Message>
+
+        <EditForm Model="@loginRequest" OnValidSubmit="@HandleLogin">
+            <DataAnnotationsValidator />
+            <div class="field-group">
+                <label class="field-label">
+                    Email
+                </label>
+                <InputText class="field-input"
+                           @bind-Value="loginRequest.Email"
+                           placeholder="seu@email.com" />
+
+                <ValidationMessage For="@(() => loginRequest.Email)"
+                                   class="validation-msg" />
+            </div>
+
+            <div class="field-group">
+
+                <label class="field-label">
+                    Senha
+                </label>
+
+                <InputText type="password"
+                           class="field-input"
+                           @bind-Value="loginRequest.Password"
+                           placeholder="••••••••" />
+
+                <ValidationMessage For="@(() => loginRequest.Password)"
+                                   class="validation-msg" />
+
+            </div>
+
+            <button type="submit"
+                    class="btn-login"
+                    disabled="@isLoading">
+
+                @(isLoading ? "Entrando..." : "Entrar")
+
+            </button>
+
+        </EditForm>
+
+    </div>
+
 </div>
 
 @code
@@ -52,10 +93,6 @@
     string Title = "Login";
     private string errorMessage = string.Empty;
     private bool isLoading = false;
-    void Mudar()
-    {
-        Title = "Salvando dados...";
-    }
 
     private LoginRequestDto loginRequest = new LoginRequestDto();
 
@@ -64,7 +101,7 @@
         msg = "Enviando dados para API...";
         isLoading = true;
         errorMessage = string.Empty;
-        msg = "Enviando dados para API...";
+
         try
         {
             var response = await Http.PostAsJsonAsync("user/login", loginRequest);
@@ -72,8 +109,9 @@
             if (response.IsSuccessStatusCode)
             {
                 var result = await response.Content.ReadFromJsonAsync<LoginResponseDto>();
+
                 msg = $"Bem vindo, {result!.Name}!";
-                // Redirecionar para a página inicial ou dashboard
+
                 NavigationManager.NavigateTo("/home");
             }
             else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
@@ -88,14 +126,11 @@
         }
         catch (Exception ex)
         {
-
             msg = $"Erro: {ex.Message}";
         }
         finally
         {
             isLoading = false;
         }
-
     }
-
 }
