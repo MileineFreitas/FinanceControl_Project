@@ -1,0 +1,175 @@
+@startuml FinanceControl_C4
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+' ============================================================
+' NIVEL 1 - DIAGRAMA DE CONTEXTO
+' ============================================================
+
+title [Nivel 1] FinanceControl - Diagrama de Contexto
+
+Person(usuario, "Usuario Final", "Gerencia financas pessoais via navegador")
+
+System(financeControl, "FinanceControl System", "Aplicacao de controle financeiro pessoal com front-end Blazor WASM e API REST .NET 8")
+
+System_Ext(mysql, "Banco de Dados MySQL", "Armazena usuarios, transacoes e categorias")
+
+Rel(usuario, financeControl, "Acessa via navegador", "HTTPS")
+Rel(financeControl, mysql, "Le e escreve dados", "TCP/3306 via EF Core")
+
+SHOW_LEGEND()
+@enduml
+
+' ============================================================
+
+@startuml FinanceControl_C4_Container
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title [Nivel 2] FinanceControl - Diagrama de Containers
+
+Person(usuario, "Usuario Final", "Gerencia financas pessoais via navegador")
+
+System_Boundary(fc, "FinanceControl System") {
+
+    Container(blazor, "FinanceControl.Blazor", "Blazor WebAssembly (.NET 8)", "SPA client-side. Renderiza UI, gerencia rotas e consome a API via HttpClient")
+
+    Container(api, "FinanceControl.API", "ASP.NET Core 8 / REST", "Expoe endpoints HTTP. Orquestra servicos de dominio e repositorios. Configura CORS, Swagger e DI")
+
+    Container(appDomain, "FinanceControl.Application +\nFinanceControl.Domain.Services", ".NET 8 Class Library", "Regras de negocio e casos de uso. Ex: UserDomService implementa logica de login")
+
+    Container(domain, "FinanceControl.Domain", ".NET 8 Class Library", "Entidades (User, Transaction, Category), enums e interfaces de contratos (IUserAppService, IUserRepository, etc.)")
+
+    Container(infra, "FinanceControl.Infrastructure", ".NET 8 Class Library / EF Core", "Repositorios (UserRepository, CategoryRepository, TransactionRepository) e FinanceDbContext")
+
+    ContainerDb(db, "MySQL Database", "MySQL", "Tabelas: Users, Transactions, Categories. Acessado via connection string DefaultConnection")
+}
+
+Rel(usuario, blazor, "Interage via navegador", "HTTPS")
+Rel(blazor, api, "Chama endpoints REST", "HTTP/HTTPS, JSON\nBaseAddress: https://localhost:7189/")
+Rel(api, appDomain, "Delega logica de negocio", ".NET in-process / DI")
+Rel(appDomain, domain, "Usa entidades e interfaces", ".NET in-process")
+Rel(api, infra, "Acessa repositorios via DI", ".NET in-process")
+Rel(appDomain, infra, "Acessa repositorios via DI", ".NET in-process")
+Rel(infra, db, "Le e persiste dados", "Pomelo MySQL EF Core")
+
+SHOW_LEGEND()
+@enduml
+
+' ============================================================
+
+@startuml FinanceControl_C4_Components_Blazor
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title [Nivel 3] FinanceControl.Blazor - Componentes do Front-end
+
+Container_Boundary(blazor, "FinanceControl.Blazor (Blazor WebAssembly)") {
+
+    Component(appRazor, "App.razor", "Blazor Component", "Componente raiz. Configura o Router (RouteView), mapeia URLs para paginas e define tratamento de rota nao encontrada")
+
+    Component(mainLayout, "MainLayout.razor", "Blazor Layout", "Define estrutura visual padrao: header, area de conteudo e navegacao lateral para todas as paginas")
+
+    Component(loginPage, "Login.razor", "Blazor Page (/login)", "Exibe formulario de login (usuario/senha). Invoca AuthService.LoginAsync e reage ao resultado")
+
+    Component(authService, "AuthService", "C# Service / DI Singleton", "Encapsula chamada HTTP ao endpoint POST /User/login da API. ATENCAO: LoginAsync contem TODO - ainda retorna false sem chamar a API real")
+
+    Component(programBlazor, "Program.cs", "Bootstrap / Host", "Cria WebAssemblyHostBuilder, registra App e HeadOutlet como root components, configura HttpClient com BaseAddress = https://localhost:7189/ e registra AuthService no container DI")
+}
+
+Person_Ext(usuario, "Usuario Final")
+Container_Ext(api, "FinanceControl.API", "ASP.NET Core REST")
+
+Rel(usuario, loginPage, "Preenche e submete formulario", "Browser / UI")
+Rel(loginPage, authService, "Chama LoginAsync(user, pass)", "C# Method Call")
+Rel(authService, api, "POST /User/login", "HTTP/JSON (via HttpClient)")
+Rel(programBlazor, authService, "Registra no DI", "DI Configuration")
+Rel(appRazor, mainLayout, "Usa como layout padrao", "Blazor Routing")
+Rel(appRazor, loginPage, "Roteia para /login", "Blazor Router")
+
+SHOW_LEGEND()
+@enduml
+
+' ============================================================
+
+@startuml FinanceControl_C4_Components_API
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title [Nivel 3] FinanceControl.API - Componentes do Backend REST
+
+Container_Boundary(api, "FinanceControl.API (ASP.NET Core 8)") {
+
+    Component(programApi, "Program.cs", "Bootstrap / Host", "Configura pipeline ASP.NET: CORS (origem https://localhost:7143), Controllers, Swagger, FinanceDbContext (MySQL via Pomelo). Registra DI: IUserRepository->UserRepository, ICategoryRepository->CategoryRepository, ITransactionRepository->TransactionRepository, IUserAppService->UserDomService")
+
+    Component(userController, "UserController", "ASP.NET Controller\n[Route: /User]", "GET /User: lista todos os usuarios\nGET /User/{id}: retorna usuario por ID (404 se nao encontrado)\nPOST /User/login: autentica (LoginRequestDto -> LoginResponseDto | 401)\nPOST /User: cria usuario\nPUT /User/{id}/user-update: atualiza usuario\nDELETE /User/{id}: remove usuario (404 se nao encontrado)")
+
+    Component(categoryController, "CategoryController", "ASP.NET Controller\n[Route: /Category]", "CRUD de categorias financeiras. Segue padrao similar ao UserController usando ICategoryRepository")
+
+    Component(transactionController, "TransactionController", "ASP.NET Controller\n[Route: /Transaction]", "CRUD de transacoes financeiras. Segue padrao similar ao UserController usando ITransactionRepository")
+}
+
+Container_Ext(blazor, "FinanceControl.Blazor", "Blazor WASM")
+Container_Ext(appDomain, "FinanceControl.Application\n+ Domain.Services", ".NET Library")
+Container_Ext(infra, "FinanceControl.Infrastructure", ".NET Library / EF Core")
+
+Rel(blazor, userController, "POST /User/login\nGET /User/{id}", "HTTP/JSON")
+Rel(userController, appDomain, "Chama Login(request)", "IUserAppService / DI")
+Rel(userController, infra, "GetAllUsers, CreateUser,\nUpdateUser, DeleteUser", "IUserRepository / DI")
+Rel(categoryController, infra, "CRUD categorias", "ICategoryRepository / DI")
+Rel(transactionController, infra, "CRUD transacoes", "ITransactionRepository / DI")
+Rel(programApi, userController, "Registra e roteia", "DI + Middleware")
+
+SHOW_LEGEND()
+@enduml
+
+' ============================================================
+
+@startuml FinanceControl_C4_Components_DomainInfra
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title [Nivel 3] Domain + Infrastructure - Componentes de Dominio e Dados
+
+Container_Boundary(domainInfra, "FinanceControl.Domain + Application + Infrastructure") {
+
+    ' --- DOMAIN ---
+    Component(userEntity, "User", "Domain Entity", "Representa o usuario do sistema. Campos: UserId, Name, Email, Password. Usada em controllers, repositorios e servicos")
+
+    Component(transactionEntity, "Transaction", "Domain Entity", "Representa uma transacao financeira.\nCampos: TransactionId, TransactionDescription, TransactionValue, Date, Type (TransactionType), UserId, CategoryId.\nNavegacoes: User [JsonIgnore], Category [JsonIgnore]")
+
+    Component(categoryEntity, "Category", "Domain Entity", "Representa uma categoria de gasto ou receita. Referenciada por Transaction via CategoryId")
+
+    Component(interfaces, "Interfaces de Contrato", "C# Interfaces", "IUserAppService, IUserRepository, ICategoryRepository, ITransactionRepository.\nDefinem contratos entre camadas de aplicacao, dominio e infraestrutura")
+
+    Component(dtos, "DTOs de Auth", "C# Records / Classes\n(FinanceControl.Contracts)", "LoginRequestDto: email + password\nLoginResponseDto: UserId, Name, Email\nUsados no fluxo de autenticacao entre Controller -> DomService -> Repository")
+
+    ' --- APPLICATION / DOMAIN SERVICE ---
+    Component(userDomService, "UserDomService", "Domain Service\n(IUserAppService)", "Implementa o caso de uso de login:\n1. Chama IUserRepository.GetUserByEmailAndPassword(email, password)\n2. Se usuario existir, monta e retorna LoginResponseDto\n3. Se nao existir, retorna null (controller devolve 401)")
+
+    ' --- INFRASTRUCTURE ---
+    Component(dbContext, "FinanceDbContext", "EF Core DbContext", "Mapeamentos EF Core para MySQL:\nDbSet<User> Users\nDbSet<Transaction> Transactions\nDbSet<Category> Categories\nInjetado via DbContextOptions pelo ASP.NET DI")
+
+    Component(userRepo, "UserRepository", "Repository\n(IUserRepository)", "GetAllUsers(): lista todos\nGetUserById(id): lanca KeyNotFoundException se nao achar\nCreateUser(user): Add + SaveChanges\nUpdateUser(user): EntityState.Modified + SaveChanges\nDeleteUser(id): lanca ArgumentNullException se nao achar\nGetUserByEmailAndPassword(email, pass): consulta para login")
+
+    Component(categoryRepo, "CategoryRepository", "Repository\n(ICategoryRepository)", "CRUD de categorias. Padrao identico ao UserRepository usando DbSet<Category>")
+
+    Component(transactionRepo, "TransactionRepository", "Repository\n(ITransactionRepository)", "CRUD de transacoes. Padrao identico ao UserRepository usando DbSet<Transaction>")
+}
+
+ContainerDb_Ext(db, "MySQL Database", "MySQL")
+
+Rel(userDomService, interfaces, "Implementa IUserAppService\nUsa IUserRepository", "C# Interface")
+Rel(userDomService, dtos, "Usa LoginRequestDto\nRetorna LoginResponseDto", "C# Types")
+Rel(userRepo, dbContext, "Usa DbSet<User>", "EF Core")
+Rel(categoryRepo, dbContext, "Usa DbSet<Category>", "EF Core")
+Rel(transactionRepo, dbContext, "Usa DbSet<Transaction>", "EF Core")
+Rel(dbContext, db, "Persiste dados", "Pomelo MySQL / TCP")
+Rel(userRepo, userEntity, "Mapeia e persiste", "EF Core Entity")
+Rel(transactionRepo, transactionEntity, "Mapeia e persiste", "EF Core Entity")
+Rel(categoryRepo, categoryEntity, "Mapeia e persiste", "EF Core Entity")
+
+SHOW_LEGEND()
+@enduml
