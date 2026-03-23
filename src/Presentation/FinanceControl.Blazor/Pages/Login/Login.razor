@@ -13,79 +13,53 @@
 
     <!-- LADO ESQUERDO -->
     <div class="login-left">
-
         <div class="brand">
             <div class="brand-icon">💰</div>
             <span class="brand-name">FinanceControl</span>
         </div>
-
         <div class="left-content">
             <div class="left-title">
                 Controle suas<br />finanças com<br />precisão.
             </div>
-
             <p class="left-subtitle">
                 Gerencie receitas, despesas e categorias em um só lugar.
                 Simples, rápido e seguro.
             </p>
         </div>
-
         <div class="left-footer">
             © 2026 FinanceControl. Todos os direitos reservados.
         </div>
-
     </div>
 
     <!-- LADO DIREITO -->
     <div class="login-right">
-
         <p class="form-eyebrow">Bem-vindo de volta</p>
         <h1 class="form-title">Entre na sua conta</h1>
         <Message Menssagem="@msg"></Message>
-
         <EditForm Model="@loginRequest" OnValidSubmit="@HandleLogin">
             <DataAnnotationsValidator />
             <div class="field-group">
-                <label class="field-label">
-                    Email
-                </label>
-                <InputText class="field-input"
-                           @bind-Value="loginRequest.Email"
-                           placeholder="seu@email.com" />
-
-                <ValidationMessage For="@(() => loginRequest.Email)"
-                                   class="validation-msg" />
+                <label class="field-label">Email</label>
+                <InputText class="form-control col-12 mt-2" @bind-Value="loginRequest.Email" placeholder="seu@email.com" />
+                <ValidationMessage For="@(() => loginRequest.Email)" class="validation-msg" />
             </div>
-
             <div class="field-group">
-
-                <label class="field-label">
-                    Senha
-                </label>
-
-                <InputText type="password"
-                           class="field-input"
-                           @bind-Value="loginRequest.Password"
-                           placeholder="••••••••" />
-
-                <ValidationMessage For="@(() => loginRequest.Password)"
-                                   class="validation-msg" />
-
+                <label class="field-label">Senha</label>
+                <InputText type="password" class="form-control col-12" @bind-Value="loginRequest.Password" placeholder="sua senha" />                         
+                <ValidationMessage For="@(() => loginRequest.Password)" class="validation-msg" />
             </div>
-
-            <button type="submit"
-                    class="btn-login"
-                    disabled="@isLoading">
-
+            <button type="submit" class="btn-login" disabled="@isLoading">
                 @(isLoading ? "Entrando..." : "Entrar")
-
             </button>
+            <div class="register-account">
+                <button type="button" class="btn btn-outline-primary mt-3 col-12">Cadastre-se</button>
+            </div>
 
         </EditForm>
-
     </div>
-
 </div>
+
+
 
 @code
 {

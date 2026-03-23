@@ -78,6 +78,7 @@
 
 .field-group {
     margin-bottom: 1.25rem;
+    border-radius:10px;
 }
 
 .field-label {
