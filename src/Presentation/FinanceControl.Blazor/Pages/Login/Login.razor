@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using System.ComponentModel.DataAnnotations
 @using FinanceControl.Blazor.Pages.Shared
+@using FinanceControl.Blazor.Pages.Register
 @using FinanceControl.Blazor.Pages.Messages
 @using FinanceControl.Contracts.Dtos.Auth
 @layout LoginLayout
@@ -52,7 +53,7 @@
                 @(isLoading ? "Entrando..." : "Entrar")
             </button>
             <div class="register-account">
-                <button type="button" class="btn btn-outline-primary mt-3 col-12">Cadastre-se</button>
+                <a href="/register" class="btn btn-outline-primary mt-3 col-12">Cadastre-se</a>
             </div>
 
         </EditForm>
