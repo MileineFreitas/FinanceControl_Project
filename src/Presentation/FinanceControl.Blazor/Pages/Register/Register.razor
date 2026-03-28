@@ -1,0 +1,216 @@
+﻿@page "/register"
+
+@using FinanceControl.Domain.Entities
+@using FinanceControl.Blazor.Pages.Login
+@layout RegisterLayout
+@inject NavigationManager Navigation
+@inject HttpClient Http
+
+<PageTitle>Cadastre-se</PageTitle>
+
+<div class="page">
+    <div class="card">
+
+        <div class="header">
+            <h1>Criar conta</h1>
+            <p>Preencha os campos abaixo para se cadastrar</p>
+        </div>
+
+        <!-- Foto de perfil -->
+        <div class="avatar-section">
+            <div class="avatar-wrapper" >
+                <div class="avatar-circle">
+                    @if (!string.IsNullOrEmpty(photoPreview))
+                    {
+                        <img src="@photoPreview" alt="Foto de perfil" />
+                    }
+                    else
+                    {
+                        <div class="avatar-icon">
+                            <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                            </svg>
+                        </div>
+                    }
+                </div>
+                <div class="avatar-badge">
+                    <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
+                    </svg>
+                </div>
+            </div>
+
+            <InputFile id="fileInput" OnChange="HandlePhoto" accept="image/*" style="display:none" />
+            <span class="avatar-label">Clique para adicionar foto de perfil</span>
+        </div>
+
+        <!-- Formulário -->
+        <EditForm Model="registerUser" OnValidSubmit="HandleSubmit">
+            <DataAnnotationsValidator />
+
+            <div class="field">
+                <label>Nome de usuário</label>
+                <div class="input-wrapper">                    
+                    <InputText @bind-Value="registerUser.UserName" class="form-control" placeholder="user.name" />
+                </div>
+                <ValidationMessage For="@(() => registerUser.UserName)" class="validation-msg" />
+            </div>
+
+            <div class="field">
+                <label>E-mail</label>
+                <div class="input-wrapper">
+                    <InputText @bind-Value="registerUser.Email" class="form-control" type="email" placeholder="seu@email.com" />
+                </div>
+                <ValidationMessage For="@(() => registerUser.Email)" class="validation-msg" />
+            </div>
+
+            <div class="field">
+                <label>Senha</label>
+                <div class="input-wrapper">
+                    <InputText @bind-Value="registerUser.Password"
+                               type="@(showPassword ? "text" : "password")"
+                               class="form-control"
+                               placeholder="mínimo 8 caracteres"
+                               @oninput="OnPasswordInput" />
+                    <button type="button" class="eye-btn" @onclick="TogglePassword">
+                        @if (showPassword)
+                        {
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
+                            </svg>
+                        }
+                        else
+                        {
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                            </svg>
+                        }
+                    </button>
+                </div>
+                <ValidationMessage For="@(() => registerUser.Password)" class="validation-msg" />
+
+                @if (!string.IsNullOrEmpty(registerUser.Password))
+                {
+                    <div class="strength-bar">
+                        <span style="background: @GetStrengthColor(1)"></span>
+                        <span style="background: @GetStrengthColor(2)"></span>
+                        <span style="background: @GetStrengthColor(3)"></span>
+                        <span style="background: @GetStrengthColor(4)"></span>
+                    </div>
+                    <div class="strength-label">@GetStrengthLabel()</div>
+                }
+            </div>
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="error-banner">@errorMessage</div>
+            }
+
+            <button type="submit" class="btn-submit" disabled="@isLoading">
+                @if (isLoading)
+                {
+                    <span>Criando conta...</span>
+                }
+                else
+                {
+
+                    <span>Criar conta</span>
+                }
+            </button>
+        </EditForm>
+
+        <div class="footer-text">
+            Já tem uma conta? <a href="/">Entrar</a>
+        </div>
+
+    </div>
+</div>
+
+@code {
+    
+    private RegisterUserDto registerUser = new();
+    private IBrowserFile? photo;
+    private string? photoPreview;
+    private bool showPassword = false;
+    private bool isLoading = false;
+    private string? errorMessage;
+    private int passwordStrength = 0;
+
+    private async Task HandlePhoto(InputFileChangeEventArgs e)
+    {
+        photo = e.File;
+        var buffer = new byte[photo.Size];
+        await photo.OpenReadStream(maxAllowedSize: 5 * 1024 * 1024).ReadAsync(buffer);
+        var base64 = Convert.ToBase64String(buffer);
+        photoPreview = $"data:{photo.ContentType};base64,{base64}";
+    }
+
+    private void TogglePassword() => showPassword = !showPassword;
+
+    private void OnPasswordInput(ChangeEventArgs e)
+    {
+        var val = e.Value?.ToString() ?? "";
+        passwordStrength = CalculateStrength(val);
+    }
+
+    private int CalculateStrength(string password)
+    {
+        int score = 0;
+        if (password.Length >= 8) score++;
+        if (password.Any(char.IsUpper)) score++;
+        if (password.Any(char.IsDigit)) score++;
+        if (password.Any(c => !char.IsLetterOrDigit(c))) score++;
+        return score;
+    }
+
+    private string GetStrengthColor(int bar)
+    {
+        if (bar > passwordStrength) return "var(--color-border-tertiary)";
+        return passwordStrength switch
+        {
+            1 => "#E24B4A",
+            2 => "#EF9F27",
+            3 => "#639922",
+            4 => "#1D9E75",
+            _ => "var(--color-border-tertiary)"
+        };
+    }
+
+    private string GetStrengthLabel() => passwordStrength switch
+    {
+        1 => "Fraca",
+        2 => "Média",
+        3 => "Boa",
+        4 => "Forte",
+        _ => ""
+    };
+
+    private async Task HandleSubmit()
+    {
+        isLoading = true;
+        errorMessage = null;        
+
+        try
+        {
+            var register = await Http.PostAsJsonAsync("user/register", new RegisterUserDto
+            {
+                UserName = registerUser.UserName,
+                Email = registerUser.Email,
+                Password = registerUser.Password,
+                
+            });
+
+            Navigation.NavigateTo("/");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}

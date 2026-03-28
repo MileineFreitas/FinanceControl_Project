@@ -27,6 +27,8 @@ public class User
     [StringLength(20)]
     public string? Password { get; set; }
 
+    public string? PhotoBase64 { get; set; }
+
     public UserType UserType { get; set; }
 
     public DateTime DateCreated { get; set; }
