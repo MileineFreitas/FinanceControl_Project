@@ -1,5 +1,6 @@
 using FinanceControl.Contracts.Dtos.Auth;
 using FinanceControl.Domain.Entities.Users;
+using FinanceControl.Domain.Entities;
 using FinanceControl.Domain.Interfaces.AppServices.Users;
 using FinanceControl.Domain.Interfaces.Repositories.Users;
 using Microsoft.AspNetCore.Mvc;
@@ -55,13 +56,25 @@ public class UserController : ControllerBase
     }
 
 
-    [HttpPost]
-    public ActionResult CreateUser(User user)
+    [HttpPost("register")]
+    public ActionResult CreateUser([FromBody] RegisterUserDto dto)
     {
-        if (user == null)
+        if (dto == null)
         {
             return BadRequest();
         }
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var user = new User
+        {
+            UserName = dto.UserName,
+            UserEmail = dto.Email,
+            Password = dto.Password,
+            PhotoBase64 = dto.PhotoBase64
+        };
 
         var createdUser = _repository.CreateUser(user);
         return new CreatedAtRouteResult("ObterUsuario",

@@ -52,9 +52,9 @@
             <div class="field">
                 <label>Nome de usuário</label>
                 <div class="input-wrapper">                    
-                    <InputText @bind-Value="registerUser.Username" class="form-control" placeholder="user.name" />
+                    <InputText @bind-Value="registerUser.UserName" class="form-control" placeholder="user.name" />
                 </div>
-                <ValidationMessage For="@(() => registerUser.Username)" class="validation-msg" />
+                <ValidationMessage For="@(() => registerUser.UserName)" class="validation-msg" />
             </div>
 
             <div class="field">
@@ -190,14 +190,13 @@
     private async Task HandleSubmit()
     {
         isLoading = true;
-        errorMessage = null;
-        string name = "?";
+        errorMessage = null;        
 
         try
         {
             var register = await Http.PostAsJsonAsync("user/register", new RegisterUserDto
             {
-                Username = registerUser.Username,
+                UserName = registerUser.UserName,
                 Email = registerUser.Email,
                 Password = registerUser.Password,
                 

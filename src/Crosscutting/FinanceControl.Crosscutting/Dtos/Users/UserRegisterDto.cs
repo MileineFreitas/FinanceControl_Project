@@ -9,7 +9,7 @@ public class RegisterUserDto
 {
     [Required(ErrorMessage = "Nome de usuário é obrigatório")]
     [MinLength(3, ErrorMessage = "Mínimo 3 caracteres")]
-    public string Username { get; set; } = "";
+    public string UserName { get; set; } = "";
 
     [Required(ErrorMessage = "E-mail é obrigatório")]
     [EmailAddress(ErrorMessage = "E-mail inválido")]
@@ -19,5 +19,5 @@ public class RegisterUserDto
     [MinLength(8, ErrorMessage = "Mínimo 8 caracteres")]
     public string Password { get; set; } = "";
 
-    public string PhtoBase64 { get; set; } = "";
+    public string PhotoBase64 { get; set; } = "";
 }
