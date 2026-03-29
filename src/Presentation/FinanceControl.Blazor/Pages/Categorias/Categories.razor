@@ -1,0 +1,44 @@
+﻿@page "/categorias"
+
+<div class="main-menu">
+    <div class="categories-content">
+        <div class="header">
+            <div>
+                <div class="title-page">
+                    Categorias
+                </div>
+                <p class="sub-title">
+                    Gerencie suas categorias
+                </p>
+            </div>
+            <button class="btn-add col-3">
+                ✦ Categoria
+            </button>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" id="tab-receitas" onclick="switchTab('receitas')">                
+                Receitas
+            </button>
+            <button class="tab" id="tab-custos" onclick="switchTab('custos')">          
+                Custos
+            </button>
+        </div>
+        <div class="bottom-grid">
+            <div class="summary-card">
+                <div class="summary-title">Rendimento Total</div>
+                <p class="summary-desc">Sua renda categorizada cresceu x% em relação ao mes anterior. Mantenha essa trajetória para atingir suas metas anuais.</p>
+                <div class="projected-box">
+                    <div class="projected-label">Projecao Total</div>
+                    <div class="projected-amount">R$ xx.xxx,xx</div>
+                    <div class="projected-badge">↑ +12.5%</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+
+}

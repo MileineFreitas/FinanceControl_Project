@@ -1,0 +1,51 @@
+@inject NavigationManager Navigation
+@using FinanceControl.Blazor.Pages.Categorias
+@using FinanceControl.Blazor.Pages.Home
+@using FinanceControl.Blazor.Pages.Register
+@using FinanceControl.Blazor.Pages.Relatorios
+@inject NavigationManager Navigation
+
+<div class="sub-title p-2">
+    <h4>Finance Control</h4>
+</div>
+
+<nav class="nav-menu mt-2 p-2">
+    <a class="nav-link" href="/categorias">
+        <img src="icon-menu.png" width="20" />
+        Categorias
+    </a>
+    <a class="nav-link mt-4" href="/transactions">
+        <img src="icon-transaction.png" width="20" />
+        Transacoes
+    </a>
+    <a class="nav-link mt-4" href="/relatorios">
+        <img src="icon-relatorio.png" width="20" />
+        Relatorios
+    </a>
+    <div class="sidebar-footer">
+        <div class="avatar">JM</div>
+        <div class="sidebar-footer-name">User Name</div>
+    </div>
+
+</nav>
+
+<style>
+    .sub-title{
+        color: black;
+        
+    }
+    .nav-link {
+        background-color: #deeaee;
+        /*color: #484f4f;*/
+        font-size: 20px;
+        padding-left: 20px;
+    }
+</style>
+
+
+@code {
+    private void RedirectCat()
+    {
+        Navigation.NavigateTo("/categorias");
+    }
+}

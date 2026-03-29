@@ -1,0 +1,92 @@
+﻿.categories-content{
+    display:flex;
+    justify-content: center;
+    padding: 2rem;
+    
+}
+
+.header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 900px;
+}
+
+.title-page {
+    font-family: var(--font-serif);
+    font-size: 2.6rem;
+    color: var(--text);
+    line-height: 1.15;
+}
+.sub-title {
+    margin: 0;
+    font-family: 'DM Serif Display', serif;
+    font-size: 1rem;
+    color: black;
+    line-height: 1.6;
+    max-width: 320px;
+}
+
+.add-cat{
+    text-align: left;
+}
+
+.btn-add {
+    background: var(--navy);
+    color: #fff;
+    border: none;
+    border-radius: 24px;
+    padding: .65rem 1.3rem;
+    font-family: var(--font-sans);
+    font-size: .82rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    transition: background .2s, transform .15s;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(19,39,67,.3);
+}
+
+.tabs {
+    display: flex;
+    gap: 2rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2rem;
+}
+
+.tab {
+    padding-bottom: .75rem;
+    font-size: .78rem;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    cursor: pointer;
+    border: none;
+    background: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color .2s, border-color .2s;
+}
+
+.tab-label {
+    font-size: .6rem;
+    font-weight: 400;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+    margin-bottom: .1rem;
+}
+
+.tab.active {
+    color: var(--text);
+    border-bottom-color: var(--navy);
+}
+
+.tab:hover:not(.active) {
+    color: var(--text);
+}
