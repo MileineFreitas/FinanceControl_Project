@@ -18,7 +18,7 @@
 
         <!-- Foto de perfil -->
         <div class="avatar-section">
-            <div class="avatar-wrapper" >
+            <label for="fileInput" class="avatar-wrapper" style="cursor:pointer">
                 <div class="avatar-circle">
                     @if (!string.IsNullOrEmpty(photoPreview))
                     {
@@ -39,7 +39,8 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
                     </svg>
                 </div>
-            </div>
+            </label>
+             
 
             <InputFile id="fileInput" OnChange="HandlePhoto" accept="image/*" style="display:none" />
             <span class="avatar-label">Clique para adicionar foto de perfil</span>

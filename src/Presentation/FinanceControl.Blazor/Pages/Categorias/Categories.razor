@@ -1,0 +1,90 @@
+﻿@page "/categorias"
+
+<div class="main-menu">
+    <div class="categories-content">
+
+        <div class="header">
+            <div>
+                <div class="title-page">Categorias</div>
+                <p class="sub-title">Gerencie suas categorias</p>
+            </div>
+            <button class="btn-add" @onclick="AbrirModal">
+                ✦ Categoria
+            </button>
+        </div>
+
+        <div class="tabs">
+            <button class="tab @(abaAtiva == "receitas" ? "active" : "")"
+                    @onclick='() => abaAtiva = "receitas"'>
+                Receitas
+            </button>
+            <button class="tab @(abaAtiva == "custos" ? "active" : "")"
+                    @onclick='() => abaAtiva = "custos"'>
+                Custos
+            </button>
+        </div>
+
+        <!-- Cards das categorias cadastradas -->
+        <div class="cards-grid">
+            @foreach (var cat in CategoriasFiltradas())
+            {
+                <div class="cat-card">
+                    <div class="card-icon">@cat.Icone</div>
+                    <div class="card-label">@cat.Nome</div>
+                    <div class="card-amount">R$ @cat.Total.ToString("N2")</div>
+                    <div class="card-bar" style="width: @cat.Percentual%"></div>
+                </div>
+            }
+        </div>
+
+        <div class="bottom-grid">
+            <div class="summary-card">
+                <div class="summary-title">Rendimento Total</div>
+                <p class="summary-desc">
+                    Sua renda categorizada cresceu x% em relação ao mês anterior.
+                    Mantenha essa trajetória para atingir suas metas anuais.
+                </p>
+                <div class="projected-box">
+                    <div class="projected-label">Projeção Total</div>
+                    <div class="projected-amount">R$ @TotalReceitas().ToString("N2")</div>
+                    <div class="projected-badge">↑ +12.5%</div>
+                </div>
+            </div>
+
+            <div class="add-card" @onclick="AbrirModal">
+                <div class="add-circle">＋</div>
+                <div class="add-card-title">Adicionar Categoria</div>
+                <div class="add-card-sub">Expanda seu sistema de classificação</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@code {
+    private string abaAtiva = "receitas";
+
+    // Substitua por injeção de serviço / dados reais
+    private List<Categoria> categorias = new()
+    {
+        new("💼", "Salário", 12450.00m, 75, "receitas"),
+        new("📈", "Investimentos", 3120.40m, 40, "receitas"),
+        new("🧳", "Freelance", 5800.00m, 55, "receitas"),
+        new("🏠", "Moradia", 3200.00m, 60, "custos"),
+        new("🛒", "Alimentação", 1450.00m, 35, "custos"),
+        new("🚗", "Transporte", 890.00m, 25, "custos"),
+    };
+
+    private IEnumerable<Categoria> CategoriasFiltradas() =>
+        categorias.Where(c => c.Tipo == abaAtiva);
+
+    private decimal TotalReceitas() =>
+        categorias.Where(c => c.Tipo == abaAtiva).Sum(c => c.Total);
+
+    private void AbrirModal()
+    {
+        // TODO: abrir modal de criação de categoria
+    }
+
+    private record Categoria(string Icone, string Nome, decimal Total, int Percentual, string Tipo);
+}
