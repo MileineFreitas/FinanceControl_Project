@@ -73,7 +73,9 @@ public class UserController : ControllerBase
             UserName = dto.UserName,
             UserEmail = dto.Email,
             Password = dto.Password,
-            PhotoBase64 = dto.PhotoBase64
+            PhotoBase64 = dto.PhotoBase64,
+            DateCreated = DateTime.UtcNow,
+            UserType = Domain.Enums.UserType.User
         };
 
         var createdUser = _repository.CreateUser(user);
