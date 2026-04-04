@@ -19,5 +19,5 @@ public class RegisterUserDto
     [MinLength(8, ErrorMessage = "Mínimo 8 caracteres")]
     public string Password { get; set; } = "";
 
-    public string PhotoBase64 { get; set; } = "";
+    public string ProfilePhoto { get; set; } = "";
 }
