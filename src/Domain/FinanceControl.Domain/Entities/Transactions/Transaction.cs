@@ -24,7 +24,7 @@ public class Transaction
 
     public DateTime Date { get; set; }
 
-    public TransactionType Type { get; set; }
+    public TransactionType? Type { get; set; }
 
     public int UserId { get; set; }
 

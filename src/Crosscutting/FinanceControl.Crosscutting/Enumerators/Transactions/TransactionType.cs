@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FinanceControl.Domain.Enums
+namespace FinanceControl.Domain.Enums;
+
+public enum TransactionType
 {
-    internal class TransactionType
-    {
-    }
+    Receita = 1,
+    Despesa = 2
 }
+
