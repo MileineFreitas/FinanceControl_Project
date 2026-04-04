@@ -73,7 +73,7 @@ public class UserController : ControllerBase
             UserName = dto.UserName,
             UserEmail = dto.Email,
             Password = dto.Password,
-            PhotoBase64 = dto.PhotoBase64,
+            ProfilePhoto = dto.ProfilePhoto,
             DateCreated = DateTime.UtcNow,
             UserType = Domain.Enums.UserType.User
         };
