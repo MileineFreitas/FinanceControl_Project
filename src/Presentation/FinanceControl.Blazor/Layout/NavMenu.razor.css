@@ -1,0 +1,161 @@
+.nav-root {
+    min-width: 0;
+}
+
+/* Menu recolhido: só ícones nos itens principais */
+.nav-root--collapsed .nav-label,
+.nav-root--collapsed .nav-chevron {
+    display: none;
+}
+
+.nav-root--collapsed .nav-link {
+    justify-content: center;
+    padding: 0.45rem 0.3rem;
+    gap: 0;
+}
+
+.nav-root--collapsed .nav-menu {
+    align-items: center;
+}
+
+.nav-root--collapsed .nav-group {
+    width: 100%;
+    align-items: center;
+}
+
+/* Botão de recolher quando menu está recolhido */
+.nav-root--collapsed .nav-collapse-btn {
+    justify-content: center;
+    padding: 0.45rem 0.3rem;
+    gap: 0;
+    margin-bottom: 0.2rem;
+}
+
+    .nav-root--collapsed .nav-collapse-btn .nav-label {
+        display: none;
+    }
+
+.nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    align-items: stretch;
+}
+
+.nav-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.nav-link {
+    box-sizing: border-box;
+    justify-content: flex-start;
+    background-color: #ced4da;
+    font-size: 0.875rem;
+    line-height: 1.25;
+    border-radius: 8px;
+    padding: 0.4rem 0.55rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.45rem;
+    text-decoration: none;
+    color: inherit;
+    text-align: left;
+}
+
+.nav-icon {
+    width: 17px;
+    height: 17px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.nav-label {
+    flex: 1;
+    min-width: 0;
+    text-align: left;
+}
+
+.nav-group-toggle {
+    cursor: pointer;
+}
+
+.nav-chevron {
+    margin-left: auto;
+    flex-shrink: 0;
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid #484f4f;
+    transition: transform 0.2s ease;
+}
+
+    .nav-chevron.open {
+        transform: rotate(180deg);
+    }
+
+.nav-sub {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    margin: 0.1rem 0 0 0;
+    padding-left: 1.35rem;
+    border-left: 2px solid #b8c0c8;
+    margin-left: 0.35rem;
+}
+
+.nav-sublink {
+    font-size: 0.8125rem;
+    padding: 0.32rem 0.5rem;
+    background-color: #d8dee4;
+    justify-content: flex-start;
+}
+
+.nav-sublink-text {
+    display: block;
+    width: 100%;
+    text-align: left;
+}
+
+/* ==================== BOTÃO DE RECOLHER NO MENU ==================== */
+
+.nav-collapse-btn {
+    background-color: #ced4da;
+    border-radius: 8px;
+    padding: 0.4rem 0.55rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.45rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+    margin-bottom: 0.35rem;
+    border: none;
+    color: inherit;
+    font-size: 0.875rem;
+    line-height: 1.25;
+}
+
+    .nav-collapse-btn:hover {
+        background-color: #bcc2c8;
+    }
+
+    .nav-collapse-btn:active {
+        background-color: #b8bec4;
+    }
+
+    .nav-collapse-btn svg {
+        width: 17px;
+        height: 17px;
+        object-fit: contain;
+        flex-shrink: 0;
+    }
+
+    .nav-collapse-btn .nav-label {
+        flex: 1;
+        min-width: 0;
+        text-align: left;
+    }

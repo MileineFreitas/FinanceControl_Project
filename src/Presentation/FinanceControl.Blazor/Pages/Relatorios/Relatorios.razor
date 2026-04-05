@@ -1,7 +1,9 @@
-﻿@page "/relatorios"
-
-<h3>Relatorios</h3>
+@page "/relatorios"
+@inject NavigationManager Navigation
 
 @code {
-
+    protected override void OnInitialized()
+    {
+        Navigation.NavigateTo("/dashboards/geral", replace: true);
+    }
 }
