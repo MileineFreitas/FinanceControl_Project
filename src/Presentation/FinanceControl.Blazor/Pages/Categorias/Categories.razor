@@ -15,15 +15,9 @@
                 <div class="title-page">Categorias</div>
                 <p class="sub-title">Gerencie suas categorias</p>
             </div>
-            <button class="btn btn-primary" type="button" data-toggle="modal" data-target=".bd-example-modal-lg" @onclick="AbrirModal">
-                + Categoria btn-add
+            <button class="btn-add" type="button" data-toggle="modal" data-target=".bd-example-modal-lg" @onclick="AbrirModal">
+                + Categoria
             </button>
-            <div class="modal fade bd-exampre-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                    </div>
-                </div>
-            </div>
         </div>
 
         <div class="tabs">
@@ -75,15 +69,15 @@
 
     @if (modalAberto)
     {
-        <div class="modal-overlay" @onclick="FecharModal">
-            <div class="modal-box" @onclick:stopPropagation="true">
+        <div class="fc-modal-overlay" @onclick="FecharModal">
+            <div class="fc-modal-box" @onclick:stopPropagation="true">
 
-                <div class="modal-header">
-                    <h2 class="modal-title">Nova Categoria</h2>
-                    <button class="modal-close" @onclick="FecharModal">✕</button>
+                <div class="fc-modal-header">
+                    <h2 class="fc-modal-title">Nova Categoria</h2>
+                    <button class="fc-modal-close" @onclick="FecharModal">✕</button>
                 </div>
 
-                <div class="modal-body">
+                <div class="fc-modal-body">
                     <div class="form-group">
                         <label class="form-label">Nome da Categoria</label>
                         <input class="form-input" type="text"
@@ -129,7 +123,7 @@
                     }
                 </div>
 
-                <div class="modal-footer">
+                <div class="fc-modal-footer">
                     <button class="btn-cancelar" @onclick="FecharModal">Cancelar</button>
                     <button class="btn-salvar" @onclick="CreateCategory"
                             disabled="@salvando">
