@@ -52,7 +52,7 @@
     transition: background .2s, transform .15s;
 }
 
-.btn btn-primary:hover {
+.btn-add:hover {
     background: #1a3352;
     transform: translateY(-1px);
 }
@@ -257,3 +257,205 @@
     text-align: center;
 }
 
+.fc-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.fc-modal-box {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 32px;
+    width: 100%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: modalEntrar 0.2s ease;
+}
+
+@keyframes modalEntrar {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.fc-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.fc-modal-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+}
+
+.fc-modal-close {
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    color: #94a3b8;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+
+    .fc-modal-close:hover {
+        background: #f1f5f9;
+        color: #475569;
+    }
+
+.fc-modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.fc-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 28px;
+}
+
+/* ── Formulário do Modal ── */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.form-input {
+    padding: 10px 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: #1e293b;
+    outline: none;
+    transition: border 0.2s;
+}
+
+    .form-input:focus {
+        border-color: #132743;
+        box-shadow: 0 0 0 3px rgba(19, 39, 67, 0.15);
+    }
+
+/* Toggle Tipo */
+.tipo-toggle {
+    display: flex;
+    gap: 8px;
+}
+
+.tipo-btn {
+    flex: 1;
+    padding: 10px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    background: #f8fafc;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #64748b;
+    transition: all 0.2s;
+}
+
+    .tipo-btn.active-receita {
+        background: #dcfce7;
+        border-color: #22c55e;
+        color: #16a34a;
+    }
+
+    .tipo-btn.active-custo {
+        background: #fee2e2;
+        border-color: #ef4444;
+        color: #dc2626;
+    }
+
+/* Grid de Ícones */
+.icone-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.icone-btn {
+    width: 40px;
+    height: 40px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    background: #f8fafc;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+    .icone-btn:hover {
+        border-color: #132743;
+        background: #eef2ff;
+    }
+
+.icone-selecionado {
+    border-color: #132743 !important;
+    background: #e8edf5 !important;
+    box-shadow: 0 0 0 3px rgba(19, 39, 67, 0.2);
+}
+
+/* Botões do Footer */
+.btn-cancelar {
+    padding: 10px 20px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    background: transparent;
+    color: #64748b;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+    .btn-cancelar:hover {
+        background: #f1f5f9;
+    }
+
+.btn-salvar {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 8px;
+    background: #132743;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, opacity 0.2s;
+}
+
+    .btn-salvar:hover:not(:disabled) {
+        background: #1a3352;
+    }
+
+    .btn-salvar:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+    }
