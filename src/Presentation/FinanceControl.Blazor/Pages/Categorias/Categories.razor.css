@@ -52,10 +52,10 @@
     transition: background .2s, transform .15s;
 }
 
-    .btn-add:hover {
-        background: #1a3352;
-        transform: translateY(-1px);
-    }
+.btn btn-primary:hover {
+    background: #1a3352;
+    transform: translateY(-1px);
+}
 
 /* TABS */
 .tabs {
@@ -256,3 +256,4 @@
     color: #6b7280;
     text-align: center;
 }
+

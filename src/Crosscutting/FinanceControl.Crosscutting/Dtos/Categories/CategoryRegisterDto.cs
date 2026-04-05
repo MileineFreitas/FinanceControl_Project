@@ -11,5 +11,8 @@ public class CategoryRegisterDto
 
     public string CategoryDescription { get; set; } = string.Empty;
 
-    public TransactionType Transaction { get; set; }
+    [Required(ErrorMessage = "Tipo (Receita ou Despesa) é obrigatório.")]
+    public TransactionType Type { get; set; }
+
+    
 }

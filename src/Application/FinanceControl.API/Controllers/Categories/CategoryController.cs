@@ -4,6 +4,7 @@ using FinanceControl.Domain.Entities.Categories;
 using FinanceControl.Infrastructure.Contexts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using FinanceControl.Domain.Entities;
 
 namespace FinanceControl.API.Controllers.Categories;
 
@@ -88,5 +89,29 @@ public class CategoryController : ControllerBase
         _context.Categories.Remove(category);
         _context.SaveChanges();
         return Ok(category);
+    }
+
+    [HttpPost("registerCategory")]
+    public ActionResult CreateCategory([FromBody] CategoryRegisterDto dto)
+    {
+        if (dto == null)
+        {
+            return BadRequest();
+        }
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        var category = new Category
+        {
+            CategoryName = dto.CategoryName,
+            Description = dto.CategoryDescription,
+            Type = dto.Type,
+            DateCreated = DateTime.UtcNow
+        };
+        
+        var createCat = _context.Categories.Add(category);
+        return new CreatedAtRouteResult("ObterCategoria",
+            new { id = createCat.Entity.CategoryId }, createCat.Entity);
     }
 }
