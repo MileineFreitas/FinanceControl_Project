@@ -1,5 +1,12 @@
 ﻿@page "/categorias"
 
+
+@using FinanceControl.Domain.Entities
+@using FinanceControl.Blazor.Pages.Login
+@using FinanceControl.Domain.Enums
+@inject NavigationManager Navigation
+@inject HttpClient Http
+
 <div class="main-menu">
     <div class="categories-content">
 
@@ -8,9 +15,15 @@
                 <div class="title-page">Categorias</div>
                 <p class="sub-title">Gerencie suas categorias</p>
             </div>
-            <button class="btn-add" @onclick="AbrirModal">
-                ✦ Categoria
+            <button class="btn btn-primary" type="button" data-toggle="modal" data-target=".bd-example-modal-lg" @onclick="AbrirModal">
+                + Categoria btn-add
             </button>
+            <div class="modal fade bd-exampre-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="tabs">
@@ -46,7 +59,6 @@
                 </p>
                 <div class="projected-box">
                     <div class="projected-label">Projeção Total</div>
-                    <div class="projected-amount">R$ @TotalReceitas().ToString("N2")</div>
                     <div class="projected-badge">↑ +12.5%</div>
                 </div>
             </div>
@@ -59,20 +71,153 @@
         </div>
 
     </div>
+
+
+    @if (modalAberto)
+    {
+        <div class="modal-overlay" @onclick="FecharModal">
+            <div class="modal-box" @onclick:stopPropagation="true">
+
+                <div class="modal-header">
+                    <h2 class="modal-title">Nova Categoria</h2>
+                    <button class="modal-close" @onclick="FecharModal">✕</button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Nome da Categoria</label>
+                        <input class="form-input" type="text"
+                               placeholder="Ex: Alimentação, Transporte..."
+                               @bind="categoryRegister.CategoryName" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Descrição (opcional)</label>
+                        <input class="form-input" type="text"
+                               placeholder="Ex: Gastos do dia a dia..."
+                               @bind="categoryRegister.CategoryDescription" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Tipo</label>
+                        <div class="tipo-toggle">
+                            <button class="tipo-btn @(categoryRegister.Type == TransactionType.Receita ? "active-receita" : "")"
+                                    @onclick='() => categoryRegister.Type = TransactionType.Receita'>
+                                ↑ Receita
+                            </button>
+                            <button class="tipo-btn @(categoryRegister.Type == TransactionType.Despesa ? "active-custo" : "")"
+                                    @onclick='() => categoryRegister.Type = TransactionType.Despesa'>
+                                ↓ Custo
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Ícone</label>
+                        <div class="icone-grid">
+                            @foreach (var icone in IconesDisponiveis)
+                            {
+                                <button class="icone-btn @(iconesSelecionados == icone ? "icone-selecionado" : "")"
+                                        @onclick='() => iconesSelecionados = icone'>
+                                    @icone
+                                </button>
+                            }
+                        </div>
+                    </div>
+                    @if (!string.IsNullOrEmpty(erroModal))
+                    {
+                        <p style="color: #ef4444; font-size: 0.85rem; margin-top: 4px;">⚠️ @erroModal</p>
+                    }
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn-cancelar" @onclick="FecharModal">Cancelar</button>
+                    <button class="btn-salvar" @onclick="CreateCategory"
+                            disabled="@salvando">
+                        @(salvando ? "Salvando..." : "Salvar Categoria")
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    }
+
 </div>
+
+
 
 @code {
     private string abaAtiva = "receitas";
+    private bool modalAberto = false;
+    private CategoryRegisterDto categoryRegister = new();
+    private string? erroModal = null;
+    private bool salvando = false;
 
-    // Substitua por injeção de serviço / dados reais
+    private void AbrirModal()
+    {
+        categoryRegister = new CategoryRegisterDto();
+        erroModal = null;
+        modalAberto = true;
+    }
+
+    private void FecharModal()
+    {
+        modalAberto = false;
+        erroModal = null;
+    }
+
+
+    private async Task CreateCategory()
+    {
+        if (string.IsNullOrWhiteSpace(categoryRegister.CategoryName) || categoryRegister.CategoryName.Length < 2)
+        {
+            erroModal = "Nome deve ter pelo menos 2 caracteres.";
+            return;
+        }
+        salvando = true;
+        erroModal = null;
+
+        try
+        {
+            var registerCat = await Http.PostAsJsonAsync("category/registerCategory", new CategoryRegisterDto
+            {
+                CategoryName = categoryRegister.CategoryName,
+                CategoryDescription = categoryRegister.CategoryDescription,
+                Type = categoryRegister.Type
+            });
+        }
+        catch (Exception ex)
+        {
+            erroModal = "Erro ao salvar categoria. Tente novamente.";
+        }
+        finally
+        {
+            salvando = false;
+        }
+    }
+
+
+    private string iconesSelecionados = "💰";
+    private string corSelecionada = "#6366f1";
+
+    private List<string> IconesDisponiveis = new() {
+        "🍔","🚗","🏠","💊","📚","🎮","✈️","👕","💡","🐶",
+        "💰","🎵","🏋️","🎁","💼","📈","🧳","🛒"
+    };
+
+    private List<string> CoresDisponiveis = new() {
+        "#6366f1","#22c55e","#f59e0b","#ef4444","#3b82f6",
+        "#ec4899","#14b8a6","#f97316","#8b5cf6","#64748b"
+    };
+
+    // ── Listagem ───────────────────────────────────────
     private List<Categoria> categorias = new()
     {
-        new("💼", "Salário", 12450.00m, 75, "receitas"),
-        new("📈", "Investimentos", 3120.40m, 40, "receitas"),
-        new("🧳", "Freelance", 5800.00m, 55, "receitas"),
-        new("🏠", "Moradia", 3200.00m, 60, "custos"),
-        new("🛒", "Alimentação", 1450.00m, 35, "custos"),
-        new("🚗", "Transporte", 890.00m, 25, "custos"),
+        new("💼", "Salário",       12450.00m, 75, "receitas"),
+        new("📈", "Investimentos",  3120.40m, 40, "receitas"),
+        new("🧳", "Freelance",      5800.00m, 55, "receitas"),
+        new("🏠", "Moradia",        3200.00m, 60, "custos"),
+        new("🛒", "Alimentação",    1450.00m, 35, "custos"),
+        new("🚗", "Transporte",      890.00m, 25, "custos"),
     };
 
     private IEnumerable<Categoria> CategoriasFiltradas() =>
@@ -81,10 +226,7 @@
     private decimal TotalReceitas() =>
         categorias.Where(c => c.Tipo == abaAtiva).Sum(c => c.Total);
 
-    private void AbrirModal()
-    {
-        // TODO: abrir modal de criação de categoria
-    }
-
     private record Categoria(string Icone, string Nome, decimal Total, int Percentual, string Tipo);
+
+    
 }
