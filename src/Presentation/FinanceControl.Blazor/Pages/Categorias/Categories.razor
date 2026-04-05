@@ -184,10 +184,26 @@
                 CategoryDescription = categoryRegister.CategoryDescription,
                 Type = categoryRegister.Type
             });
+
+            if (!registerCat.IsSuccessStatusCode)
+            {
+                var detalhe = await registerCat.Content.ReadAsStringAsync();
+                erroModal = $"Erro ao salvar: {detalhe}";
+                return;
+            }
+            categorias.Add(new Categoria(
+                iconesSelecionados,
+                categoryRegister.CategoryName,
+                0, 0,
+                categoryRegister.Type == TransactionType.Receita ? "receitas" : "custos"
+            ));
+
+            FecharModal();
+
         }
         catch (Exception ex)
         {
-            erroModal = "Erro ao salvar categoria. Tente novamente.";
+            erroModal = $"Erro inesperado: {ex.Message}";
         }
         finally
         {

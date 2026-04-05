@@ -109,9 +109,18 @@ public class CategoryController : ControllerBase
             Type = dto.Type,
             DateCreated = DateTime.UtcNow
         };
-        
-        var createCat = _context.Categories.Add(category);
+
+        _context.Categories.Add(category);
+        _context.SaveChanges();
         return new CreatedAtRouteResult("ObterCategoria",
-            new { id = createCat.Entity.CategoryId }, createCat.Entity);
+            new { id = category.CategoryId },
+            new
+            {
+                category.CategoryId,
+                category.CategoryName,
+                category.Description,
+                category.Type,
+                category.DateCreated
+            });
     }
 }
