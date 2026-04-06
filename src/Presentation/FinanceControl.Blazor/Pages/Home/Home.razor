@@ -1,9 +1,122 @@
 ﻿@page "/home"
+@inject NavigationManager Nav
 
-<h1>Bem vindo!!!</h1>
+<div class="home-container">
+    <section class="home-header">
+        <div class="header-content">
+            <h1 class="page-title">Visão Geral Financeira</h1>
+            <p class="page-subtitle">Resumo do seu saldo e movimentações</p>
+        </div>
+    </section>
 
+    <section class="cards-grid">
+        <!-- Card Saldo Total -->
+        <div class="card-base">
+            <div class="card-header">
+                <div class="card-header-left">
+                    <svg class="card-header-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill="currentColor" d="M3 6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6zm2 0v12h14V6H5zm7 3a3 3 0 1 1 0 6 3 3 0 0 1 0-6z" />
+                    </svg>
+                </div>
+                <h3 class="card-title">Saldo Total</h3>
+            </div>
+            <div class="card-body">
+                <p class="card-value">R$ 12.450,00</p>
+                <p class="card-sub">Conta bancária + Poupança</p>
+            </div>
+        </div>
 
-<span>Teste redirecionando Pagina inicial</span>
+        <!-- Card Receitas do Mês -->
+        <div class="card-base">
+            <div class="card-header">
+                <div class="card-header-left card-success">
+                    <svg class="card-header-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill="currentColor" d="M4 16l6-6 4 4 6-6 2 2-8 8-4-4-4 4z" />
+                    </svg>
+                </div>
+                <h3 class="card-title">Receitas</h3>
+            </div>
+            <div class="card-body">
+                <p class="card-value amount-positive">+ R$ 5.800,00</p>
+                <p class="card-sub">Neste mês</p>
+            </div>
+        </div>
+
+        <!-- Card Despesas do Mês -->
+        <div class="card-base">
+            <div class="card-header">
+                <div class="card-header-left">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill="currentColor" d="M3 6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6zm2 0v12h14V6H5zm7 3a3 3 0 1 1 0 6 3 3 0 0 1 0-6z" />
+                    </svg>
+                </div>
+                <h3 class="card-title">Despesas</h3>
+            </div>
+            <div class="card-body">
+                <p class="card-value amount-negative">- R$ 3.200,00</p>
+                <p class="card-sub">Neste mês</p>
+            </div>
+        </div>
+
+        <!-- Card Economia -->
+        <div class="card-base">
+            <div class="card-header">
+                <span class="card-header-left ">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill="currentColor" d="M3 6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6zm2 0v12h14V6H5zm7 3a3 3 0 1 1 0 6 3 3 0 0 1 0-6z" />
+                    </svg>
+                </span>
+                <h3 class="card-title">Economia</h3>
+            </div>
+            <div class="card-body">
+                <p class="card-value amount-positive">+ R$ 2.600,00</p>
+                <p class="card-sub">Última atualização</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="recent-transactions">
+        <div class="section-header">
+            <h2 class="section-title">Transações Recentes</h2>
+            <a href="/transacoes" class="link-more">Ver mais</a>
+        </div>
+        <div class="transactions-list">
+            <div class="transaction-item">
+                <div class="transaction-info">
+                    <p class="transaction-name">Salário</p>
+                    <p class="transaction-category">Renda</p>
+                </div>
+                <p class="transaction-amount amount-positive">+ R$ 5.000,00</p>
+            </div>
+            <div class="transaction-item">
+                <div class="transaction-info">
+                    <p class="transaction-name">Aluguel</p>
+                    <p class="transaction-category">Moradia</p>
+                </div>
+                <p class="transaction-amount amount-negative">- R$ 1.200,00</p>
+            </div>
+            <div class="transaction-item">
+                <div class="transaction-info">
+                    <p class="transaction-name">Supermercado</p>
+                    <p class="transaction-category">Alimentação</p>
+                </div>
+                <p class="transaction-amount amount-negative">- R$ 280,50</p>
+            </div>
+            <div class="transaction-item">
+                <div class="transaction-info">
+                    <p class="transaction-name">Freelance</p>
+                    <p class="transaction-category">Renda Extra</p>
+                </div>
+                <p class="transaction-amount amount-positive">+ R$ 800,00</p>
+            </div>
+        </div>
+    </section>
+</div>
+
 @code {
-
+    protected override void OnInitialized()
+    {
+        // Aqui você pode carregar dados reais do seu backend
+        // Por enquanto estamos usando dados mockados
+    }
 }
