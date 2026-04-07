@@ -276,7 +276,7 @@
     max-height: 90vh;
     overflow-y: auto;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    animation: modalEntrar 0.2s ease;
+    animation: modalEntrar 0.8s ease;
 }
 
 @keyframes modalEntrar {
