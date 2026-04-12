@@ -1,122 +1,283 @@
 ﻿@page "/home"
-@inject NavigationManager Nav
+@using System.Collections.Generic
+@using System.Linq
 
-<div class="home-container">
-    <section class="home-header">
-        <div class="header-content">
-            <h1 class="page-title">Visão Geral Financeira</h1>
-            <p class="page-subtitle">Resumo do seu saldo e movimentações</p>
-        </div>
-    </section>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
 
-    <section class="cards-grid">
-        <!-- Card Saldo Total -->
-        <div class="card-base">
-            <div class="card-header">
-                <div class="card-header-left">
-                    <svg class="card-header-icon" viewBox="0 0 24 24" aria-hidden="true">
-                        <path fill="currentColor" d="M3 6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6zm2 0v12h14V6H5zm7 3a3 3 0 1 1 0 6 3 3 0 0 1 0-6z" />
-                    </svg>
-                </div>
-                <h3 class="card-title">Saldo Total</h3>
-            </div>
-            <div class="card-body">
-                <p class="card-value">R$ 12.450,00</p>
-                <p class="card-sub">Conta bancária + Poupança</p>
-            </div>
-        </div>
+<div class="home-sanctuary">
+    <!-- Editorial Header -->
+    <header class="hs-editorial">
+        <span class="hs-kicker">Visão executiva</span>
+        <h1 class="hs-title">Seu santuário financeiro</h1>
+    </header>
 
-        <!-- Card Receitas do Mês -->
-        <div class="card-base">
-            <div class="card-header">
-                <div class="card-header-left card-success">
-                    <svg class="card-header-icon" viewBox="0 0 24 24" aria-hidden="true">
-                        <path fill="currentColor" d="M4 16l6-6 4 4 6-6 2 2-8 8-4-4-4 4z" />
-                    </svg>
-                </div>
-                <h3 class="card-title">Receitas</h3>
-            </div>
-            <div class="card-body">
-                <p class="card-value amount-positive">+ R$ 5.800,00</p>
-                <p class="card-sub">Neste mês</p>
-            </div>
-        </div>
-
-        <!-- Card Despesas do Mês -->
-        <div class="card-base">
-            <div class="card-header">
-                <div class="card-header-left">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path fill="currentColor" d="M3 6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6zm2 0v12h14V6H5zm7 3a3 3 0 1 1 0 6 3 3 0 0 1 0-6z" />
-                    </svg>
-                </div>
-                <h3 class="card-title">Despesas</h3>
-            </div>
-            <div class="card-body">
-                <p class="card-value amount-negative">- R$ 3.200,00</p>
-                <p class="card-sub">Neste mês</p>
-            </div>
-        </div>
-
-        <!-- Card Economia -->
-        <div class="card-base">
-            <div class="card-header">
-                <span class="card-header-left ">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path fill="currentColor" d="M3 6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6zm2 0v12h14V6H5zm7 3a3 3 0 1 1 0 6 3 3 0 0 1 0-6z" />
-                    </svg>
+    <!-- Bento Grid Summary Cards -->
+    <section class="hs-bento" aria-label="Resumo financeiro">
+        <!-- Total Balance Card -->
+        <div class="hs-bento-card hs-bento-card--primary">
+            <span class="hs-bento-label">Saldo total</span>
+            <div class="hs-bento-row">
+                <h2 class="hs-bento-value">R$&nbsp;128.450,00</h2>
+                <span class="hs-bento-trend hs-bento-trend--up">
+                    <span class="material-symbols-outlined" aria-hidden="true">trending_up</span>
+                    2,4%
                 </span>
-                <h3 class="card-title">Economia</h3>
             </div>
-            <div class="card-body">
-                <p class="card-value amount-positive">+ R$ 2.600,00</p>
-                <p class="card-sub">Última atualização</p>
+            <div class="hs-progress hs-progress--single">
+                <div class="hs-progress-fill hs-progress-fill--primary" style="width: 75%"></div>
+            </div>
+        </div>
+
+        <!-- Monthly Income Card -->
+        <div class="hs-bento-card hs-bento-card--tertiary">
+            <span class="hs-bento-label">Receita mensal</span>
+            <div class="hs-bento-row">
+                <h2 class="hs-bento-value">R$&nbsp;12.500,00</h2>
+                <span class="hs-bento-hint">vs. mês ant.</span>
+            </div>
+            <div class="hs-progress hs-progress--segments" role="presentation">
+                <div class="hs-seg"><div class="hs-seg-fill hs-seg-fill--full"></div></div>
+                <div class="hs-seg"><div class="hs-seg-fill" style="width: 80%"></div></div>
+                <div class="hs-seg"><div class="hs-seg-fill hs-seg-fill--full"></div></div>
+                <div class="hs-seg"><div class="hs-seg-fill hs-seg-fill--empty"></div></div>
+            </div>
+        </div>
+
+        <!-- Monthly Expenses Card -->
+        <div class="hs-bento-card hs-bento-card--error">
+            <span class="hs-bento-label">Despesas mensais</span>
+            <div class="hs-bento-row">
+                <h2 class="hs-bento-value">R$&nbsp;4.820,00</h2>
+                <span class="hs-bento-trend hs-bento-trend--down">
+                    <span class="material-symbols-outlined" aria-hidden="true">trending_down</span>
+                    1,2%
+                </span>
+            </div>
+            <div class="hs-progress hs-progress--single">
+                <div class="hs-progress-fill hs-progress-fill--error" style="width: 33%"></div>
             </div>
         </div>
     </section>
 
-    <section class="recent-transactions">
-        <div class="section-header">
-            <h2 class="section-title">Transações Recentes</h2>
-            <a href="/transacoes" class="link-more">Ver mais</a>
-        </div>
-        <div class="transactions-list">
-            <div class="transaction-item">
-                <div class="transaction-info">
-                    <p class="transaction-name">Salário</p>
-                    <p class="transaction-category">Renda</p>
-                </div>
-                <p class="transaction-amount amount-positive">+ R$ 5.000,00</p>
+    <!-- Main Content Stack -->
+    <div class="hs-stack">
+        <!-- Spending Breakdown Section -->
+        <section class="hs-section" aria-labelledby="hs-spending-heading">
+            <div class="hs-section-head">
+                <h2 id="hs-spending-heading" class="hs-section-title">Distribuição de gastos</h2>
+                <a class="hs-link-action" href="/categorias">Ver categorias</a>
             </div>
-            <div class="transaction-item">
-                <div class="transaction-info">
-                    <p class="transaction-name">Aluguel</p>
-                    <p class="transaction-category">Moradia</p>
+            <div class="hs-spending-panel">
+                <!-- Donut Chart -->
+                <div class="hs-donut-wrap" aria-hidden="true">
+                    <svg class="hs-donut-svg" viewBox="0 0 224 224">
+                        <circle class="hs-donut-track" cx="112" cy="112" r="95" fill="transparent" stroke="currentColor" stroke-width="16" />
+                        <circle class="hs-donut-arc hs-donut-arc--primary" cx="112" cy="112" r="95" fill="transparent" stroke="currentColor" stroke-width="16"
+                                stroke-dasharray="597" stroke-dashoffset="180" stroke-linecap="round" transform="rotate(-90 112 112)" />
+                        <circle class="hs-donut-arc hs-donut-arc--tertiary" cx="112" cy="112" r="95" fill="transparent" stroke="currentColor" stroke-width="16"
+                                stroke-dasharray="597" stroke-dashoffset="480" stroke-linecap="round" transform="rotate(-90 112 112)" />
+                        <circle class="hs-donut-arc hs-donut-arc--secondary" cx="112" cy="112" r="95" fill="transparent" stroke="currentColor" stroke-width="16"
+                                stroke-dasharray="597" stroke-dashoffset="540" stroke-linecap="round" transform="rotate(-90 112 112)" />
+                    </svg>
+                    <div class="hs-donut-center">
+                        <span class="hs-donut-label">Moradia</span>
+                        <span class="hs-donut-pct">35%</span>
+                    </div>
                 </div>
-                <p class="transaction-amount amount-negative">- R$ 1.200,00</p>
-            </div>
-            <div class="transaction-item">
-                <div class="transaction-info">
-                    <p class="transaction-name">Supermercado</p>
-                    <p class="transaction-category">Alimentação</p>
+
+                <!-- Legend -->
+                <div class="hs-legend">
+                    @foreach (var item in SpendingItems)
+                    {
+                        <div class="hs-legend-item">
+                            <span class="hs-legend-bar @item.BarClass"></span>
+                            <div>
+                                <p class="hs-legend-cat">@item.Category</p>
+                                <p class="hs-legend-amt">@item.Amount</p>
+                            </div>
+                        </div>
+                    }
                 </div>
-                <p class="transaction-amount amount-negative">- R$ 280,50</p>
             </div>
-            <div class="transaction-item">
-                <div class="transaction-info">
-                    <p class="transaction-name">Freelance</p>
-                    <p class="transaction-category">Renda Extra</p>
+        </section>
+
+        <!-- Recent Transactions Section -->
+        <section class="hs-section" aria-labelledby="hs-trans-heading">
+            <div class="hs-section-head">
+                <h2 id="hs-trans-heading" class="hs-section-title">Transações recentes</h2>
+                <div class="hs-filters" role="group" aria-label="Filtrar transações">
+                    <button type="button"
+                            class="hs-filter @(ActiveFilter == "Todas" ? "hs-filter--active" : "")"
+                            @onclick="@((MouseEventArgs e) => SetFilter("Todas"))">
+                        Todas
+                    </button>
+                    <button type="button"
+                            class="hs-filter @(ActiveFilter == "Entradas" ? "hs-filter--active" : "")"
+                            @onclick="@((MouseEventArgs e) => SetFilter("Entradas"))">
+                        Entradas
+                    </button>
+                    <button type="button"
+                            class="hs-filter @(ActiveFilter == "Saídas" ? "hs-filter--active" : "")"
+                            @onclick="@((MouseEventArgs e) => SetFilter("Saídas"))">
+                        Saídas
+                    </button>
                 </div>
-                <p class="transaction-amount amount-positive">+ R$ 800,00</p>
             </div>
-        </div>
-    </section>
+
+            <!-- Transaction List -->
+            <div class="hs-trans-list">
+                @foreach (var trans in FilteredTransactions)
+                {
+                    <div class="hs-trans @trans.TransClass">
+                        <div class="hs-trans-main">
+                            <div class="hs-trans-icon @trans.IconClass">
+                                <span class="material-symbols-outlined">@trans.Icon</span>
+                            </div>
+                            <div>
+                                <p class="hs-trans-name">@trans.Name</p>
+                                <p class="hs-trans-meta">@trans.Category • @trans.Date</p>
+                            </div>
+                        </div>
+                        <p class="hs-trans-amt @trans.AmountClass">@trans.Amount</p>
+                    </div>
+                }
+            </div>
+        </section>
+    </div>
 </div>
 
 @code {
+    private string ActiveFilter = "Todas";
+    private List<SpendingItem> SpendingItems { get; set; } = new();
+    private List<Transaction> Transactions { get; set; } = new();
+
     protected override void OnInitialized()
     {
-        // Aqui você pode carregar dados reais do seu backend
-        // Por enquanto estamos usando dados mockados
+        InitializeSpendingItems();
+        InitializeTransactions();
+    }
+
+    private void InitializeSpendingItems()
+    {
+        SpendingItems = new List<SpendingItem>
+        {
+            new SpendingItem
+            {
+                Category = "Moradia",
+                Amount = "R$ 1.687,00",
+                BarClass = "hs-legend-bar--primary"
+            },
+            new SpendingItem
+            {
+                Category = "Investimentos",
+                Amount = "R$ 1.200,00",
+                BarClass = "hs-legend-bar--tertiary"
+            },
+            new SpendingItem
+            {
+                Category = "Estilo de vida",
+                Amount = "R$ 933,00",
+                BarClass = "hs-legend-bar--secondary"
+            },
+            new SpendingItem
+            {
+                Category = "Outros",
+                Amount = "R$ 1.000,00",
+                BarClass = "hs-legend-bar--muted"
+            }
+        };
+    }
+
+    private void InitializeTransactions()
+    {
+        Transactions = new List<Transaction>
+        {
+            new Transaction
+            {
+                Name = "Apple Store Soho",
+                Category = "Eletrônicos",
+                Date = "12 out., 10:45",
+                Icon = "shopping_bag",
+                Amount = "-R$ 1.299,00",
+                Type = "Saídas",
+                TransClass = "hs-trans--primary",
+                IconClass = "hs-trans-icon--primary",
+                AmountClass = ""
+            },
+            new Transaction
+            {
+                Name = "Repasse mensal Stripe",
+                Category = "Salário",
+                Date = "10 out., 09:00",
+                Icon = "payments",
+                Amount = "+R$ 8.400,00",
+                Type = "Entradas",
+                TransClass = "hs-trans--tertiary",
+                IconClass = "hs-trans-icon--tertiary",
+                AmountClass = "hs-trans-amt--in"
+            },
+            new Transaction
+            {
+                Name = "The Green Bistro",
+                Category = "Alimentação",
+                Date = "09 out., 20:30",
+                Icon = "restaurant",
+                Amount = "-R$ 84,50",
+                Type = "Saídas",
+                TransClass = "hs-trans--primary",
+                IconClass = "hs-trans-icon--primary",
+                AmountClass = ""
+            },
+            new Transaction
+            {
+                Name = "Airbnb — Tóquio",
+                Category = "Viagem",
+                Date = "07 out., 14:15",
+                Icon = "travel_explore",
+                Amount = "-R$ 420,00",
+                Type = "Saídas",
+                TransClass = "hs-trans--primary",
+                IconClass = "hs-trans-icon--primary",
+                AmountClass = ""
+            }
+        };
+    }
+
+    private void SetFilter(string filter)
+    {
+        ActiveFilter = filter;
+    }
+
+    private IEnumerable<Transaction> FilteredTransactions
+    {
+        get
+        {
+            if (ActiveFilter == "Todas")
+                return Transactions;
+            
+            return Transactions.Where(t => t.Type == ActiveFilter);
+        }
+    }
+
+    // Nested Classes
+    public class SpendingItem
+    {
+        public string Category { get; set; } = string.Empty;
+        public string Amount { get; set; } = string.Empty;
+        public string BarClass { get; set; } = string.Empty;
+    }
+
+    public class Transaction
+    {
+        public string Name { get; set; } = string.Empty;
+        public string Category { get; set; } = string.Empty;
+        public string Date { get; set; } = string.Empty;
+        public string Icon { get; set; } = string.Empty;
+        public string Amount { get; set; } = string.Empty;
+        public string Type { get; set; } = string.Empty;
+        public string TransClass { get; set; } = string.Empty;
+        public string IconClass { get; set; } = string.Empty;
+        public string AmountClass { get; set; } = string.Empty;
     }
 }
