@@ -374,7 +374,7 @@ Desenvolver uma API RESTful utilizando [ASP.NET](http://asp.net/) Core .NET 8, a
     - UsuarioId
     
     ---
-
+## DIAGRAMA C4
 
 <img width="503" height="753" alt="image" src="https://github.com/user-attachments/assets/50df72be-cc82-49ed-89bb-998a561be430" />
 
