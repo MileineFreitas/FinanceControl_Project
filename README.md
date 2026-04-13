@@ -375,6 +375,14 @@ Desenvolver uma API RESTful utilizando [ASP.NET](http://asp.net/) Core .NET 8, a
     
     ---
 
+<img width="1052" height="687" alt="Diagramas" src="https://github.com/user-attachments/assets/314a6220-53cf-4747-bcca-8ee207bb714f" />
+
+
+    ---
+
+
+
+
 Pacotes necessários:
 
 EntityFrameworkCore → baixar ferramenta.
