@@ -376,12 +376,13 @@ Desenvolver uma API RESTful utilizando [ASP.NET](http://asp.net/) Core .NET 8, a
     ---
 
 
-<img width="457" height="493" alt="image" src="https://github.com/user-attachments/assets/5decfd96-fbf9-4eea-8a49-37506f7faa94" />
+<img width="503" height="753" alt="image" src="https://github.com/user-attachments/assets/50df72be-cc82-49ed-89bb-998a561be430" />
 
-<img width="448" height="389" alt="image" src="https://github.com/user-attachments/assets/d1fdb2dc-38da-443b-a97a-0ba31a91e4ed" />
 
-<img width="2313" height="829" alt="image" src="https://github.com/user-attachments/assets/1fac45a9-04d1-40a2-b231-6e2269896c3d" />
+<img width="357" height="800" alt="image" src="https://github.com/user-attachments/assets/81fa032e-f365-4965-a0e1-333a676490dd" />
 
+
+<img width="763" height="800" alt="image" src="https://github.com/user-attachments/assets/64d2e2ba-6754-4570-b772-4cd2d9fda546" />
 
 
 
