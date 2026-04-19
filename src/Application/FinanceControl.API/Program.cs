@@ -10,14 +10,27 @@ using FinanceControl.Infrastructure.Repositories.Transactions;
 using FinanceControl.Infrastructure.Repositories.Users;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
+/*
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
         policy.WithOrigins("https://localhost:7143")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+*/
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFront", policy =>
+    {
+        policy.WithOrigins("http://127.0.0.1:5500", "http://localhost:5500") // porta do seu front (Live Server)
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -56,7 +69,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
-app.UseCors();
+app.UseCors("AllowFront");
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();

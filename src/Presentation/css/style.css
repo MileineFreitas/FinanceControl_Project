@@ -1,0 +1,94 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Days+One&display=swap');
+*{
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+
+}
+body{
+    background-color: #e3f2fd;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+     /* desconta a altura do header */
+}
+.test{
+    margin-top: 30px;
+}
+
+
+a, a:hover{
+    text-decoration: none;
+}
+    
+
+header{
+    background-color: #003049;
+    color: aliceblue;
+    font-family: "Days One", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.container{
+    align-content: center;
+    display: flex;
+    background-color: azure;
+    width: 700;
+    border-radius: 8px;
+    padding: 12px;   
+    margin-top: 8px;
+    
+}
+
+.content{
+    padding: 5px;
+    margin: 0;
+}
+
+.form-control{
+    display: flex;
+    width: 400px;
+    height: 40px;
+    padding: 3px;
+}
+
+
+.btn-login{
+    background-color: #1284c2;
+    color: #fff;
+    font-size: 15px;
+    width: 100%;
+    height: 40px;
+    border: none;
+    cursor: pointer;
+}
+
+.fild-register{   
+    text-align: start;
+    margin-top: 5px;
+}
+
+.text-span{
+    margin-right: 5px;
+}
+
+register-title{
+    align-content: center;
+}
+
+.btn-register{
+    margin-top: 10px;
+    background-color: #08ba14;
+    color: #fff;
+    font-size: 15px;
+    width: 100%;
+    height: 40px;
+    border: none;
+    cursor: pointer;
+}
