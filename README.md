@@ -216,29 +216,86 @@ Desenvolver uma API RESTful utilizando [ASP.NET](http://asp.net/) Core .NET 8, a
     Vamos usar uma arquitetura limpa e organizada (inspirada em Clean Architecture, mas simplificada).
     
     ```
-    FinanceControl/
-    │
-    ├── FinanceControl.API/
-    │   ├── Controllers/
-    │   ├── Middlewares/
-    │   ├── Program.cs
-    │   └── appsettings.json
-    │
-    ├── FinanceControl.Application/
-    │   ├── DTOs/
-    │   ├── Interfaces/
-    │   ├── Services/
-    │
-    ├── FinanceControl.Domain/
-    │   ├── Entities/
-    │   ├── Enums/
-    │
-    ├── FinanceControl.Infrastructure/
-    │   ├── Data/
-    │   │   ├── AppDbContext.cs
-    │   ├── Repositories/
-    │
-    └── FinanceControl.sln
+    FinanceControl_Project/
+    ├── .github/
+    │   └── workflows/
+    ├── FinanceControl.slnx
+    └── src/
+        ├── Application/
+        │   ├── FinanceControl.API/
+        │   │   ├── Configurations/
+        │   │   ├── Controllers/
+        │   │   │   ├── Categories/
+        │   │   │   ├── Transactions/
+        │   │   │   └── Users/
+        │   │   └── Properties/
+        │   └── FinanceControl.Application/
+        │       ├── Categories/
+        │       ├── Transactions/
+        │       └── Users/
+        ├── Crosscutting/
+        │   └── FinanceControl.Crosscutting/
+        │       ├── Dtos/
+        │       │   ├── Auth/
+        │       │   ├── Categories/
+        │       │   ├── Transactions/
+        │       │   └── Users/
+        │       ├── Enumerators/
+        │       │   └── Transactions/
+        │       └── Interfaces/
+        │           └── Entities/
+        ├── Domain/
+        │   ├── FinanceControl.Domain/
+        │   │   ├── Entities/
+        │   │   │   ├── Categories/
+        │   │   │   ├── Transactions/
+        │   │   │   └── Users/
+        │   │   ├── Enums/
+        │   │   ├── Interfaces/
+        │   │   │   ├── AppServices/
+        │   │   │   ├── DomService/
+        │   │   │   └── Repositories/
+        │   │   └── Properties/
+        │   └── FinanceControl.Domain.Services/
+        │       ├── Categories/
+        │       ├── Transactions/
+        │       └── Users/
+        ├── Infrastructure/
+        │   └── FinanceControl.Infrastructure/
+        │       ├── Contexts/
+        │       ├── EntityConfiguration/
+        │       │   ├── Categories/
+        │       │   ├── Transactions/
+        │       │   └── Users/
+        │       ├── Migrations/
+        │       └── Repositories/
+        │           ├── Categories/
+        │           ├── Transactions/
+        │           └── Users/
+        ├── Presentation/
+        │   └── FinanceControl.Blazor/
+        │       ├── Layout/
+        │       ├── Pages/
+        │       │   ├── Categorias/
+        │       │   ├── Conta/
+        │       │   ├── Dashboards/
+        │       │   ├── Home/
+        │       │   ├── Login/
+        │       │   ├── Messages/
+        │       │   ├── Perfil/
+        │       │   ├── Register/
+        │       │   ├── Relatorios/
+        │       │   ├── Shared/
+        │       │   └── Transactions/
+        │       ├── Properties/
+        │       ├── Services/
+        │       └── wwwroot/
+        │           ├── css/
+        │           ├── js/
+        │           ├── lib/
+        │           └── sample-data/
+        └── Tests/
+            └── FinanceControl.Tests/
     ```
     
     ---
@@ -317,6 +374,22 @@ Desenvolver uma API RESTful utilizando [ASP.NET](http://asp.net/) Core .NET 8, a
     - UsuarioId
     
     ---
+## DIAGRAMA C4
+
+<img width="503" height="753" alt="image" src="https://github.com/user-attachments/assets/50df72be-cc82-49ed-89bb-998a561be430" />
+
+
+<img width="357" height="800" alt="image" src="https://github.com/user-attachments/assets/81fa032e-f365-4965-a0e1-333a676490dd" />
+
+
+<img width="763" height="800" alt="image" src="https://github.com/user-attachments/assets/64d2e2ba-6754-4570-b772-4cd2d9fda546" />
+
+
+
+    ---
+
+
+
 
 Pacotes necessários:
 
