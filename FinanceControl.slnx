@@ -15,7 +15,7 @@
     <Project Path="src/Infrastructure/FinanceControl.Infrastructure/FinanceControl.Data.csproj" />
   </Folder>
   <Folder Name="/src/Presentation/">
-    <Project Path="src/Presentation/FinanceControl.Blazor/FinanceControl.Blazor.csproj" />
+    <Project Path="src/Presentation/FinanceControl.Web/FinanceControl.Web.csproj" />
   </Folder>
   <Folder Name="/src/Tests/">
     <Project Path="src/Tests/FinanceControl.Tests/FinanceControl.Tests.csproj" />

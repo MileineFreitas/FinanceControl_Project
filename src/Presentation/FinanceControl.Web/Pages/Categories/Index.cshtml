@@ -1,0 +1,118 @@
+@page "/categorias"
+@using FinanceControl.Domain.Enums
+@model FinanceControl.Web.Pages.Categories.IndexModel
+@{
+    ViewData["Title"] = "Categorias";
+    var showModal = Model.ModalAberto || !string.IsNullOrEmpty(Model.ErroModal);
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/categories.css" asp-append-version="true" />
+}
+
+<div class="main-menu">
+    <div class="categories-content">
+        <div class="header">
+            <div>
+                <div class="title-page">Categorias</div>
+                <p class="sub-title">Gerencie suas categorias</p>
+            </div>
+            <button class="btn-add" type="button" data-fc-open-modal>+ Categoria</button>
+        </div>
+
+        <div class="tabs" role="tablist">
+            <a class="tab @(Model.Aba == "receitas" ? "active" : null)" href="?aba=receitas" role="tab">Receitas</a>
+            <a class="tab @(Model.Aba == "custos" ? "active" : null)" href="?aba=custos" role="tab">Custos</a>
+        </div>
+
+        <div class="cards-grid">
+            @foreach (var cat in Model.Categorias)
+            {
+                <div class="cat-card">
+                    <div class="card-icon">@cat.Icone</div>
+                    <div class="card-label">@cat.Nome</div>
+                    <div class="card-amount">R$ @cat.Total.ToString("N2")</div>
+                    <div class="card-bar" style="width: @cat.Percentual%"></div>
+                </div>
+            }
+        </div>
+
+        <div class="bottom-grid">
+            <div class="summary-card">
+                <div class="summary-title">Rendimento Total</div>
+                <p class="summary-desc">
+                    Sua renda categorizada cresceu x% em relação ao mês anterior.
+                    Mantenha essa trajetória para atingir suas metas anuais.
+                </p>
+                <div class="projected-box">
+                    <div class="projected-label">Projeção Total</div>
+                    <div class="projected-badge">↑ +12.5%</div>
+                </div>
+            </div>
+
+            <div class="add-card" data-fc-open-modal>
+                <div class="add-circle">＋</div>
+                <div class="add-card-title">Adicionar Categoria</div>
+                <div class="add-card-sub">Expanda seu sistema de classificação</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="fc-modal-overlay @(showModal ? null : "is-hidden")" id="fc-cat-modal">
+    <div class="fc-modal-box" data-fc-stop>
+        <form method="post" asp-page-handler="CreateCategory">
+            <input type="hidden" asp-for="Aba" />
+            <div class="fc-modal-header">
+                <h2 class="fc-modal-title">Nova Categoria</h2>
+                <button class="fc-modal-close" type="button" data-fc-close-modal>✕</button>
+            </div>
+            <div class="fc-modal-body">
+                <div class="form-group">
+                    <label class="form-label" asp-for="CategoryInput.CategoryName">Nome da Categoria</label>
+                    <input class="form-input" type="text" asp-for="CategoryInput.CategoryName" placeholder="Ex: Alimentação, Transporte..." />
+                </div>
+                <div class="form-group">
+                    <label class="form-label" asp-for="CategoryInput.CategoryDescription">Descrição (opcional)</label>
+                    <input class="form-input" type="text" asp-for="CategoryInput.CategoryDescription" placeholder="Ex: Gastos do dia a dia..." />
+                </div>
+                <div class="form-group">
+                    <span class="form-label">Tipo</span>
+                    <div class="tipo-toggle">
+                        <label class="tipo-btn @(Model.CategoryInput.Type == TransactionType.Receita ? "active-receita" : "")">
+                            <input class="visually-hidden" type="radio" name="CategoryInput.Type" value="@((int)TransactionType.Receita)" @(Model.CategoryInput.Type == TransactionType.Receita ? "checked" : null) />
+                            ↑ Receita
+                        </label>
+                        <label class="tipo-btn @(Model.CategoryInput.Type == TransactionType.Despesa ? "active-custo" : "")">
+                            <input class="visually-hidden" type="radio" name="CategoryInput.Type" value="@((int)TransactionType.Despesa)" @(Model.CategoryInput.Type == TransactionType.Despesa ? "checked" : null) />
+                            ↓ Custo
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <span class="form-label">Ícone</span>
+                    <div class="icone-grid">
+                        @foreach (var icone in Model.IconesDisponiveis)
+                        {
+                            <label class="icone-btn @(Model.SelectedIcon == icone ? "icone-selecionado" : "")">
+                                <input class="visually-hidden" type="radio" name="SelectedIcon" value="@icone" @(Model.SelectedIcon == icone ? "checked" : null) />
+                                @icone
+                            </label>
+                        }
+                    </div>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.ErroModal))
+                {
+                    <p class="text-danger small">⚠️ @Model.ErroModal</p>
+                }
+            </div>
+            <div class="fc-modal-footer">
+                <button class="btn-cancelar" type="button" data-fc-close-modal>Cancelar</button>
+                <button class="btn-salvar" type="submit">Salvar Categoria</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/categories.js" asp-append-version="true"></script>
+}

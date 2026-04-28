@@ -1,0 +1,133 @@
+@page "/home"
+@model FinanceControl.Web.Pages.HomeModel
+@{
+    ViewData["Title"] = "Home";
+}
+@section Styles {
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
+}
+
+<div class="home-sanctuary">
+    <header class="hs-editorial">
+        <span class="hs-kicker">Visão executiva</span>
+        <h1 class="hs-title">Seu santuário financeiro</h1>
+    </header>
+
+    <section class="hs-bento" aria-label="Resumo financeiro">
+        <div class="hs-bento-card hs-bento-card--primary">
+            <span class="hs-bento-label">Saldo total</span>
+            <div class="hs-bento-row">
+                <h2 class="hs-bento-value">R$&nbsp;128.450,00</h2>
+                <span class="hs-bento-trend hs-bento-trend--up">
+                    <span class="material-symbols-outlined" aria-hidden="true">trending_up</span>
+                    2,4%
+                </span>
+            </div>
+            <div class="hs-progress hs-progress--single">
+                <div class="hs-progress-fill hs-progress-fill--primary" style="width: 75%"></div>
+            </div>
+        </div>
+
+        <div class="hs-bento-card hs-bento-card--tertiary">
+            <span class="hs-bento-label">Receita mensal</span>
+            <div class="hs-bento-row">
+                <h2 class="hs-bento-value">R$&nbsp;12.500,00</h2>
+                <span class="hs-bento-hint">vs. mês ant.</span>
+            </div>
+            <div class="hs-progress hs-progress--segments" role="presentation">
+                <div class="hs-seg"><div class="hs-seg-fill hs-seg-fill--full"></div></div>
+                <div class="hs-seg"><div class="hs-seg-fill" style="width: 80%"></div></div>
+                <div class="hs-seg"><div class="hs-seg-fill hs-seg-fill--full"></div></div>
+                <div class="hs-seg"><div class="hs-seg-fill hs-seg-fill--empty"></div></div>
+            </div>
+        </div>
+
+        <div class="hs-bento-card hs-bento-card--error">
+            <span class="hs-bento-label">Despesas mensais</span>
+            <div class="hs-bento-row">
+                <h2 class="hs-bento-value">R$&nbsp;4.820,00</h2>
+                <span class="hs-bento-trend hs-bento-trend--down">
+                    <span class="material-symbols-outlined" aria-hidden="true">trending_down</span>
+                    1,2%
+                </span>
+            </div>
+            <div class="hs-progress hs-progress--single">
+                <div class="hs-progress-fill hs-progress-fill--error" style="width: 33%"></div>
+            </div>
+        </div>
+    </section>
+
+    <div class="hs-stack">
+        <section class="hs-section" aria-labelledby="hs-spending-heading">
+            <div class="hs-section-head">
+                <h2 id="hs-spending-heading" class="hs-section-title">Distribuição de gastos</h2>
+                <a class="hs-link-action" href="/categorias">Ver categorias</a>
+            </div>
+            <div class="hs-spending-panel">
+                <div class="hs-donut-wrap" aria-hidden="true">
+                    <svg class="hs-donut-svg" viewBox="0 0 224 224">
+                        <circle class="hs-donut-track" cx="112" cy="112" r="95" fill="transparent" stroke="currentColor" stroke-width="16" />
+                        <circle class="hs-donut-arc hs-donut-arc--primary" cx="112" cy="112" r="95" fill="transparent" stroke="currentColor" stroke-width="16"
+                                stroke-dasharray="597" stroke-dashoffset="180" stroke-linecap="round" transform="rotate(-90 112 112)" />
+                        <circle class="hs-donut-arc hs-donut-arc--tertiary" cx="112" cy="112" r="95" fill="transparent" stroke="currentColor" stroke-width="16"
+                                stroke-dasharray="597" stroke-dashoffset="480" stroke-linecap="round" transform="rotate(-90 112 112)" />
+                        <circle class="hs-donut-arc hs-donut-arc--secondary" cx="112" cy="112" r="95" fill="transparent" stroke="currentColor" stroke-width="16"
+                                stroke-dasharray="597" stroke-dashoffset="540" stroke-linecap="round" transform="rotate(-90 112 112)" />
+                    </svg>
+                    <div class="hs-donut-center">
+                        <span class="hs-donut-label">Moradia</span>
+                        <span class="hs-donut-pct">35%</span>
+                    </div>
+                </div>
+
+                <div class="hs-legend">
+                    @foreach (var item in Model.SpendingItems)
+                    {
+                        <div class="hs-legend-item">
+                            <span class="hs-legend-bar @item.BarClass"></span>
+                            <div>
+                                <p class="hs-legend-cat">@item.Category</p>
+                                <p class="hs-legend-amt">@item.Amount</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </section>
+
+        <section class="hs-section" aria-labelledby="hs-trans-heading">
+            <div class="hs-section-head">
+                <h2 id="hs-trans-heading" class="hs-section-title">Transações recentes</h2>
+                <div class="hs-filters" role="group" aria-label="Filtrar transações">
+                    <button type="button" class="hs-filter hs-filter--active" data-fc-filter="Todas">Todas</button>
+                    <button type="button" class="hs-filter" data-fc-filter="Entradas">Entradas</button>
+                    <button type="button" class="hs-filter" data-fc-filter="Saídas">Saídas</button>
+                </div>
+            </div>
+
+            <div class="hs-trans-list">
+                @foreach (var trans in Model.Transactions)
+                {
+                    <div class="hs-trans @trans.TransClass" data-type="@trans.Type">
+                        <div class="hs-trans-main">
+                            <div class="hs-trans-icon @trans.IconClass">
+                                <span class="material-symbols-outlined">@trans.Icon</span>
+                            </div>
+                            <div>
+                                <p class="hs-trans-name">@trans.Name</p>
+                                <p class="hs-trans-meta">@trans.Category • @trans.Date</p>
+                            </div>
+                        </div>
+                        <p class="hs-trans-amt @trans.AmountClass">@trans.Amount</p>
+                    </div>
+                }
+            </div>
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/home-sanctuary.js" asp-append-version="true"></script>
+}

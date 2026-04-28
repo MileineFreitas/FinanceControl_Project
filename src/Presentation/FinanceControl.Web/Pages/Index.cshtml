@@ -1,0 +1,55 @@
+@page "/"
+@model FinanceControl.Web.Pages.IndexModel
+@{
+    Layout = "/Pages/Shared/_LayoutAuth.cshtml";
+    ViewData["Title"] = "Entrar";
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
+}
+
+<div class="login-wrapper">
+    <div class="login-left">
+        <div class="brand">
+            <div class="brand-icon">💰</div>
+            <span class="brand-name">FinanceControl</span>
+        </div>
+        <div class="left-content">
+            <div class="left-title">
+                Controle suas<br />finanças com<br />precisão.
+            </div>
+            <p class="left-subtitle">
+                Gerencie receitas, despesas e categorias em um só lugar.
+                Simples, rápido e seguro.
+            </p>
+        </div>
+        <div class="left-footer">
+            © 2026 FinanceControl. Todos os direitos reservados.
+        </div>
+    </div>
+
+    <div class="login-right">
+        <p class="form-eyebrow">Bem-vindo de volta</p>
+        <h1 class="form-title">Entre na sua conta</h1>
+
+        @if (!string.IsNullOrEmpty(Model.Message))
+        {
+            <div class="text-info p-3 text-center text-danger" role="alert">@Model.Message</div>
+        }
+
+        <form method="post" novalidate>
+            <div class="field-group">
+                <label class="field-label" asp-for="LoginRequest.Email">Email</label>
+                <input asp-for="LoginRequest.Email" class="form-control col-12 mt-2" placeholder="seu@email.com" autocomplete="username" />
+            </div>
+            <div class="field-group">
+                <label class="field-label" asp-for="LoginRequest.Password">Senha</label>
+                <input asp-for="LoginRequest.Password" type="password" class="form-control col-12" placeholder="sua senha" autocomplete="current-password" />
+            </div>
+            <button type="submit" class="btn-login">Entrar</button>
+            <div class="register-account">
+                <a href="/register" class="btn btn-outline-primary mt-3 col-12">Cadastre-se</a>
+            </div>
+        </form>
+    </div>
+</div>
