@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using FinanceControl.Domain.Entities.TransactionTypes;
 using FinanceControl.Domain.Entities.Transactions;
 using FinanceControl.Domain.Entities.Users;
-using FinanceControl.Domain.Enums;
 
 namespace FinanceControl.Domain.Entities.Categories;
 
@@ -21,11 +21,21 @@ public class Category
 
     public DateTime DateCreated { get; set; }
 
+    public DateTime? UpdatedAt { get; set; }
+
     public int? UserId { get; set; }
 
     [JsonIgnore]
     public User? User { get; set; }
 
+    /// <summary>
+    /// Opcional no modelo de negócio: categorias podem ser só de receita ou só de despesa.
+    /// </summary>
+    public int? TransactionTypeId { get; set; }
+
     [JsonIgnore]
-    public TransactionType Type { get; set; }
+    public TransactionTypeDefinition? TransactionTypeDefinition { get; set; }
+
+    [JsonIgnore]
+    public ICollection<Transaction>? Transactions { get; set; }
 }

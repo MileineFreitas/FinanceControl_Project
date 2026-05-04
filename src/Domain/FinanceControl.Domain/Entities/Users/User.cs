@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 using FinanceControl.Domain.Enums;
+using FinanceControl.Domain.Entities.Accounts;
 using FinanceControl.Domain.Entities.Categories;
 using FinanceControl.Domain.Entities.Transactions;
 
@@ -38,4 +39,7 @@ public class User
 
     [JsonIgnore]
     public ICollection<Category>? Categories { get; set; }
+
+    [JsonIgnore]
+    public ICollection<Account>? Accounts { get; set; }
 }

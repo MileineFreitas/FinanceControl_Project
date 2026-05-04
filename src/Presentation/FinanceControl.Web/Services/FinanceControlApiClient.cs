@@ -15,5 +15,5 @@ public sealed class FinanceControlApiClient(HttpClient httpClient) : IFinanceCon
         _httpClient.PostAsJsonAsync("user/register", request, cancellationToken);
 
     public Task<HttpResponseMessage> RegisterCategoryAsync(CategoryRegisterDto request, CancellationToken cancellationToken = default) =>
-        _httpClient.PostAsJsonAsync("category/registerCategory", request, cancellationToken);
+        _httpClient.PostAsJsonAsync("api/Category/registerCategory", request, cancellationToken);
 }

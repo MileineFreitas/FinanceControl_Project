@@ -1,0 +1,116 @@
+### Finance Control API — testes manuais (REST Client / VS Code / Rider)
+### Suba a API antes: `dotnet run --launch-profile http`
+### Ajuste @userId, @categoryId se necessário após criar usuário/categoria.
+
+@host = http://localhost:5056
+@userId = 1
+@categoryId = 1
+@accountId = 1
+
+### --- Tipos de transação (somente leitura) ---
+GET {{host}}/api/TransactionTypes
+
+### --- Contas: listar ---
+GET {{host}}/api/Account
+
+### --- Contas: criar ---
+POST {{host}}/api/Account
+Content-Type: application/json
+
+{
+  "name": "Conta teste HTTP",
+  "initialBalance": 100.00,
+  "userId": {{userId}}
+}
+
+### --- Contas: obter por id (troque o id) ---
+GET {{host}}/api/Account/2
+
+### --- Contas: atualizar ---
+PUT {{host}}/api/Account/2
+Content-Type: application/json
+
+{
+  "accountId": 2,
+  "name": "Conta teste HTTP (editada)",
+  "initialBalance": 100.00,
+  "currentBalance": 150.50
+}
+
+### --- Categorias: listar ---
+GET {{host}}/api/Category
+
+### --- Categorias: registrar (usa enum numérico: 1=Receita, 2=Despesa) ---
+POST {{host}}/api/Category/registerCategory
+Content-Type: application/json
+
+{
+  "categoryName": "Teste API",
+  "categoryDescription": "Categoria criada pelo .http",
+  "type": 2
+}
+
+### --- Categorias: atualizar ---
+PUT {{host}}/api/Category/{{categoryId}}
+Content-Type: application/json
+
+{
+  "categoryId": {{categoryId}},
+  "categoryName": "Teste API (editada)",
+  "description": "Descrição atualizada",
+  "transactionTypeId": 2
+}
+
+### --- Transações: listar (filtro opcional) ---
+GET {{host}}/api/Transaction?userId={{userId}}
+
+### --- Transações: criar (status: 1=Pendente, 2=Pago — saldo só muda com Pago) ---
+POST {{host}}/api/Transaction
+Content-Type: application/json
+
+{
+  "transactionDescription": "Compra teste",
+  "transactionValue": 25.90,
+  "date": "2026-05-04T15:00:00Z",
+  "transactionTypeId": 2,
+  "categoryId": {{categoryId}},
+  "accountId": {{accountId}},
+  "userId": {{userId}},
+  "status": 2
+}
+
+### --- Transações: obter por id (troque @txId) ---
+@txId = 1
+GET {{host}}/api/Transaction/{{txId}}
+
+### --- Transações: atualizar ---
+PUT {{host}}/api/Transaction/{{txId}}
+Content-Type: application/json
+
+{
+  "transactionId": {{txId}},
+  "transactionDescription": "Compra teste (editada)",
+  "transactionValue": 30.00,
+  "date": "2026-05-04T16:00:00Z",
+  "transactionTypeId": 2,
+  "categoryId": {{categoryId}},
+  "accountId": {{accountId}},
+  "status": 2
+}
+
+### --- Transações: excluir ---
+DELETE {{host}}/api/Transaction/{{txId}}
+
+### --- Usuários (rota sem prefixo api): listar ---
+GET {{host}}/user
+
+### --- Usuários: registrar (senha mín. 8 caracteres) ---
+POST {{host}}/user/register
+Content-Type: application/json
+
+{
+  "userName": "Tester API",
+  "email": "tester.api@example.com",
+  "password": "Senha1234!",
+  "profilePhoto": ""
+}
