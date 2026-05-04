@@ -8,7 +8,7 @@ using FinanceControl.Domain.Entities;
 
 namespace FinanceControl.API.Controllers.Categories;
 
-[Route("[controller]")]
+[Route("api/[controller]")]
 [ApiController]
 public class CategoryController : ControllerBase
 {
@@ -24,14 +24,11 @@ public class CategoryController : ControllerBase
     {
         var categories = await _context.Categories
             .Include(c => c.User)
-            .Where(c => c.CategoryId <= 30)
+            .Include(c => c.TransactionTypeDefinition)
             .AsNoTracking()
+            .OrderBy(c => c.CategoryName)
             .ToListAsync();
 
-        if (categories == null)
-        {
-            return BadRequest("Categorias não encontradas...");
-        }
         return Ok(categories);
     }
 
@@ -65,16 +62,22 @@ public class CategoryController : ControllerBase
     }
 
     [HttpPut("{id:int:min(1)}")]
-    public ActionResult Put(int id, Category category)
+    public async Task<ActionResult> Put(int id, [FromBody] CategoryUpdateDto dto)
     {
-        if (id != category.CategoryId)
-        {
+        if (id != dto.CategoryId)
             return BadRequest("Id invalido...");
-        }
 
-        _context.Entry(category).State = EntityState.Modified;
-        _context.SaveChanges();
-        return Ok(category);
+        var category = await _context.Categories.FindAsync(id);
+        if (category == null)
+            return NotFound("Categoria não encontrada...");
+
+        category.CategoryName = dto.CategoryName;
+        category.Description = dto.Description;
+        category.TransactionTypeId = dto.TransactionTypeId;
+        category.UpdatedAt = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+        return NoContent();
     }
 
     [HttpDelete("{id:int:min(1)}")]
@@ -106,7 +109,7 @@ public class CategoryController : ControllerBase
         {
             CategoryName = dto.CategoryName,
             Description = dto.CategoryDescription,
-            Type = dto.Type,
+            TransactionTypeId = (int)dto.Type,
             DateCreated = DateTime.UtcNow
         };
 
@@ -119,7 +122,7 @@ public class CategoryController : ControllerBase
                 category.CategoryId,
                 category.CategoryName,
                 category.Description,
-                category.Type,
+                category.TransactionTypeId,
                 category.DateCreated
             });
     }

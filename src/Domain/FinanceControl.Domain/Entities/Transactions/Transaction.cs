@@ -1,8 +1,9 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using FinanceControl.Domain.Entities.Accounts;
 using FinanceControl.Domain.Entities.Categories;
+using FinanceControl.Domain.Entities.TransactionTypes;
 using FinanceControl.Domain.Entities.Users;
 using FinanceControl.Domain.Enums;
 
@@ -15,24 +16,38 @@ public class Transaction
     public int TransactionId { get; set; }
 
     [Required]
-    [StringLength(150)]
-    public string? TransactionDescription { get; set; }
+    [StringLength(250)]
+    public string TransactionDescription { get; set; } = string.Empty;
 
     [Required]
-    [Range(0.01, double.MaxValue, ErrorMessage = "Valr minimo deve ser maior que 0")]
+    [Column(TypeName = "decimal(18,2)")]
     public decimal TransactionValue { get; set; }
 
     public DateTime Date { get; set; }
 
-    public TransactionType? Type { get; set; }
+    public int TransactionTypeId { get; set; }
+
+    [JsonIgnore]
+    public TransactionTypeDefinition? TransactionTypeDefinition { get; set; }
+
+    public int CategoryId { get; set; }
+
+    [JsonIgnore]
+    public Category? Category { get; set; }
+
+    public int AccountId { get; set; }
+
+    [JsonIgnore]
+    public Account? Account { get; set; }
 
     public int UserId { get; set; }
 
     [JsonIgnore]
     public User? User { get; set; }
 
-    public int CategoryId { get; set; }
+    public TransactionStatus Status { get; set; }
 
-    [JsonIgnore]
-    public Category? Category { get; set; }
+    public DateTime CreatedAt { get; set; }
+
+    public DateTime UpdatedAt { get; set; }
 }
