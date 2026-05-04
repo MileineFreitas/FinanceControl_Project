@@ -1,0 +1,117 @@
+/* WEALTHTERMINAL — sidebar (base: Downloads/nav.css) */
+.page--wealth .fc-wt-sidebar.sidebar {
+  position: fixed;
+  left: 0;
+  top: 80px;
+  width: 220px;
+  height: calc(100vh - 80px);
+  background: linear-gradient(180deg, #0f1e3d 0%, #1a2f4d 100%);
+  border-right: 1px solid rgba(65, 139, 224, 0.2);
+  padding: 2rem 0;
+  overflow-y: auto;
+  z-index: 999;
+}
+
+.sidebar__header {
+  padding: 0 1.5rem 2rem;
+  border-bottom: 1px solid rgba(65, 139, 224, 0.15);
+}
+
+.sidebar__title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 0.25rem;
+  letter-spacing: 0.05em;
+}
+
+.sidebar__subtitle {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+}
+
+.sidebar__menu {
+  padding: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sidebar__item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.875rem 1.5rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  position: relative;
+  margin: 0 0.75rem;
+  border-radius: 0.5rem;
+}
+
+.sidebar__item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, #4189e0, #7db8e8);
+  border-radius: 0 3px 3px 0;
+  transform: scaleY(0);
+  transition: transform 0.3s ease;
+}
+
+.sidebar__item:hover {
+  background: rgba(65, 139, 224, 0.1);
+  color: #4189e0;
+}
+
+.sidebar__item--active {
+  color: #4189e0;
+  background: rgba(65, 139, 224, 0.15);
+}
+
+.sidebar__item--active::before {
+  transform: scaleY(1);
+}
+
+.sidebar__item svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.fc-wt-sidebar.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.fc-wt-sidebar.sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.fc-wt-sidebar.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(65, 139, 224, 0.3);
+  border-radius: 3px;
+}
+
+.fc-wt-sidebar.sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(65, 139, 224, 0.5);
+}
+
+@media (max-width: 768px) {
+  .page--wealth .fc-wt-sidebar.sidebar {
+    width: 260px;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .page--wealth .fc-wt-sidebar.sidebar.active {
+    transform: translateX(0);
+  }
+}
