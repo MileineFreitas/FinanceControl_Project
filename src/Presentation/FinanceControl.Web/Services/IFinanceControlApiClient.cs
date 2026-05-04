@@ -20,6 +20,12 @@ public interface IFinanceControlApiClient
 
     Task<HttpResponseMessage> GetTransactionTypesAsync(CancellationToken cancellationToken = default);
 
+    Task<HttpResponseMessage> GetPaymentMethodsAsync(CancellationToken cancellationToken = default);
+
+    Task<HttpResponseMessage> RegisterPaymentMethodAsync(PaymentMethodRegisterDto request, CancellationToken cancellationToken = default);
+
+    Task<HttpResponseMessage> DeletePaymentMethodAsync(int paymentMethodId, CancellationToken cancellationToken = default);
+
     Task<HttpResponseMessage> DeleteCategoryAsync(int categoryId, CancellationToken cancellationToken = default);
 
     Task<HttpResponseMessage> DeleteTransactionAsync(int transactionId, CancellationToken cancellationToken = default);

@@ -1,4 +1,5 @@
 using FinanceControl.Domain.Entities.Categories;
+using FinanceControl.Domain.Entities.PaymentMethods;
 using FinanceControl.Domain.Entities.Transactions;
 using FinanceControl.Domain.Entities.Users;
 using FinanceControl.Domain.Enums;
@@ -15,9 +16,58 @@ public static class FinanceDbContextSeed
 {
     public static void EnsureDemoUserAccountAndCategories(FinanceDbContext db)
     {
+        EnsureDefaultPaymentMethods(db);
         EnsureDemoUserAndAccount(db);
         EnsureDefaultCategories(db);
         EnsureDemoTransactions(db);
+    }
+
+    /// <summary>Meios de pagamento de exemplo (apenas se a tabela estiver vazia).</summary>
+    private static void EnsureDefaultPaymentMethods(FinanceDbContext db)
+    {
+        if (db.PaymentMethods.Any())
+            return;
+
+        var utc = DateTime.UtcNow;
+        db.PaymentMethods.AddRange(
+            new PaymentMethod
+            {
+                Name = "PIX",
+                Description = "Transferência instantânea (CPF, e-mail, celular ou chave aleatória)",
+                DateCreated = utc
+            },
+            new PaymentMethod
+            {
+                Name = "Cartão de crédito",
+                Description = "Crédito à vista ou parcelado — fatura mensal",
+                DateCreated = utc
+            },
+            new PaymentMethod
+            {
+                Name = "Cartão de débito",
+                Description = "Débito automático em conta corrente",
+                DateCreated = utc
+            },
+            new PaymentMethod
+            {
+                Name = "Dinheiro",
+                Description = "Espécie / caixa físico",
+                DateCreated = utc
+            },
+            new PaymentMethod
+            {
+                Name = "Boleto bancário",
+                Description = "Pagamento por código de barras ou Pix copia e cola",
+                DateCreated = utc
+            },
+            new PaymentMethod
+            {
+                Name = "TED / transferência",
+                Description = "Transferência entre contas (mesmo banco ou outros)",
+                DateCreated = utc
+            });
+
+        db.SaveChanges();
     }
 
     private static void EnsureDemoUserAndAccount(FinanceDbContext db)

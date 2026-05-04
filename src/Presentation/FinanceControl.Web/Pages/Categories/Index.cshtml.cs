@@ -19,7 +19,7 @@ public class IndexModel : PageModel
     public IndexModel(IFinanceControlApiClient api) => _api = api;
 
     [BindProperty(SupportsGet = true)]
-    public string Aba { get; set; } = "receitas";
+    public string? Abrir { get; set; }
 
     [BindProperty]
     public CategoryRegisterDto CategoryInput { get; set; } = new();
@@ -45,6 +45,9 @@ public class IndexModel : PageModel
 
     public async Task OnGetAsync(CancellationToken cancellationToken)
     {
+        if (string.Equals(Abrir?.Trim(), "novo", StringComparison.OrdinalIgnoreCase))
+            ModalAberto = true;
+
         await CarregarCategoriasAsync(cancellationToken);
     }
 
@@ -59,6 +62,9 @@ public class IndexModel : PageModel
             return Page();
         }
 
+        // API ainda associa um TransactionTypeId; na UI nao escolhemos — usa despesa como valor tecnico padrao.
+        CategoryInput.Type = TransactionType.Despesa;
+
         try
         {
             var response = await _api.RegisterCategoryAsync(CategoryInput, cancellationToken);
@@ -72,8 +78,7 @@ public class IndexModel : PageModel
             ErroModal = null;
             CategoryInput = new CategoryRegisterDto();
             SelectedIcon = "💰";
-            await CarregarCategoriasAsync(cancellationToken);
-            return Page();
+            return RedirectToPage("/categorias");
         }
         catch (Exception ex)
         {
@@ -123,26 +128,20 @@ public class IndexModel : PageModel
             var res = await _api.GetCategoriesAsync(cancellationToken);
             if (res.IsSuccessStatusCode)
             {
+                UsandoDadosDemo = false;
                 await using var stream = await res.Content.ReadAsStreamAsync(cancellationToken);
-                var arr = await JsonSerializer.DeserializeAsync<List<CategoryJson>>(stream, JsonOpts, cancellationToken);
-                if (arr is { Count: > 0 })
+                var arr = await JsonSerializer.DeserializeAsync<List<CategoryJson>>(stream, JsonOpts, cancellationToken)
+                          ?? [];
+                foreach (var c in arr.OrderBy(x => x.CategoryName))
                 {
-                    UsandoDadosDemo = false;
-                    foreach (var c in arr.OrderBy(x => x.CategoryName))
-                    {
-                        var tipo = c.TransactionTypeId == 2 ? "custos" : "receitas";
-                        Categorias.Add(new CategoriaVm(
-                            c.CategoryId,
-                            PickIcon(c.CategoryName),
-                            c.CategoryName ?? "—",
-                            0,
-                            0,
-                            tipo));
-                    }
-
-                    Categorias = Filtradas();
-                    return;
+                    Categorias.Add(new CategoriaVm(
+                        c.CategoryId,
+                        PickIcon(c.CategoryName),
+                        c.CategoryName ?? "—",
+                        c.Description));
                 }
+
+                return;
             }
         }
         catch
@@ -152,18 +151,7 @@ public class IndexModel : PageModel
 
         UsandoDadosDemo = true;
         EnsureDemoFallback();
-        Categorias = FiltradasFallback();
-    }
-
-    private List<CategoriaVm> Filtradas() =>
-        Categorias.Where(c => c.Tipo == Aba).ToList();
-
-    private List<CategoriaVm> FiltradasFallback()
-    {
-        lock (SeedLock)
-        {
-            return _demoFallback!.Where(c => c.Tipo == Aba).ToList();
-        }
+        Categorias = _demoFallback!.ToList();
     }
 
     private static void EnsureDemoFallback()
@@ -172,12 +160,12 @@ public class IndexModel : PageModel
         {
             _demoFallback ??=
             [
-                new(null, "💼", "Salário", 12450.00m, 75, "receitas"),
-                new(null, "📈", "Investimentos", 3120.40m, 40, "receitas"),
-                new(null, "🧳", "Freelance", 5800.00m, 55, "receitas"),
-                new(null, "🏠", "Moradia", 3200.00m, 60, "custos"),
-                new(null, "🛒", "Alimentação", 1450.00m, 35, "custos"),
-                new(null, "🚗", "Transporte", 890.00m, 25, "custos"),
+                new(null, "💼", "Salário", "Receitas fixas"),
+                new(null, "📈", "Investimentos", "Rendimentos e resgates"),
+                new(null, "🧳", "Freelance", "Projetos avulsos"),
+                new(null, "🏠", "Moradia", "Aluguel, condominio, contas"),
+                new(null, "🛒", "Alimentacao", "Mercado e refeicoes"),
+                new(null, "🚗", "Transporte", "Combustivel e mobilidade"),
             ];
         }
     }
@@ -193,8 +181,8 @@ public class IndexModel : PageModel
     {
         public int CategoryId { get; set; }
         public string? CategoryName { get; set; }
-        public int? TransactionTypeId { get; set; }
+        public string? Description { get; set; }
     }
 }
 
-public sealed record CategoriaVm(int? CategoryId, string Icone, string Nome, decimal Total, int Percentual, string Tipo);
+public sealed record CategoriaVm(int? CategoryId, string Icone, string Nome, string? Descricao);

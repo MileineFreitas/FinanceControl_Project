@@ -11,8 +11,7 @@ public class CategoryRegisterDto
 
     public string CategoryDescription { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "Tipo (Receita ou Despesa) é obrigatório.")]
-    public TransactionType Type { get; set; } = TransactionType.Receita;
-
-    
+    /// <summary>Tipo de fluxo na API legada; a UI de categorias nao expoe mais esta escolha (usa padrao ao gravar).</summary>
+    public TransactionType Type { get; set; } = TransactionType.Despesa;
 }
+
