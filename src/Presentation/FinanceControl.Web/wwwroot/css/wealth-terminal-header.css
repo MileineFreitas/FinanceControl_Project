@@ -51,11 +51,9 @@
   50% { opacity: 0.7; transform: scale(1.1); }
 }
 
+/* Links centrais removidos — navegação principal fica na sidebar */
 .header__nav {
-  display: flex;
-  gap: 2rem;
-  flex: 1;
-  justify-content: center;
+  display: none;
 }
 
 .header__nav-link {
@@ -95,11 +93,20 @@
   width: 100%;
 }
 
-/* Busca (mockup) */
+/* Busca global (telas do menu) */
+.header__search-global-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  max-width: 640px;
+}
+
 .header__search-wrap {
   display: flex;
   align-items: center;
-  flex: 0 1 220px;
+  flex: 1;
+  min-width: 0;
+  max-width: 640px;
 }
 
 .header__search {
@@ -113,6 +120,59 @@
   border: 1px solid rgba(65, 139, 224, 0.25);
   color: rgba(255, 255, 255, 0.9);
   font-size: 0.8125rem;
+}
+
+.header__search--wide {
+  max-width: none;
+}
+
+.fc-global-search-results {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 6px);
+  z-index: 1005;
+  margin: 0;
+  padding: 0.35rem 0;
+  list-style: none;
+  border-radius: 12px;
+  background: #152238;
+  border: 1px solid rgba(65, 139, 224, 0.35);
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.45);
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.fc-global-search-results.is-hidden {
+  display: none !important;
+}
+
+.fc-global-search-results li a {
+  display: block;
+  padding: 0.65rem 1rem;
+  font-size: 0.875rem;
+  color: rgba(248, 250, 252, 0.95);
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+
+.fc-global-search-results li a:hover,
+.fc-global-search-results li a:focus-visible {
+  background: rgba(65, 139, 224, 0.18);
+  outline: none;
+}
+
+.fc-global-search-results li mark {
+  background: rgba(125, 211, 252, 0.25);
+  color: #7dd3fc;
+  padding: 0 0.1em;
+  border-radius: 2px;
+}
+
+.fc-global-search-results .fc-global-search-empty {
+  padding: 0.75rem 1rem;
+  font-size: 0.82rem;
+  color: rgba(148, 163, 184, 0.9);
 }
 
 .header__search svg {
@@ -137,6 +197,8 @@
   display: flex;
   align-items: center;
   gap: 1rem;
+  margin-left: auto;
+  flex-shrink: 0;
 }
 
 .header__menu-toggle {
@@ -316,12 +378,27 @@
     display: none;
   }
 
-  .header__search-wrap {
-    display: none;
+  .header__container {
+    flex-wrap: wrap;
   }
 
   .header__menu-toggle {
     display: inline-flex;
+    order: 0;
+  }
+
+  .header__logo {
+    order: 1;
+  }
+
+  .header__actions {
+    order: 2;
+  }
+
+  .header__search-global-wrap {
+    order: 3;
+    flex: 1 1 100%;
+    max-width: 100%;
   }
 
   .header__container {

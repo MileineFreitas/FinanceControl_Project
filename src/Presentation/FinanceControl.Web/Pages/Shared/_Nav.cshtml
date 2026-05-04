@@ -3,39 +3,53 @@
     var isHome = path is "home" or "";
     var isTrans = path.StartsWith("transacoes", StringComparison.Ordinal) || path.StartsWith("transactions", StringComparison.Ordinal);
     var isCat = path.StartsWith("categorias", StringComparison.Ordinal);
+    var isTipo = path.StartsWith("tipos-transacao", StringComparison.Ordinal);
     var isInv = path.StartsWith("dashboards", StringComparison.Ordinal);
     var isRel = path.StartsWith("relatorios", StringComparison.Ordinal);
 }
 <nav class="sidebar__inner" aria-label="Navegação do portfólio">
-    <div class="sidebar__header">
-        <h2 class="sidebar__title">Portfólio Privado</h2>
-        <p class="sidebar__subtitle">Nível Institucional</p>
+    <div class="sidebar__scroll">
+        <div class="sidebar__header">
+            <h2 class="sidebar__title">Portfólio Privado</h2>
+            <p class="sidebar__subtitle">Nível Institucional</p>
+        </div>
+
+        <div class="sidebar__menu">
+            <a class="sidebar__item @(isHome ? "sidebar__item--active" : null)" href="~/home" title="Dashboard">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+                <span class="sidebar__label">Dashboard</span>
+            </a>
+
+            <a class="sidebar__item @(isTrans ? "sidebar__item--active" : null)" href="~/transacoes" title="Transações">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.35-3.39-3.83V5H10v2.16c-1.97.41-3.6 1.36-3.6 3.15 0 2.19 1.77 3.23 4.6 3.9 2.48.59 3 1.35 3 2.33 0 .92-.71 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+                <span class="sidebar__label">Transações</span>
+            </a>
+
+            <a class="sidebar__item @(isCat ? "sidebar__item--active" : null)" href="~/categorias" title="Categorias">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l-5.5 9h11L12 2zm0 18c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6-9c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM6 13c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                <span class="sidebar__label">Categorias</span>
+            </a>
+
+            <a class="sidebar__item @(isTipo ? "sidebar__item--active" : null)" href="~/tipos-transacao" title="Tipos de transação">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 5h2V3H3v2zm0 8h2v-2H3v2zm0 8h2v-2H3v2zM7 3h2v2H7V3zm0 6h2v2H7V9zm0 6h2v2H7v-2zm4-12h10v2H11V3zm0 6h10v2H11V9zm0 6h10v2H11v-2z"/></svg>
+                <span class="sidebar__label">Tipos de transação</span>
+            </a>
+
+            <a class="sidebar__item @(isInv ? "sidebar__item--active" : null)" href="~/dashboards/geral" title="Investimentos">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6h-6z"/></svg>
+                <span class="sidebar__label">Investimentos</span>
+            </a>
+
+            <a class="sidebar__item @(isRel ? "sidebar__item--active" : null)" href="~/relatorios" title="Relatórios">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7v-7zm4-3h2v10h-2V7zm4 6h2v4h-2v-4z"/></svg>
+                <span class="sidebar__label">Relatórios</span>
+            </a>
+        </div>
     </div>
 
-    <div class="sidebar__menu">
-        <a class="sidebar__item @(isHome ? "sidebar__item--active" : null)" href="~/home">
-            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
-            <span>Dashboard</span>
-        </a>
-
-        <a class="sidebar__item @(isTrans ? "sidebar__item--active" : null)" href="~/transacoes">
-            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.35-3.39-3.83V5H10v2.16c-1.97.41-3.6 1.36-3.6 3.15 0 2.19 1.77 3.23 4.6 3.9 2.48.59 3 1.35 3 2.33 0 .92-.71 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
-            <span>Transações</span>
-        </a>
-
-        <a class="sidebar__item @(isCat ? "sidebar__item--active" : null)" href="~/categorias">
-            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l-5.5 9h11L12 2zm0 18c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6-9c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM6 13c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
-            <span>Categorias</span>
-        </a>
-
-        <a class="sidebar__item @(isInv ? "sidebar__item--active" : null)" href="~/dashboards/geral">
-            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6h-6z"/></svg>
-            <span>Investimentos</span>
-        </a>
-
-        <a class="sidebar__item @(isRel ? "sidebar__item--active" : null)" href="~/relatorios">
-            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7v-7zm4-3h2v10h-2V7zm4 6h2v4h-2v-4z"/></svg>
-            <span>Relatórios</span>
-        </a>
-    </div>
+    <button type="button" class="sidebar__collapse-toggle" data-fc-sidebar-collapse aria-expanded="true" aria-controls="fc-sidebar" aria-label="Recolher menu lateral" title="Recolher menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <path d="M15 6l-6 6 6 6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </button>
 </nav>

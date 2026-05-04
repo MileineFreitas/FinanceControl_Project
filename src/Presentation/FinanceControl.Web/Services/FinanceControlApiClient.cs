@@ -16,4 +16,25 @@ public sealed class FinanceControlApiClient(HttpClient httpClient) : IFinanceCon
 
     public Task<HttpResponseMessage> RegisterCategoryAsync(CategoryRegisterDto request, CancellationToken cancellationToken = default) =>
         _httpClient.PostAsJsonAsync("api/Category/registerCategory", request, cancellationToken);
+
+    public Task<HttpResponseMessage> GetCategoriesAsync(CancellationToken cancellationToken = default) =>
+        _httpClient.GetAsync("api/Category", cancellationToken);
+
+    public Task<HttpResponseMessage> GetTransactionsAsync(CancellationToken cancellationToken = default) =>
+        _httpClient.GetAsync("api/Transaction", cancellationToken);
+
+    public Task<HttpResponseMessage> CreateTransactionAsync(TransactionCreateDto request, CancellationToken cancellationToken = default) =>
+        _httpClient.PostAsJsonAsync("api/Transaction", request, cancellationToken);
+
+    public Task<HttpResponseMessage> GetTransactionTypesAsync(CancellationToken cancellationToken = default) =>
+        _httpClient.GetAsync("api/TransactionTypes", cancellationToken);
+
+    public Task<HttpResponseMessage> DeleteCategoryAsync(int categoryId, CancellationToken cancellationToken = default) =>
+        _httpClient.DeleteAsync($"api/Category/{categoryId}", cancellationToken);
+
+    public Task<HttpResponseMessage> DeleteTransactionAsync(int transactionId, CancellationToken cancellationToken = default) =>
+        _httpClient.DeleteAsync($"api/Transaction/{transactionId}", cancellationToken);
+
+    public Task<HttpResponseMessage> GetAccountByIdAsync(int accountId, CancellationToken cancellationToken = default) =>
+        _httpClient.GetAsync($"api/Account/{accountId}", cancellationToken);
 }

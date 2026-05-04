@@ -4,97 +4,116 @@
 @{
     ViewData["Title"] = "Categorias";
     var showModal = Model.ModalAberto || !string.IsNullOrEmpty(Model.ErroModal);
+    var isReceitaTab = Model.Aba == "receitas";
 }
 @section Styles {
-    <link rel="stylesheet" href="~/css/categories.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/cadastros-wt.css" asp-append-version="true" />
 }
 
-<div class="main-menu">
-    <div class="categories-content">
-        <div class="header">
+<div class="wt-cadastro">
+    <div class="wt-cadastro__inner">
+        @if (!string.IsNullOrEmpty(Model.ErroPagina))
+        {
+            <div class="wt-alert wt-alert--error">@Model.ErroPagina</div>
+        }
+        @if (Model.UsandoDadosDemo)
+        {
+            <div class="wt-alert">Sem dados da API — exibindo exemplos locais (exclusão indisponível).</div>
+        }
+
+        <header class="wt-page-head">
             <div>
-                <div class="title-page">Categorias</div>
-                <p class="sub-title">Gerencie suas categorias</p>
+                <p class="wt-page-kicker">FinanceControl</p>
+                <h1 class="wt-page-title">Categorias</h1>
+                <p class="wt-page-sub">Organize o fluxo de receitas e despesas com clareza e consistência.</p>
             </div>
-            <button class="btn-add" type="button" data-fc-open-modal>+ Categoria</button>
+            <button type="button" class="wt-btn wt-btn--primary wt-btn--glow" data-wt-modal-open="wt-cat-modal">
+                + Nova categoria
+            </button>
+        </header>
+
+        <div class="wt-tabs" role="tablist">
+            <a class="wt-tab @(isReceitaTab ? "wt-tab--active" : null)" href="?aba=receitas" role="tab" aria-selected="@(isReceitaTab.ToString().ToLower())">Receitas</a>
+            <a class="wt-tab @(!isReceitaTab ? "wt-tab--active" : null)" href="?aba=custos" role="tab" aria-selected="@((!isReceitaTab).ToString().ToLower())">Custos</a>
         </div>
 
-        <div class="tabs" role="tablist">
-            <a class="tab @(Model.Aba == "receitas" ? "active" : null)" href="?aba=receitas" role="tab">Receitas</a>
-            <a class="tab @(Model.Aba == "custos" ? "active" : null)" href="?aba=custos" role="tab">Custos</a>
-        </div>
-
-        <div class="cards-grid">
+        <div class="wt-cards-grid">
             @foreach (var cat in Model.Categorias)
             {
-                <div class="cat-card">
-                    <div class="card-icon">@cat.Icone</div>
-                    <div class="card-label">@cat.Nome</div>
-                    <div class="card-amount">R$ @cat.Total.ToString("N2")</div>
-                    <div class="card-bar" style="width: @cat.Percentual%"></div>
+                <div class="wt-cat-card">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:0.5rem;margin-bottom:0.5rem">
+                        <div class="wt-card-icon">@cat.Icone</div>
+                        <span class="wt-badge @(cat.Tipo == "receitas" ? "wt-badge--income" : "wt-badge--expense")">@(cat.Tipo == "receitas" ? "Receita" : "Despesa")</span>
+                    </div>
+                    <div class="wt-card-name">@cat.Nome</div>
+                    <div class="wt-card-amount">R$ @cat.Total.ToString("N2")</div>
+                    <div class="wt-card-bar" style="width: @(Math.Min(100, cat.Percentual))%"></div>
+                    @if (cat.CategoryId is int cid && cid > 0)
+                    {
+                        <form method="post" asp-page-handler="DeleteCategory" asp-route-id="@cid" style="margin-top:0.75rem" onsubmit="return confirm('Excluir esta categoria?');">
+                            <button type="submit" class="wt-btn wt-btn--outline" style="width:100%;font-size:0.75rem;padding:0.4rem">Excluir</button>
+                        </form>
+                    }
                 </div>
             }
         </div>
 
-        <div class="bottom-grid">
-            <div class="summary-card">
-                <div class="summary-title">Rendimento Total</div>
-                <p class="summary-desc">
-                    Sua renda categorizada cresceu x% em relação ao mês anterior.
-                    Mantenha essa trajetória para atingir suas metas anuais.
-                </p>
-                <div class="projected-box">
-                    <div class="projected-label">Projeção Total</div>
-                    <div class="projected-badge">↑ +12.5%</div>
-                </div>
+        <div class="wt-bottom-grid">
+            <div class="wt-summary-card wt-summary-card--accent">
+                <h3>Rendimento categorizado</h3>
+                <p class="wt-hint">Sua renda classificada ajuda a comparar períodos e metas. Ajuste as categorias para refletir sua realidade.</p>
+                <p class="wt-trend-up" style="margin-top:0.75rem">↑ +12,5% vs. mês anterior (exemplo)</p>
             </div>
 
-            <div class="add-card" data-fc-open-modal>
-                <div class="add-circle">＋</div>
-                <div class="add-card-title">Adicionar Categoria</div>
-                <div class="add-card-sub">Expanda seu sistema de classificação</div>
-            </div>
+            <button type="button" class="wt-add-card" data-wt-modal-open="wt-cat-modal" style="border:0;font:inherit;width:100%">
+                <div style="font-size:1.75rem;line-height:1;color:#7dd3fc">＋</div>
+                <div style="font-weight:600;color:#e2e8f0">Adicionar categoria</div>
+                <div class="wt-hint" style="text-align:center">Expanda seu sistema de classificação</div>
+            </button>
         </div>
     </div>
 </div>
 
-<div class="fc-modal-overlay @(showModal ? null : "is-hidden")" id="fc-cat-modal">
-    <div class="fc-modal-box" data-fc-stop>
+<div class="wt-modal-overlay @(showModal ? null : "is-hidden")" id="wt-cat-modal" aria-hidden="@((!showModal).ToString().ToLower())">
+    <div class="wt-modal" data-wt-stop-propagation role="dialog" aria-modal="true" aria-labelledby="wt-cat-modal-title">
         <form method="post" asp-page-handler="CreateCategory">
             <input type="hidden" asp-for="Aba" />
-            <div class="fc-modal-header">
-                <h2 class="fc-modal-title">Nova Categoria</h2>
-                <button class="fc-modal-close" type="button" data-fc-close-modal>✕</button>
+            <div class="wt-modal__head">
+                <div>
+                    <h2 class="wt-modal__title" id="wt-cat-modal-title">Nova categoria</h2>
+                    <p class="wt-modal__sub">Classificação de movimentos</p>
+                </div>
+                <button class="wt-modal__close" type="button" data-wt-close-modal aria-label="Fechar">✕</button>
             </div>
-            <div class="fc-modal-body">
-                <div class="form-group">
-                    <label class="form-label" asp-for="CategoryInput.CategoryName">Nome da Categoria</label>
-                    <input class="form-input" type="text" asp-for="CategoryInput.CategoryName" placeholder="Ex: Alimentação, Transporte..." />
+            <div class="wt-form-grid">
+                <div>
+                    <label class="wt-label" asp-for="CategoryInput.CategoryName">Nome da categoria</label>
+                    <input class="wt-input" style="width:100%" type="text" asp-for="CategoryInput.CategoryName" placeholder="Ex.: Alimentação, Tech subscription…" autocomplete="off" />
                 </div>
-                <div class="form-group">
-                    <label class="form-label" asp-for="CategoryInput.CategoryDescription">Descrição (opcional)</label>
-                    <input class="form-input" type="text" asp-for="CategoryInput.CategoryDescription" placeholder="Ex: Gastos do dia a dia..." />
+                <div>
+                    <label class="wt-label" asp-for="CategoryInput.CategoryDescription">Descrição (opcional)</label>
+                    <input class="wt-input" style="width:100%" type="text" asp-for="CategoryInput.CategoryDescription" placeholder="Ex.: Gastos do dia a dia" autocomplete="off" />
                 </div>
-                <div class="form-group">
-                    <span class="form-label">Tipo</span>
-                    <div class="tipo-toggle">
-                        <label class="tipo-btn @(Model.CategoryInput.Type == TransactionType.Receita ? "active-receita" : "")">
-                            <input class="visually-hidden" type="radio" name="CategoryInput.Type" value="@((int)TransactionType.Receita)" @(Model.CategoryInput.Type == TransactionType.Receita ? "checked" : null) />
-                            ↑ Receita
-                        </label>
-                        <label class="tipo-btn @(Model.CategoryInput.Type == TransactionType.Despesa ? "active-custo" : "")">
-                            <input class="visually-hidden" type="radio" name="CategoryInput.Type" value="@((int)TransactionType.Despesa)" @(Model.CategoryInput.Type == TransactionType.Despesa ? "checked" : null) />
-                            ↓ Custo
-                        </label>
+                <div>
+                    <span class="wt-label">Tipo de transação</span>
+                    <div class="wt-segment" role="group" aria-label="Tipo">
+                        <input class="wt-visually-hidden" type="radio" name="CategoryInput.Type" value="@((int)TransactionType.Receita)" id="wt-cat-tipo-rec" @(Model.CategoryInput.Type == TransactionType.Receita ? "checked" : null) />
+                        <label for="wt-cat-tipo-rec">↗ Receita</label>
+                        <input class="wt-visually-hidden" type="radio" name="CategoryInput.Type" value="@((int)TransactionType.Despesa)" id="wt-cat-tipo-des" @(Model.CategoryInput.Type == TransactionType.Despesa ? "checked" : null) />
+                        <label for="wt-cat-tipo-des">↘ Despesa</label>
                     </div>
                 </div>
-                <div class="form-group">
-                    <span class="form-label">Ícone</span>
-                    <div class="icone-grid">
+                <div>
+                    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:0.5rem;margin-bottom:0.4rem">
+                        <span class="wt-label" style="margin:0">Ícone</span>
+                        <span style="font-size:0.6rem;font-weight:600;letter-spacing:0.14em;color:rgba(148,163,184,0.75)">@Model.IconesDisponiveis.Count DISPONÍVEIS</span>
+                    </div>
+                    <div class="wt-icone-grid">
                         @foreach (var icone in Model.IconesDisponiveis)
                         {
-                            <label class="icone-btn @(Model.SelectedIcon == icone ? "icone-selecionado" : "")">
-                                <input class="visually-hidden" type="radio" name="SelectedIcon" value="@icone" @(Model.SelectedIcon == icone ? "checked" : null) />
+                            var sel = Model.SelectedIcon == icone;
+                            <label class="wt-icone-btn @(sel ? "wt-icone-btn--selected" : null)">
+                                <input class="wt-visually-hidden" type="radio" name="SelectedIcon" value="@icone" @(sel ? "checked" : null) />
                                 @icone
                             </label>
                         }
@@ -102,17 +121,17 @@
                 </div>
                 @if (!string.IsNullOrEmpty(Model.ErroModal))
                 {
-                    <p class="text-danger small">⚠️ @Model.ErroModal</p>
+                    <p class="wt-alert wt-alert--error">@Model.ErroModal</p>
                 }
             </div>
-            <div class="fc-modal-footer">
-                <button class="btn-cancelar" type="button" data-fc-close-modal>Cancelar</button>
-                <button class="btn-salvar" type="submit">Salvar Categoria</button>
+            <div class="wt-modal__footer">
+                <button type="button" class="wt-btn wt-btn--outline" data-wt-close-modal>Cancelar</button>
+                <button type="submit" class="wt-btn wt-btn--primary wt-btn--glow">Salvar categoria</button>
             </div>
         </form>
     </div>
 </div>
 
 @section Scripts {
-    <script src="~/js/categories.js" asp-append-version="true"></script>
+    <script src="~/js/cadastros-wt.js" asp-append-version="true"></script>
 }

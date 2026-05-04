@@ -5,6 +5,7 @@ using FinanceControl.Domain.Interfaces.Repositories.Categories;
 using FinanceControl.Domain.Interfaces.Repositories.Transactions;
 using FinanceControl.Domain.Interfaces.Repositories.Users;
 using FinanceControl.Infrastructure.Contexts;
+using FinanceControl.Infrastructure.Seeding;
 using FinanceControl.Infrastructure.Repositories.Categories;
 using FinanceControl.Infrastructure.Repositories.Transactions;
 using FinanceControl.Infrastructure.Repositories.Users;
@@ -42,6 +43,12 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<FinanceDbContext>();
+    FinanceDbContextSeed.EnsureDemoUserAccountAndCategories(db);
+}
 
 if (app.Environment.IsDevelopment())
 {

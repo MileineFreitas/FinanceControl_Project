@@ -1,7 +1,198 @@
 @page "/transacoes"
+@model FinanceControl.Web.Pages.Transactions.IndexModel
 @{
     ViewData["Title"] = "Transações";
+    var showModal = Model.ModalAberto || !string.IsNullOrEmpty(Model.ErroModal);
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/cadastros-wt.css" asp-append-version="true" />
 }
 
-<h3>Transações</h3>
-<p class="text-muted">Lista e filtros de transações podem ser ligados à API quando necessário.</p>
+<div class="wt-cadastro">
+    <div class="wt-cadastro__inner">
+        @if (!string.IsNullOrEmpty(Model.ApiMensagem))
+        {
+            <div class="wt-alert">@Model.ApiMensagem</div>
+        }
+
+        <header class="wt-page-head">
+            <div>
+                <p class="wt-page-kicker">FinanceControl</p>
+                <h1 class="wt-page-title">Transações</h1>
+                <p class="wt-page-sub">Histórico completo de movimentações financeiras.</p>
+            </div>
+            <button type="button" class="wt-btn wt-btn--primary wt-btn--glow" data-wt-modal-open="wt-tx-modal">
+                + Cadastrar transação
+            </button>
+        </header>
+
+        <form method="get" class="wt-filters">
+            <div class="wt-field">
+                <label for="FiltroTipo">Tipo</label>
+                <select class="wt-select" id="FiltroTipo" name="FiltroTipo" onchange="this.form.submit()">
+                    <option value="" selected="@(string.IsNullOrEmpty(Model.FiltroTipo))">Todos os tipos</option>
+                    <option value="1" selected="@(Model.FiltroTipo == "1")">Receita</option>
+                    <option value="2" selected="@(Model.FiltroTipo == "2")">Despesa</option>
+                </select>
+            </div>
+            <div class="wt-field">
+                <label for="FiltroCategoriaId">Categoria</label>
+                <select class="wt-select" id="FiltroCategoriaId" name="FiltroCategoriaId" onchange="this.form.submit()">
+                    <option value="">Todas</option>
+                    @foreach (var c in Model.CategoriasOpcoes)
+                    {
+                        <option value="@c.Id" selected="@(Model.FiltroCategoriaId == c.Id ? true : false)">@c.Nome</option>
+                    }
+                </select>
+            </div>
+            <button type="submit" class="wt-btn wt-btn--outline">Filtrar</button>
+        </form>
+
+        <section class="wt-card-panel">
+            <div class="wt-table-wrap">
+                <table class="wt-table">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Descrição</th>
+                            <th>Categoria</th>
+                            <th style="text-align:right">Valor</th>
+                            <th style="text-align:right;width:5rem">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var t in Model.Transacoes)
+                        {
+                            var badgeClass = t.IsReceita ? "wt-badge--income" : "wt-badge--expense";
+                            var numClass = t.IsReceita ? "wt-num--receita" : "wt-num--despesa";
+                            var abs = Math.Abs(t.Valor);
+                            var formatted = (t.IsReceita ? "+ " : "- ") + "R$ " + abs.ToString("N2");
+                            <tr>
+                                <td>@t.Data.ToString("dd MMM yyyy")</td>
+                                <td>@t.Descricao</td>
+                                <td><span class="wt-badge @badgeClass">@t.CategoriaNome</span></td>
+                                <td style="text-align:right" class="@numClass">@formatted</td>
+                                <td style="text-align:right">
+                                    @if (t.Id > 0)
+                                    {
+                                        <form method="post" asp-page-handler="ExcluirTransacao" asp-route-id="@t.Id" style="display:inline" onsubmit="return confirm('Excluir esta transação?');">
+                                            <button type="submit" class="wt-btn wt-btn--ghost" title="Excluir">🗑</button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <span class="wt-hint" style="font-size:0.75rem">—</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="wt-pagination">
+                <span>Mostrando @(Model.TotalItens == 0 ? 0 : (Model.Pag - 1) * Model.TamanhoPagina + 1)–@Math.Min(Model.Pag * Model.TamanhoPagina, Model.TotalItens) de @Model.TotalItens transações</span>
+                <div class="wt-pagination__nums">
+                    @if (Model.Pag > 1)
+                    {
+                        <a asp-page="Index" asp-route-FiltroTipo="@Model.FiltroTipo" asp-route-FiltroCategoriaId="@Model.FiltroCategoriaId" asp-route-Pag="@(Model.Pag - 1)">←</a>
+                    }
+                    @for (var i = 1; i <= Model.TotalPaginas && i <= 5; i++)
+                    {
+                        if (i == Model.Pag)
+                        {
+                            <span class="wt-page-active">@i</span>
+                        }
+                        else
+                        {
+                            <a asp-page="Index" asp-route-FiltroTipo="@Model.FiltroTipo" asp-route-FiltroCategoriaId="@Model.FiltroCategoriaId" asp-route-Pag="@i">@i</a>
+                        }
+                    }
+                    @if (Model.Pag < Model.TotalPaginas)
+                    {
+                        <a asp-page="Index" asp-route-FiltroTipo="@Model.FiltroTipo" asp-route-FiltroCategoriaId="@Model.FiltroCategoriaId" asp-route-Pag="@(Model.Pag + 1)">→</a>
+                    }
+                </div>
+            </div>
+        </section>
+
+        <section class="wt-summary-grid">
+            <div class="wt-summary-card wt-summary-card--accent">
+                <h3>Saldo mensal</h3>
+                <p class="wt-big">@Model.ResumoSaldoMensal</p>
+                <p class="wt-hint"><span class="wt-trend-up">↑ 12,5%</span> vs mês anterior</p>
+            </div>
+            <div class="wt-summary-card">
+                <h3>Maior gasto</h3>
+                <p class="wt-big">@Model.ResumoMaiorGasto</p>
+                <p class="wt-hint">Representa 42% do seu orçamento.</p>
+            </div>
+            <div class="wt-summary-card">
+                <h3>Alerta de orçamento</h3>
+                <p class="wt-hint">@Model.AlertaOrcamento</p>
+            </div>
+        </section>
+    </div>
+</div>
+
+<div class="wt-modal-overlay @(showModal ? "" : "is-hidden")" id="wt-tx-modal">
+    <div class="wt-modal" data-wt-stop-propagation="1">
+        <form method="post" asp-page-handler="NovaTransacao">
+            <div class="wt-modal__head">
+                <div>
+                    <h2 class="wt-modal__title">Nova transação</h2>
+                    <p class="wt-modal__sub">Registro de movimento de capital</p>
+                </div>
+                <button type="button" class="wt-modal__close" data-wt-close-modal="1" aria-label="Fechar">×</button>
+            </div>
+            <div class="wt-form-grid">
+                <div class="wt-form-row2">
+                    <div>
+                        <label class="wt-label" for="tx-data">Data da transação</label>
+                        <input class="wt-input" style="width:100%" type="date" id="tx-data" asp-for="Input.Data" />
+                    </div>
+                    <div>
+                        <span class="wt-label">Tipo de fluxo</span>
+                        <div class="wt-segment">
+                            <input type="radio" asp-for="Input.TipoFluxo" id="fluxo-1" value="1" />
+                            <label for="fluxo-1">Entrada</label>
+                            <input type="radio" asp-for="Input.TipoFluxo" id="fluxo-2" value="2" />
+                            <label for="fluxo-2">Saída</label>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label class="wt-label" asp-for="Input.Descricao">Descrição do lançamento</label>
+                    <input class="wt-input" style="width:100%" asp-for="Input.Descricao" placeholder="Ex: Pagamento consultoria financeira" />
+                </div>
+                <div class="wt-form-row2">
+                    <div>
+                        <label class="wt-label" asp-for="Input.Valor">Valor (R$)</label>
+                        <input class="wt-input" style="width:100%" type="number" step="0.01" min="0.01" asp-for="Input.Valor" placeholder="0,00" />
+                    </div>
+                    <div>
+                        <label class="wt-label" asp-for="Input.CategoryId">Categoria</label>
+                        <select class="wt-select" style="width:100%" asp-for="Input.CategoryId">
+                            <option value="0">Selecione…</option>
+                            @foreach (var c in Model.CategoriasOpcoes)
+                            {
+                                <option value="@c.Id">@c.Nome</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.ErroModal))
+                {
+                    <p class="wt-alert wt-alert--error">@Model.ErroModal</p>
+                }
+            </div>
+            <div class="wt-modal__footer">
+                <button type="button" class="wt-btn wt-btn--outline" data-wt-close-modal>Cancelar</button>
+                <button type="submit" class="wt-btn wt-btn--primary wt-btn--glow">Confirmar lançamento</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/cadastros-wt.js" asp-append-version="true"></script>
+}

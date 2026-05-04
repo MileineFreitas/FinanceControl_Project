@@ -19,6 +19,11 @@
     min-height: calc(100vh - 80px);
     background: linear-gradient(160deg, #152238 0%, #1a2f4d 55%, #132042 100%);
     padding: 0;
+    transition: margin-left 0.25s ease;
+}
+
+.page--wealth.sidebar-collapsed .main-area {
+    margin-left: 72px;
 }
 
 .page--wealth article.content {
@@ -29,6 +34,10 @@
 
 @media (max-width: 768px) {
     .page--wealth .main-area {
+        margin-left: 0;
+    }
+
+    .page--wealth.sidebar-collapsed .main-area {
         margin-left: 0;
     }
 
