@@ -1,0 +1,201 @@
+/* WEALTHTERMINAL — sidebar (base: Downloads/nav.css) */
+.page--wealth .fc-wt-sidebar.sidebar {
+  position: fixed;
+  left: 0;
+  top: 80px;
+  width: 220px;
+  height: calc(100vh - 80px);
+  background: linear-gradient(180deg, #0f1e3d 0%, #1a2f4d 100%);
+  border-right: 1px solid rgba(65, 139, 224, 0.2);
+  padding: 2rem 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  z-index: 999;
+  transition: width 0.25s ease;
+}
+
+.page--wealth.sidebar-collapsed .fc-wt-sidebar.sidebar {
+  width: 72px;
+}
+
+.sidebar__inner {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 80px - 4rem);
+  justify-content: space-between;
+}
+
+.sidebar__scroll {
+  flex: 1;
+  min-height: 0;
+}
+
+.sidebar__collapse-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem 0.75rem 0;
+  padding: 0.55rem;
+  border-radius: 10px;
+  border: 1px solid rgba(65, 139, 224, 0.28);
+  background: rgba(15, 30, 61, 0.55);
+  color: rgba(226, 232, 240, 0.85);
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.sidebar__collapse-toggle:hover {
+  border-color: #4189e0;
+  background: rgba(65, 139, 224, 0.12);
+  color: #7dd3fc;
+}
+
+.sidebar__collapse-toggle svg {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.25s ease;
+}
+
+.page--wealth.sidebar-collapsed .sidebar__collapse-toggle svg {
+  transform: rotate(180deg);
+}
+
+.page--wealth.sidebar-collapsed .sidebar__title,
+.page--wealth.sidebar-collapsed .sidebar__subtitle {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.page--wealth.sidebar-collapsed .sidebar__header {
+  padding: 0 0.75rem 1rem;
+  min-height: 0;
+}
+
+.page--wealth.sidebar-collapsed .sidebar__item {
+  justify-content: center;
+  padding-left: 0.65rem;
+  padding-right: 0.65rem;
+}
+
+.page--wealth.sidebar-collapsed .sidebar__label {
+  display: none;
+}
+
+.sidebar__header {
+  padding: 0 1.5rem 2rem;
+  border-bottom: 1px solid rgba(65, 139, 224, 0.15);
+}
+
+.sidebar__title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 0.25rem;
+  letter-spacing: 0.05em;
+}
+
+.sidebar__subtitle {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+}
+
+.sidebar__menu {
+  padding: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sidebar__item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.875rem 1.5rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  position: relative;
+  margin: 0 0.75rem;
+  border-radius: 0.5rem;
+}
+
+.sidebar__item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, #4189e0, #7db8e8);
+  border-radius: 0 3px 3px 0;
+  transform: scaleY(0);
+  transition: transform 0.3s ease;
+}
+
+.sidebar__item:hover {
+  background: rgba(65, 139, 224, 0.1);
+  color: #4189e0;
+}
+
+.sidebar__item--active {
+  color: #4189e0;
+  background: rgba(65, 139, 224, 0.15);
+}
+
+.sidebar__item--active::before {
+  transform: scaleY(1);
+}
+
+.sidebar__item svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.fc-wt-sidebar.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.fc-wt-sidebar.sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.fc-wt-sidebar.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(65, 139, 224, 0.3);
+  border-radius: 3px;
+}
+
+.fc-wt-sidebar.sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(65, 139, 224, 0.5);
+}
+
+@media (max-width: 768px) {
+  .page--wealth .fc-wt-sidebar.sidebar {
+    width: 260px;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .page--wealth .fc-wt-sidebar.sidebar.active {
+    transform: translateX(0);
+  }
+
+  .sidebar__collapse-toggle {
+    display: none;
+  }
+
+  .sidebar__inner {
+    min-height: auto;
+  }
+}

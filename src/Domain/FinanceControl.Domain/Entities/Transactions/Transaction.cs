@@ -32,7 +32,7 @@ public class Transaction
 
     public int CategoryId { get; set; }
 
-    [JsonIgnore]
+    /// <summary>Incluído no JSON da API para telas (dashboard) exibirem o nome da categoria.</summary>
     public Category? Category { get; set; }
 
     public int AccountId { get; set; }

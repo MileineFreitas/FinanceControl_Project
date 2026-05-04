@@ -81,17 +81,22 @@ public class CategoryController : ControllerBase
     }
 
     [HttpDelete("{id:int:min(1)}")]
-    public ActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
-        var category = _context.Categories.FirstOrDefault(c => c.CategoryId == id);
+        var category = await _context.Categories.FirstOrDefaultAsync(c => c.CategoryId == id);
         if (category == null)
-        {
             return NotFound("Categoria não encontrada...");
-        }
 
         _context.Categories.Remove(category);
-        _context.SaveChanges();
-        return Ok(category);
+        try
+        {
+            await _context.SaveChangesAsync();
+            return Ok(category);
+        }
+        catch (DbUpdateException)
+        {
+            return Conflict(new { message = "Não é possível excluir: existem transações vinculadas a esta categoria." });
+        }
     }
 
     [HttpPost("registerCategory")]
@@ -105,12 +110,16 @@ public class CategoryController : ControllerBase
         {
             return BadRequest(ModelState);
         }
+
+        var userId = _context.Users.OrderBy(u => u.UserId).Select(u => (int?)u.UserId).FirstOrDefault();
+
         var category = new Category
         {
             CategoryName = dto.CategoryName,
             Description = dto.CategoryDescription,
             TransactionTypeId = (int)dto.Type,
-            DateCreated = DateTime.UtcNow
+            DateCreated = DateTime.UtcNow,
+            UserId = userId
         };
 
         _context.Categories.Add(category);

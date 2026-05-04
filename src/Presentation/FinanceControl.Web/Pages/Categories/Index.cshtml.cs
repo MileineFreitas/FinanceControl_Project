@@ -1,3 +1,5 @@
+using System.Net;
+using System.Text.Json;
 using FinanceControl.Domain.Entities;
 using FinanceControl.Domain.Enums;
 using FinanceControl.Web.Services;
@@ -8,15 +10,13 @@ namespace FinanceControl.Web.Pages.Categories;
 
 public class IndexModel : PageModel
 {
+    private static readonly JsonSerializerOptions JsonOpts = new() { PropertyNameCaseInsensitive = true };
     private static readonly object SeedLock = new();
-    private static List<CategoriaVm>? _todas;
+    private static List<CategoriaVm>? _demoFallback;
 
     private readonly IFinanceControlApiClient _api;
 
-    public IndexModel(IFinanceControlApiClient api)
-    {
-        _api = api;
-    }
+    public IndexModel(IFinanceControlApiClient api) => _api = api;
 
     [BindProperty(SupportsGet = true)]
     public string Aba { get; set; } = "receitas";
@@ -31,6 +31,10 @@ public class IndexModel : PageModel
 
     public string? ErroModal { get; set; }
 
+    public string? ErroPagina { get; set; }
+
+    public bool UsandoDadosDemo { get; set; }
+
     public List<CategoriaVm> Categorias { get; private set; } = [];
 
     public IReadOnlyList<string> IconesDisponiveis { get; } =
@@ -39,22 +43,19 @@ public class IndexModel : PageModel
         "💰", "🎵", "🏋️", "🎁", "💼", "📈", "🧳", "🛒",
     ];
 
-    public void OnGet()
+    public async Task OnGetAsync(CancellationToken cancellationToken)
     {
-        EnsureSeed();
-        Categorias = Filtradas();
+        await CarregarCategoriasAsync(cancellationToken);
     }
 
     public async Task<IActionResult> OnPostCreateCategoryAsync(CancellationToken cancellationToken)
     {
-        EnsureSeed();
-
         ModalAberto = true;
+        await CarregarCategoriasAsync(cancellationToken);
 
         if (string.IsNullOrWhiteSpace(CategoryInput.CategoryName) || CategoryInput.CategoryName.Length < 2)
         {
             ErroModal = "Nome deve ter pelo menos 2 caracteres.";
-            Categorias = Filtradas();
             return Page();
         }
 
@@ -64,57 +65,136 @@ public class IndexModel : PageModel
             if (!response.IsSuccessStatusCode)
             {
                 ErroModal = $"Erro ao salvar: {await response.Content.ReadAsStringAsync(cancellationToken)}";
-                Categorias = Filtradas();
                 return Page();
-            }
-
-            var tipo = CategoryInput.Type == TransactionType.Receita ? "receitas" : "custos";
-            lock (SeedLock)
-            {
-                _todas!.Add(new CategoriaVm(SelectedIcon, CategoryInput.CategoryName, 0, 0, tipo));
             }
 
             ModalAberto = false;
             ErroModal = null;
             CategoryInput = new CategoryRegisterDto();
             SelectedIcon = "💰";
-            Categorias = Filtradas();
+            await CarregarCategoriasAsync(cancellationToken);
             return Page();
         }
         catch (Exception ex)
         {
             ErroModal = $"Erro inesperado: {ex.Message}";
-            Categorias = Filtradas();
             return Page();
         }
     }
 
-    private List<CategoriaVm> Filtradas()
+    public async Task<IActionResult> OnPostDeleteCategoryAsync(int id, CancellationToken cancellationToken)
     {
-        EnsureSeed();
+        ErroPagina = null;
+        if (id <= 0)
+        {
+            ErroPagina = "Categoria inválida.";
+            await CarregarCategoriasAsync(cancellationToken);
+            return Page();
+        }
+
+        try
+        {
+            var res = await _api.DeleteCategoryAsync(id, cancellationToken);
+            if (res.IsSuccessStatusCode)
+            {
+                await CarregarCategoriasAsync(cancellationToken);
+                return Page();
+            }
+
+            var body = await res.Content.ReadAsStringAsync(cancellationToken);
+            ErroPagina = res.StatusCode == HttpStatusCode.Conflict
+                ? "Não é possível excluir: existem transações vinculadas a esta categoria."
+                : $"Erro ao excluir ({(int)res.StatusCode}): {body}";
+        }
+        catch (Exception ex)
+        {
+            ErroPagina = ex.Message;
+        }
+
+        await CarregarCategoriasAsync(cancellationToken);
+        return Page();
+    }
+
+    private async Task CarregarCategoriasAsync(CancellationToken cancellationToken)
+    {
+        Categorias = [];
+        try
+        {
+            var res = await _api.GetCategoriesAsync(cancellationToken);
+            if (res.IsSuccessStatusCode)
+            {
+                await using var stream = await res.Content.ReadAsStreamAsync(cancellationToken);
+                var arr = await JsonSerializer.DeserializeAsync<List<CategoryJson>>(stream, JsonOpts, cancellationToken);
+                if (arr is { Count: > 0 })
+                {
+                    UsandoDadosDemo = false;
+                    foreach (var c in arr.OrderBy(x => x.CategoryName))
+                    {
+                        var tipo = c.TransactionTypeId == 2 ? "custos" : "receitas";
+                        Categorias.Add(new CategoriaVm(
+                            c.CategoryId,
+                            PickIcon(c.CategoryName),
+                            c.CategoryName ?? "—",
+                            0,
+                            0,
+                            tipo));
+                    }
+
+                    Categorias = Filtradas();
+                    return;
+                }
+            }
+        }
+        catch
+        {
+            /* fallback */
+        }
+
+        UsandoDadosDemo = true;
+        EnsureDemoFallback();
+        Categorias = FiltradasFallback();
+    }
+
+    private List<CategoriaVm> Filtradas() =>
+        Categorias.Where(c => c.Tipo == Aba).ToList();
+
+    private List<CategoriaVm> FiltradasFallback()
+    {
         lock (SeedLock)
         {
-            return _todas!.Where(c => c.Tipo == Aba).ToList();
+            return _demoFallback!.Where(c => c.Tipo == Aba).ToList();
         }
     }
 
-    private static void EnsureSeed()
+    private static void EnsureDemoFallback()
     {
         lock (SeedLock)
         {
-            if (_todas != null) return;
-
-            _todas =
+            _demoFallback ??=
             [
-                new("💼", "Salário", 12450.00m, 75, "receitas"),
-                new("📈", "Investimentos", 3120.40m, 40, "receitas"),
-                new("🧳", "Freelance", 5800.00m, 55, "receitas"),
-                new("🏠", "Moradia", 3200.00m, 60, "custos"),
-                new("🛒", "Alimentação", 1450.00m, 35, "custos"),
-                new("🚗", "Transporte", 890.00m, 25, "custos"),
+                new(null, "💼", "Salário", 12450.00m, 75, "receitas"),
+                new(null, "📈", "Investimentos", 3120.40m, 40, "receitas"),
+                new(null, "🧳", "Freelance", 5800.00m, 55, "receitas"),
+                new(null, "🏠", "Moradia", 3200.00m, 60, "custos"),
+                new(null, "🛒", "Alimentação", 1450.00m, 35, "custos"),
+                new(null, "🚗", "Transporte", 890.00m, 25, "custos"),
             ];
         }
     }
+
+    private static string PickIcon(string? name)
+    {
+        var icons = new[] { "💼", "📈", "🏠", "🛒", "💰", "🎮" };
+        if (string.IsNullOrEmpty(name)) return icons[0];
+        return icons[Math.Abs(name.GetHashCode()) % icons.Length];
+    }
+
+    private sealed class CategoryJson
+    {
+        public int CategoryId { get; set; }
+        public string? CategoryName { get; set; }
+        public int? TransactionTypeId { get; set; }
+    }
 }
 
-public sealed record CategoriaVm(string Icone, string Nome, decimal Total, int Percentual, string Tipo);
+public sealed record CategoriaVm(int? CategoryId, string Icone, string Nome, decimal Total, int Percentual, string Tipo);

@@ -55,6 +55,15 @@ public class TransactionController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Transaction>> Post([FromBody] TransactionCreateDto dto)
     {
+        if (!await _context.Categories.AnyAsync(c => c.CategoryId == dto.CategoryId))
+            return BadRequest(new { message = $"Não existe categoria com CategoryId={dto.CategoryId}. Cadastre categorias (ou reinicie a API para aplicar o seed) antes de lançar transações." });
+
+        if (!await _context.Accounts.AnyAsync(a => a.AccountId == dto.AccountId))
+            return BadRequest(new { message = $"Conta AccountId={dto.AccountId} não encontrada." });
+
+        if (!await _context.Users.AnyAsync(u => u.UserId == dto.UserId))
+            return BadRequest(new { message = $"Utilizador UserId={dto.UserId} não encontrado." });
+
         var now = DateTime.UtcNow;
         var entity = new Transaction
         {
