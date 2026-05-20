@@ -1,11 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using FinanceControl.Contracts.Enumerators.Transactions;
 using FinanceControl.Domain.Entities.Accounts;
 using FinanceControl.Domain.Entities.Categories;
-using FinanceControl.Domain.Entities.TransactionTypes;
 using FinanceControl.Domain.Entities.Users;
-using FinanceControl.Domain.Enums;
 
 namespace FinanceControl.Domain.Entities.Transactions;
 
@@ -25,10 +24,11 @@ public class Transaction
 
     public DateTime Date { get; set; }
 
-    public int TransactionTypeId { get; set; }
+    /// <summary>Receita ou despesa — escolhido no cadastro da transação.</summary>
+    public TransactionTypeKind TransactionTypeKind { get; set; }
 
-    [JsonIgnore]
-    public TransactionTypeDefinition? TransactionTypeDefinition { get; set; }
+    /// <summary>Meio de pagamento (opcional), definido no cadastro da transação.</summary>
+    public PaymentKind? PaymentKind { get; set; }
 
     public int CategoryId { get; set; }
 

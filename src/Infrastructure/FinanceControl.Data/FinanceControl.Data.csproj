@@ -7,7 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\\..\\Domain\\FinanceControl.Domain\\FinanceControl.Domain.csproj" />
+    <ProjectReference Include="..\..\Domain\FinanceControl.Domain\FinanceControl.Domain.csproj" />
+    <ProjectReference Include="..\..\Crosscutting\FinanceControl.Contracts\FinanceControl.Contracts.csproj" />
   </ItemGroup>
 
   <ItemGroup>

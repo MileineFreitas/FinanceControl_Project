@@ -1,11 +1,10 @@
 using System.ComponentModel.DataAnnotations;
-using FinanceControl.Domain.Enums;
+using FinanceControl.Contracts.Enumerators.Transactions;
 
-namespace FinanceControl.Domain.Entities;
+namespace FinanceControl.Contracts.Dtos.Transactions;
 
 public class TransactionUpdateDto
 {
-    [Required]
     public int TransactionId { get; set; }
 
     [Required]
@@ -18,7 +17,9 @@ public class TransactionUpdateDto
     public DateTime Date { get; set; }
 
     [Range(1, 2)]
-    public int TransactionTypeId { get; set; }
+    public TransactionTypeKind TransactionTypeKind { get; set; }
+
+    public PaymentKind? PaymentKind { get; set; }
 
     public int CategoryId { get; set; }
 

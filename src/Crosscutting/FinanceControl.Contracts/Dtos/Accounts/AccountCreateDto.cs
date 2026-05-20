@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace FinanceControl.Domain.Entities;
+namespace FinanceControl.Contracts.Dtos.Accounts;
 
 public class AccountCreateDto
 {

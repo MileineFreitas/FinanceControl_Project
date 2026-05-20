@@ -1,18 +1,25 @@
-using System.Collections.Generic;
+using FinanceControl.Contracts.Dtos.Common;
+using FinanceControl.Contracts.Dtos.Users;
+using FinanceControl.Contracts.Filters;
 using FinanceControl.Domain.Entities.Users;
 
 namespace FinanceControl.Domain.Interfaces.Repositories.Users;
 
 public interface IUserRepository
 {
-    IEnumerable<User> GetAllUsers();
+    Task<DataResultDto<UserDto>> FilterAsync(DataFilterDto filter, CancellationToken cancellationToken = default);
 
-    User GetUserById(int id);
+    Task<UserDto?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
 
-    User CreateUser(User user);
+    Task<User> AddAsync(User user, CancellationToken cancellationToken = default);
 
-    User UpdateUser(User user);
+    Task<User?> FindTrackedAsync(int id, CancellationToken cancellationToken = default);
 
-    User DeleteUser(int id);
-    User? GetUserByEmailAndPassword(string email, string password);
+    Task SaveChangesAsync(CancellationToken cancellationToken = default);
+
+    Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default);
+
+    Task<User?> FindByEmailAndPasswordAsync(string email, string password, CancellationToken cancellationToken = default);
+
+    Task<bool> EmailExistsAsync(string email, CancellationToken cancellationToken = default);
 }

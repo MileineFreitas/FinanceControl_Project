@@ -118,7 +118,8 @@
 }
 
 .wt-input,
-.wt-select {
+.wt-select,
+.wt-textarea {
     min-width: 10rem;
     padding: 0.5rem 0.85rem;
     border-radius: 10px;
@@ -128,8 +129,22 @@
     font-size: 0.875rem;
 }
 
+.wt-input--block,
+.wt-textarea.wt-input--block {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.wt-textarea {
+    resize: vertical;
+    line-height: 1.45;
+    font-family: inherit;
+}
+
 .wt-input:focus,
-.wt-select:focus {
+.wt-select:focus,
+.wt-textarea:focus {
     outline: none;
     border-color: #4189e0;
     box-shadow: 0 0 0 3px rgba(65, 139, 224, 0.2);
@@ -168,6 +183,38 @@
     color: rgba(148, 163, 184, 0.85);
     background: rgba(15, 24, 41, 0.9);
     border-bottom: 1px solid rgba(65, 139, 224, 0.15);
+}
+
+.wt-th-sort {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: inherit;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    transition: color 0.2s ease;
+}
+
+.wt-th-sort--right {
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.wt-th-sort:hover {
+    color: #7dd3fc;
+}
+
+.wt-th-sort.is-active {
+    color: #7dd3fc;
+}
+
+.wt-th-sort__icon {
+    font-size: 0.75rem;
+    opacity: 0.85;
+    letter-spacing: 0;
 }
 
 .wt-table tbody td {
@@ -326,6 +373,7 @@
 .wt-modal {
     width: 100%;
     max-width: 520px;
+    color-scheme: dark;
     max-height: 92vh;
     overflow-y: auto;
     padding: 1.75rem 1.85rem;
@@ -379,6 +427,11 @@
 .wt-form-grid {
     display: grid;
     gap: 1.1rem;
+}
+
+.wt-form-grid--full > div {
+    width: 100%;
+    min-width: 0;
 }
 
 .wt-form-row2 {
@@ -490,6 +543,34 @@
     margin-bottom: 1.5rem;
 }
 
+/* Categorias e meios de pagamento — cards compactos, centralizados, com borda do painel visível */
+#categories-page .wt-card-panel,
+#payment-types-page .wt-card-panel {
+    padding: 2rem 2.25rem 1.5rem;
+    overflow: visible;
+}
+
+#categories-page .wt-cards-grid,
+#payment-types-page .wt-cards-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: flex-start;
+    gap: 1rem 1.15rem;
+    margin-bottom: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#categories-page .wt-cat-card,
+#payment-types-page .wt-cat-card {
+    flex: 0 0 168px;
+    width: 168px;
+    max-width: 168px;
+    box-sizing: border-box;
+    padding: 0.95rem 0.85rem;
+}
+
 .wt-cat-card {
     background: rgba(17, 28, 52, 0.75);
     border: 1px solid rgba(65, 139, 224, 0.18);
@@ -515,6 +596,15 @@
     background: rgba(65, 139, 224, 0.12);
 }
 
+#categories-page .wt-cat-card .wt-card-icon,
+#payment-types-page .wt-cat-card .wt-card-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+    margin-bottom: 0.55rem;
+    border-radius: 8px;
+}
+
 .wt-cat-card .wt-card-label {
     font-size: 0.62rem;
     letter-spacing: 0.12em;
@@ -528,6 +618,29 @@
     font-weight: 600;
     color: #f1f5f9;
     margin-bottom: 0.35rem;
+}
+
+#categories-page .wt-cat-card .wt-card-name,
+#payment-types-page .wt-cat-card .wt-card-name {
+    font-size: 0.9rem;
+    line-height: 1.3;
+}
+
+#categories-page .wt-cat-card .wt-hint,
+#payment-types-page .wt-cat-card .wt-hint {
+    font-size: 0.72rem;
+    line-height: 1.35;
+}
+
+#categories-page .wt-cat-card .wt-btn,
+#payment-types-page .wt-cat-card .wt-btn {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.55rem;
+}
+
+#payment-types-page .wt-cat-card .wt-badge {
+    font-size: 0.62rem;
+    padding: 0.15rem 0.45rem;
 }
 
 .wt-cat-card .wt-card-amount {
@@ -557,40 +670,84 @@
     border: 0;
 }
 
+/* Modal nova categoria — campos empilhados em largura total */
+.wt-cat-form {
+    width: 100%;
+}
+
+.wt-cat-form__fields {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    width: 100%;
+}
+
+.wt-cat-form__field {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-width: 0;
+}
+
+.wt-cat-form__field .wt-input,
+.wt-cat-form__field .wt-textarea {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
 .wt-icone-grid {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 0.5rem;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 0.4rem 0.25rem;
+    padding: 0.85rem 0.65rem;
+    border-radius: 12px;
+    background: rgba(15, 30, 61, 0.45);
+    border: 1px solid rgba(65, 139, 224, 0.18);
+    width: 100%;
+    box-sizing: border-box;
+    justify-items: center;
 }
 
 @media (max-width: 520px) {
     .wt-icone-grid {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 }
 
-.wt-icone-btn {
-    display: flex;
+.wt-icone-opt {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 2.5rem;
-    border-radius: 10px;
-    border: 1px solid rgba(65, 139, 224, 0.25);
-    background: rgba(11, 17, 30, 0.9);
+    padding: 0.2rem 0.35rem;
+    margin: 0;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    background: none;
     cursor: pointer;
-    font-size: 1.1rem;
-    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    font-size: 1.5rem;
+    line-height: 1;
+    font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+    user-select: none;
+    transition: border-color 0.2s ease, background 0.2s ease, outline 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
 }
 
-.wt-icone-btn:hover {
-    border-color: rgba(65, 139, 224, 0.5);
+.wt-icone-opt:hover {
+    border-color: rgba(65, 139, 224, 0.45);
     background: rgba(65, 139, 224, 0.1);
 }
 
-.wt-icone-btn--selected {
+.wt-icone-opt:focus-visible {
+    outline: 2px solid #4189e0;
+    outline-offset: 2px;
+}
+
+.wt-icone-opt--selected {
     border-color: #4189e0;
-    background: rgba(65, 139, 224, 0.2);
-    box-shadow: 0 0 0 1px rgba(65, 139, 224, 0.35);
+    background: rgba(65, 139, 224, 0.18);
 }
 
 .wt-bottom-grid {

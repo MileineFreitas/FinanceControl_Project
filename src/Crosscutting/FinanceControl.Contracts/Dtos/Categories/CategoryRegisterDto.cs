@@ -1,18 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using FinanceControl.Domain.Enums;
+using FinanceControl.Contracts.Constants;
 
-namespace FinanceControl.Domain.Entities;
+namespace FinanceControl.Contracts.Dtos.Categories;
 
 public class CategoryRegisterDto
 {
-    [Required(ErrorMessage = "Nome é obrigatorio.")]
-    [MinLength(2, ErrorMessage = "Minimo 3 caracteres")]
+    [Required(ErrorMessage = "Nome é obrigatório.")]
+    [MinLength(2, ErrorMessage = "Mínimo 2 caracteres.")]
     public string CategoryName { get; set; } = string.Empty;
 
     public string CategoryDescription { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "Tipo (Receita ou Despesa) é obrigatório.")]
-    public TransactionType Type { get; set; } = TransactionType.Receita;
-
-    
+    public string Icon { get; set; } = CategoryIcons.Default;
 }

@@ -1,10 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace FinanceControl.Domain.Entities;
+namespace FinanceControl.Contracts.Dtos.Accounts;
 
 public class AccountUpdateDto
 {
-    [Required]
     public int AccountId { get; set; }
 
     [Required]

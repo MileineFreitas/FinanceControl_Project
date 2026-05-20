@@ -1,152 +1,76 @@
-using FinanceControl.Domain.Entities;
-using FinanceControl.Domain.Entities.Transactions;
-using FinanceControl.Domain.Enums;
-using FinanceControl.Infrastructure.Contexts;
+using FinanceControl.Contracts.Dtos.Transactions;
+using FinanceControl.Contracts.Filters;
+using FinanceControl.Domain.Interfaces.AppServices.Transactions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace FinanceControl.API.Controllers.Transactions;
 
 [Route("api/[controller]")]
 [ApiController]
-public class TransactionController : ControllerBase
+public class TransactionController(ITransactionAppService appService) : ControllerBase
 {
-    private readonly FinanceDbContext _context;
-
-    public TransactionController(FinanceDbContext context)
-    {
-        _context = context;
-    }
-
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Transaction>>> Get([FromQuery] int? userId, [FromQuery] int? accountId)
+    public async Task<IActionResult> Get([FromQuery] DataFilterDto filter, CancellationToken cancellationToken)
     {
-        var query = _context.Transactions
-            .Include(t => t.Category)
-            .Include(t => t.Account)
-            .Include(t => t.TransactionTypeDefinition)
-            .AsNoTracking()
-            .AsQueryable();
+        if (filter.Page < 1) filter.Page = 1;
+        if (filter.PageSize < 1) filter.PageSize = 100;
 
-        if (userId.HasValue)
-            query = query.Where(t => t.UserId == userId.Value);
-        if (accountId.HasValue)
-            query = query.Where(t => t.AccountId == accountId.Value);
+        if (Request.Query.TryGetValue("userId", out var userId))
+        {
+            filter.Filters ??= new Dictionary<string, string>();
+            filter.Filters["userId"] = userId!;
+        }
 
-        var list = await query.OrderByDescending(t => t.Date).ThenByDescending(t => t.TransactionId).ToListAsync();
-        return Ok(list);
+        if (Request.Query.TryGetValue("accountId", out var accountId))
+        {
+            filter.Filters ??= new Dictionary<string, string>();
+            filter.Filters["accountId"] = accountId!;
+        }
+
+        return Ok(await appService.FilterAsync(filter, cancellationToken));
     }
 
-    [HttpGet("{id:int}", Name = "GetTransactionById")]
-    public async Task<ActionResult<Transaction>> GetById(int id)
+    [HttpGet("{id:int:min(1)}", Name = "GetTransactionById")]
+    public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
     {
-        var entity = await _context.Transactions
-            .Include(t => t.Category)
-            .Include(t => t.Account)
-            .Include(t => t.TransactionTypeDefinition)
-            .AsNoTracking()
-            .FirstOrDefaultAsync(t => t.TransactionId == id);
-
-        if (entity == null)
-            return NotFound();
-        return Ok(entity);
+        var dto = await appService.GetByIdAsync(id, cancellationToken);
+        return dto == null ? NotFound() : Ok(dto);
     }
 
     [HttpPost]
-    public async Task<ActionResult<Transaction>> Post([FromBody] TransactionCreateDto dto)
+    public async Task<IActionResult> Post([FromBody] TransactionCreateDto dto, CancellationToken cancellationToken)
     {
-        if (!await _context.Categories.AnyAsync(c => c.CategoryId == dto.CategoryId))
-            return BadRequest(new { message = $"Não existe categoria com CategoryId={dto.CategoryId}. Cadastre categorias (ou reinicie a API para aplicar o seed) antes de lançar transações." });
-
-        if (!await _context.Accounts.AnyAsync(a => a.AccountId == dto.AccountId))
-            return BadRequest(new { message = $"Conta AccountId={dto.AccountId} não encontrada." });
-
-        if (!await _context.Users.AnyAsync(u => u.UserId == dto.UserId))
-            return BadRequest(new { message = $"Utilizador UserId={dto.UserId} não encontrado." });
-
-        var now = DateTime.UtcNow;
-        var entity = new Transaction
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        try
         {
-            TransactionDescription = dto.TransactionDescription,
-            TransactionValue = dto.TransactionValue,
-            Date = dto.Date,
-            TransactionTypeId = dto.TransactionTypeId,
-            CategoryId = dto.CategoryId,
-            AccountId = dto.AccountId,
-            UserId = dto.UserId,
-            Status = dto.Status,
-            CreatedAt = now,
-            UpdatedAt = now
-        };
-
-        _context.Transactions.Add(entity);
-        await _context.SaveChangesAsync();
-
-        if (entity.Status == TransactionStatus.Pago)
-            await AdjustAccountBalanceAsync(entity.AccountId, entity.TransactionValue, entity.TransactionTypeId, subtractDelta: false);
-
-        return CreatedAtRoute("GetTransactionById", new { id = entity.TransactionId }, entity);
+            var created = await appService.CreateAsync(dto, cancellationToken);
+            return CreatedAtRoute("GetTransactionById", new { id = created.TransactionId }, created);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
-    [HttpPut("{id:int}")]
-    public async Task<ActionResult> Put(int id, [FromBody] TransactionUpdateDto dto)
+    [HttpPut("{id:int:min(1)}")]
+    public async Task<IActionResult> Put(int id, [FromBody] TransactionUpdateDto dto, CancellationToken cancellationToken)
     {
-        if (id != dto.TransactionId)
-            return BadRequest();
-
-        var entity = await _context.Transactions.FindAsync(id);
-        if (entity == null)
-            return NotFound();
-
-        var oldAccountId = entity.AccountId;
-        var oldValue = entity.TransactionValue;
-        var oldTypeId = entity.TransactionTypeId;
-        var oldStatus = entity.Status;
-
-        if (oldStatus == TransactionStatus.Pago)
-            await AdjustAccountBalanceAsync(oldAccountId, oldValue, oldTypeId, subtractDelta: true);
-
-        entity.TransactionDescription = dto.TransactionDescription;
-        entity.TransactionValue = dto.TransactionValue;
-        entity.Date = dto.Date;
-        entity.TransactionTypeId = dto.TransactionTypeId;
-        entity.CategoryId = dto.CategoryId;
-        entity.AccountId = dto.AccountId;
-        entity.Status = dto.Status;
-        entity.UpdatedAt = DateTime.UtcNow;
-
-        await _context.SaveChangesAsync();
-
-        if (entity.Status == TransactionStatus.Pago)
-            await AdjustAccountBalanceAsync(entity.AccountId, entity.TransactionValue, entity.TransactionTypeId, subtractDelta: false);
-
-        return NoContent();
+        if (id != dto.TransactionId) return BadRequest();
+        try
+        {
+            var updated = await appService.UpdateAsync(id, dto, cancellationToken);
+            return updated ? NoContent() : NotFound();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
-    [HttpDelete("{id:int}")]
-    public async Task<ActionResult> Delete(int id)
+    [HttpDelete("{id:int:min(1)}")]
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
     {
-        var entity = await _context.Transactions.FindAsync(id);
-        if (entity == null)
-            return NotFound();
-
-        if (entity.Status == TransactionStatus.Pago)
-            await AdjustAccountBalanceAsync(entity.AccountId, entity.TransactionValue, entity.TransactionTypeId, subtractDelta: true);
-
-        _context.Transactions.Remove(entity);
-        await _context.SaveChangesAsync();
-        return NoContent();
-    }
-
-    /// <summary>Receita (tipo 1) aumenta saldo; despesa (tipo 2) diminui. subtractDelta=true remove o efeito de uma transação já contabilizada.</summary>
-    private async Task AdjustAccountBalanceAsync(int accountId, decimal value, int transactionTypeId, bool subtractDelta)
-    {
-        var account = await _context.Accounts.FindAsync(accountId);
-        if (account == null)
-            return;
-
-        var delta = transactionTypeId == 1 ? value : -value;
-        account.CurrentBalance += subtractDelta ? -delta : delta;
-        await _context.SaveChangesAsync();
+        var deleted = await appService.DeleteAsync(id, cancellationToken);
+        return deleted ? NoContent() : NotFound();
     }
 }

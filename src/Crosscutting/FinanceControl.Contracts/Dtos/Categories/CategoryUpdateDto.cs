@@ -1,10 +1,10 @@
 using System.ComponentModel.DataAnnotations;
+using FinanceControl.Contracts.Constants;
 
-namespace FinanceControl.Domain.Entities;
+namespace FinanceControl.Contracts.Dtos.Categories;
 
 public class CategoryUpdateDto
 {
-    [Required]
     public int CategoryId { get; set; }
 
     [Required]
@@ -13,6 +13,5 @@ public class CategoryUpdateDto
 
     public string? Description { get; set; }
 
-    /// <summary>1 = Receita, 2 = Despesa, ou null para não vincular.</summary>
-    public int? TransactionTypeId { get; set; }
+    public string Icon { get; set; } = CategoryIcons.Default;
 }

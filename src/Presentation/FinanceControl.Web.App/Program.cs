@@ -1,12 +1,9 @@
-using FinanceControl.Web.Infrastructure.DependencyInjection;
+using FinanceControl.Client.Services.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddFinanceControlApiClient(builder.Configuration);
-
-builder.Services.AddRazorPages();
-
-builder.Services.AddControllers();
+builder.Services.AddFinanceControlClientServices(builder.Configuration);
+builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
@@ -25,7 +22,8 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.MapRazorPages();
-app.MapControllers();
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Login}/{action=Index}/{id?}");
 
 app.Run();

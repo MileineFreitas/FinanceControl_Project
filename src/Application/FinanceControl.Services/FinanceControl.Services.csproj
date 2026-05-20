@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\\..\\Domain\\FinanceControl.Domain\\FinanceControl.Domain.csproj" />
-    <ProjectReference Include="..\\..\\Crosscutting\\FinanceControl.Crosscutting\\FinanceControl.Contracts.csproj" />
+    <ProjectReference Include="..\..\Crosscutting\FinanceControl.Contracts\FinanceControl.Contracts.csproj" />
+    <ProjectReference Include="..\..\Domain\FinanceControl.Domain\FinanceControl.Domain.csproj" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.1" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.1">
 		  <PrivateAssets>all</PrivateAssets>

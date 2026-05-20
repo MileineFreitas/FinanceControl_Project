@@ -1,108 +1,78 @@
 using FinanceControl.Contracts.Dtos.Auth;
-using FinanceControl.Domain.Entities.Users;
-using FinanceControl.Domain.Entities;
+using FinanceControl.Contracts.Dtos.Users;
+using FinanceControl.Contracts.Filters;
 using FinanceControl.Domain.Interfaces.AppServices.Users;
-using FinanceControl.Domain.Interfaces.Repositories.Users;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 
 namespace FinanceControl.API.Controllers.Users;
 
 [Route("[controller]")]
 [ApiController]
-public class UserController : ControllerBase
+public class UserController(IUserAppService appService) : ControllerBase
 {
-    private readonly IUserRepository _repository;
-    private readonly IUserAppService _userAppService;
-
-    public UserController(IUserRepository repository, IUserAppService userAppService)
-    {
-        _repository = repository;
-        _userAppService = userAppService;
-    }
-
     [HttpGet]
-    public ActionResult<IEnumerable<User>> Get()
+    public async Task<IActionResult> Get([FromQuery] DataFilterDto filter, CancellationToken cancellationToken)
     {
-        var users = _repository.GetAllUsers();
-        return Ok(users);
+        if (filter.Page < 1) filter.Page = 1;
+        if (filter.PageSize < 1) filter.PageSize = 100;
+        return Ok(await appService.FilterAsync(filter, cancellationToken));
     }
 
     [HttpGet("{id:int:min(1)}", Name = "ObterUsuario")]
-    public ActionResult<User> GetUserId(int id)
+    public async Task<IActionResult> GetUserId(int id, CancellationToken cancellationToken)
     {
-        var user = _repository.GetUserById(id);
-        if (user == null)
-        {
-            return NotFound("Usuario não encontrado...");
-        }
-        return Ok(user);
+        var user = await appService.GetByIdAsync(id, cancellationToken);
+        return user == null ? NotFound("Usuario não encontrado...") : Ok(user);
     }
-
 
     [HttpPost("login")]
-    public ActionResult<LoginResponseDto> Login([FromBody] LoginRequestDto request)
+    public async Task<IActionResult> Login([FromBody] LoginRequestDto request, CancellationToken cancellationToken)
     {
-        if(request == null)
-        {
-            return BadRequest("Requisição inválida...");
-        }
-        var result = _userAppService.Login(request);
-        if(result == null)
-        {
-            return Unauthorized("Email ou senha inválidos...");
-        }
-        return Ok(result);
+        if (request == null) return BadRequest("Requisição inválida...");
+        var result = await appService.LoginAsync(request, cancellationToken);
+        return result == null ? Unauthorized("Email ou senha inválidos...") : Ok(result);
     }
 
-
     [HttpPost("register")]
-    public ActionResult CreateUser([FromBody] RegisterUserDto dto)
+    public async Task<IActionResult> CreateUser([FromBody] RegisterUserDto dto, CancellationToken cancellationToken)
     {
-        if (dto == null)
-        {
-            return BadRequest();
-        }
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
+        if (dto == null) return BadRequest();
+        if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        var user = new User
+        try
         {
-            UserName = dto.UserName,
-            UserEmail = dto.Email,
-            Password = dto.Password,
-            ProfilePhoto = dto.ProfilePhoto,
-            DateCreated = DateTime.UtcNow,
-            UserType = Domain.Enums.UserType.User
-        };
-
-        var createdUser = _repository.CreateUser(user);
-        return new CreatedAtRouteResult("ObterUsuario",
-            new { id = createdUser.UserId }, createdUser);
+            var created = await appService.RegisterAsync(dto, cancellationToken);
+            return CreatedAtRoute("ObterUsuario", new { id = created.UserId }, created);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { message = ex.Message });
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     [HttpPut("{id:int:min(1)}/user-update")]
-    public ActionResult Put(int id, User user)
+    public async Task<IActionResult> Put(int id, [FromBody] UserUpdateDto dto, CancellationToken cancellationToken)
     {
-        if (id != user.UserId)
+        if (id != dto.UserId) return BadRequest("Id invalido...");
+        try
         {
-            return BadRequest("Id invalido...");
+            var updated = await appService.UpdateAsync(dto, cancellationToken);
+            return updated == null ? NotFound("Usuario não encontrado...") : Ok(updated);
         }
-
-        _repository.UpdateUser(user);
-        return Ok(user);
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     [HttpDelete("{id:int:min(1)}")]
-    public ActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
     {
-        var user = _repository.DeleteUser(id);
-        if (user == null)
-        {
-            return NotFound("Id invalido");
-        }
-        return Ok("Usuario excluido");
+        var deleted = await appService.DeleteAsync(id, cancellationToken);
+        return deleted ? Ok("Usuario excluido") : NotFound("Id invalido");
     }
 }

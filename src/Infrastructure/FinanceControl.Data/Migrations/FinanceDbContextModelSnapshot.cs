@@ -85,8 +85,12 @@ namespace FinanceControl.Data.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("longtext");
 
-                    b.Property<int?>("TransactionTypeId")
-                        .HasColumnType("int");
+                    b.Property<string>("Icon")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(16)
+                        .HasColumnType("varchar(16)")
+                        .HasDefaultValue("📁");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime(6)");
@@ -95,8 +99,6 @@ namespace FinanceControl.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("CategoryId");
-
-                    b.HasIndex("TransactionTypeId");
 
                     b.HasIndex("UserId");
 
@@ -111,12 +113,51 @@ namespace FinanceControl.Data.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("TransactionTypeId"));
 
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("Icon")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(16)
+                        .HasColumnType("varchar(16)")
+                        .HasDefaultValue("💳");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("IsSystem")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(40)
                         .HasColumnType("varchar(40)");
 
+                    b.Property<int?>("PaymentKind")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("TransactionTypeId");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("TransactionTypes", (string)null);
 
@@ -124,12 +165,35 @@ namespace FinanceControl.Data.Migrations
                         new
                         {
                             TransactionTypeId = 1,
-                            Name = "RECEITA"
+                            Code = "DEBITO",
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Icon = "💳",
+                            IsActive = true,
+                            IsSystem = true,
+                            Name = "Débito",
+                            PaymentKind = 1
                         },
                         new
                         {
                             TransactionTypeId = 2,
-                            Name = "DESPESA"
+                            Code = "CREDITO",
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Icon = "💳",
+                            IsActive = true,
+                            IsSystem = true,
+                            Name = "Crédito",
+                            PaymentKind = 2
+                        },
+                        new
+                        {
+                            TransactionTypeId = 3,
+                            Code = "DINHEIRO",
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Icon = "💵",
+                            IsActive = true,
+                            IsSystem = true,
+                            Name = "Dinheiro",
+                            PaymentKind = 3
                         });
                 });
 
@@ -153,6 +217,9 @@ namespace FinanceControl.Data.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<int?>("PaymentKind")
+                        .HasColumnType("int");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -161,8 +228,9 @@ namespace FinanceControl.Data.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("varchar(250)");
 
-                    b.Property<int>("TransactionTypeId")
-                        .HasColumnType("int");
+                    b.Property<int>("TransactionTypeKind")
+                        .HasColumnType("int")
+                        .HasColumnName("FlowDirection");
 
                     b.Property<decimal>("TransactionValue")
                         .HasPrecision(18, 2)
@@ -179,8 +247,6 @@ namespace FinanceControl.Data.Migrations
                     b.HasIndex("AccountId");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("TransactionTypeId");
 
                     b.HasIndex("UserId");
 
@@ -236,16 +302,19 @@ namespace FinanceControl.Data.Migrations
 
             modelBuilder.Entity("FinanceControl.Domain.Entities.Categories.Category", b =>
                 {
-                    b.HasOne("FinanceControl.Domain.Entities.TransactionTypes.TransactionTypeDefinition", "TransactionTypeDefinition")
-                        .WithMany()
-                        .HasForeignKey("TransactionTypeId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("FinanceControl.Domain.Entities.Users.User", "User")
                         .WithMany("Categories")
                         .HasForeignKey("UserId");
 
-                    b.Navigation("TransactionTypeDefinition");
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FinanceControl.Domain.Entities.TransactionTypes.TransactionTypeDefinition", b =>
+                {
+                    b.HasOne("FinanceControl.Domain.Entities.Users.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("User");
                 });
@@ -264,12 +333,6 @@ namespace FinanceControl.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("FinanceControl.Domain.Entities.TransactionTypes.TransactionTypeDefinition", "TransactionTypeDefinition")
-                        .WithMany()
-                        .HasForeignKey("TransactionTypeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("FinanceControl.Domain.Entities.Users.User", "User")
                         .WithMany("Transactions")
                         .HasForeignKey("UserId")
@@ -279,8 +342,6 @@ namespace FinanceControl.Data.Migrations
                     b.Navigation("Account");
 
                     b.Navigation("Category");
-
-                    b.Navigation("TransactionTypeDefinition");
 
                     b.Navigation("User");
                 });

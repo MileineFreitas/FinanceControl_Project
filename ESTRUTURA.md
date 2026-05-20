@@ -1,39 +1,172 @@
 # Mapa da estrutura do repositório
 
-Este ficheiro ajuda a alinhar a **árvore esperada** com o que está **no disco** após confusões no Solution Explorer (Folder View, `.slnx`, projetos unloaded).
+Arquitetura alinhada ao padrão **Seven.Support.V3** e ao **Guia prático: Criação de CRUD do zero** (15 passos + MapperProfile).
 
-## O que não se perdeu
+## Solução (`FinanceControl.sln`)
 
-O código em `src/` está versionado no Git. A camada **Application / Domain / Infrastructure / Crosscutting / Tests** está presente, com **API** em `Application/FinanceControl.API` e **apresentação** em `Presentation/FinanceControl.Web`.
+Abra no Visual Studio com **Solution View** (não *Folder View*). Use `FinanceControl.sln` (formato clássico).
 
-## Diferenças em relação a um diagrama antigo
+| Pasta de solução | Projeto | Pasta no disco |
+|------------------|---------|----------------|
+| **Crosscutting** | `FinanceControl.Contracts` | `src/Crosscutting/FinanceControl.Contracts/` |
+| | `FinanceControl.Culture` | `src/Crosscutting/FinanceControl.Culture/` |
+| **Domain** | `FinanceControl.Domain` | `src/Domain/FinanceControl.Domain/` |
+| | `FinanceControl.Domain.Services` | `src/Domain/FinanceControl.Domain.Services/` |
+| **Infrastructure** | `FinanceControl.Data` | `src/Infrastructure/FinanceControl.Data/` |
+| **Application** | `FinanceControl.Services` | `src/Application/FinanceControl.Services/` |
+| | `FinanceControl.Web.Api` | `src/Application/FinanceControl.Web.Api/` |
+| **Presentation** | `FinanceControl.Client.Services` | `src/Presentation/FinanceControl.Client.Services/` |
+| | `FinanceControl.Web` | `src/Presentation/FinanceControl.Web.App/` |
+| **Tests** | `FinanceControl.Tests` | `src/Tests/FinanceControl.Tests/` |
 
-| Diagrama / memória | Repositório actual |
-|--------------------|--------------------|
-| `Presentation/FinanceControl.**Blazor**` | **`FinanceControl.Web`** (ASP.NET Core **Razor Pages**, não Blazor) |
-| `Infrastructure/.../EntityConfiguration/` | Configuração EF em **`Contexts/FinanceDbContext.cs`** (`OnModelCreating`); não há pasta `EntityConfiguration` separada |
-| Vários `Enums` em `Domain/Enums` | Enums podem estar em **Domain** e em **Crosscutting/Enumerators** (ex.: `TransactionStatus`) |
-| `API/Controllers/...` só 3 pastas | Existem também **Accounts**, **TransactionTypes**, além de Categories, Transactions, Users |
-| `Application/FinanceControl.Application` com 3 pastas | Inclui ficheiros de serviço; a árvore exacta segue o que está no Explorer de ficheiros |
+## Fluxo CRUD (guia → pastas)
 
-## Abrir a solução no Visual Studio
+| Passo | Artefacto | Onde criar |
+|-------|-----------|------------|
+| 1 | `I{Entidade}` | `Contracts/Interfaces/Entities/{Entidade}/` |
+| 2 | `{Entidade}` | `Domain/Entities/{Entidade}/` |
+| 3 | `{Entidade}Dto` | `Contracts/Dtos/{Entidade}/` |
+| 4 | `{Entidade}Configuration` | `Data/EntityConfiguration/{Entidade}/` |
+| 5 | `I{Entidade}Repository` | `Domain/Interfaces/Repositories/{Entidade}/` |
+| 6 | `{Entidade}Repository` | `Data/Repositories/{Entidade}/` |
+| 7 | `I{Entidade}AppService` | `Domain/Interfaces/AppServices/{Entidade}/` |
+| 8 | `{Entidade}AppService` | `Services/{Entidade}/` |
+| 9 | `{Entidade}Controller` (API) | `Web.Api/Controllers/{Entidade}/` |
+| 10 | `I{Entidade}CliService` | `Client.Services/Interfaces/{Entidade}/` |
+| 11 | `{Entidade}CliService` | `Client.Services/Integrated/{Entidade}/` |
+| 12–15 | Controller / View / JS / ViewModel (UI) | `Web.App` (MVC — ver abaixo) |
+| — | MapperProfile | `Domain/MapperProfiles/{Entidade}/` |
 
-1. Abre **`FinanceControl.sln`** (formato clássico, amplamente suportado).
-2. No **Solution Explorer**, usa **Solution View** (não *Folder View*).
-3. Os projectos estão agrupados em pastas de solução: `src\Application`, `src\Domain`, etc.
+**Entidades actuais:** `Accounts`, `Categories`, `Transactions`, `TransactionTypes`, `Users`.
+
+## Árvore por camada
+
+### Crosscutting — `FinanceControl.Contracts`
+```
+Constants/
+Dtos/{Entidade}/
+Enumerators/
+Filters/          ← DataFilterDto
+Interfaces/Entities/{Entidade}/
+FinanceControlContractsModule.cs
+```
+
+### Crosscutting — `FinanceControl.Culture`
+```
+Environments/
+MailTemplates/
+Validations/
+FinanceControlCultureModule.cs
+```
+
+### Domain — `FinanceControl.Domain`
+```
+Entities/{Entidade}/
+Interfaces/AppServices|Repositories|DomService/{Entidade}/
+MapperProfiles/{Entidade}/
+Validators/{Entidade}/
+Models/{Entidade}/
+Views/{Entidade}/
+FinanceControlDomainModule.cs
+```
+
+### Domain — `FinanceControl.Domain.Services`
+```
+{Entidade}/{Entidade}DomService.cs
+FinanceControlDomainServiceModule.cs
+```
+
+### Infrastructure — `FinanceControl.Data`
+```
+Contexts/
+DatabaseObjects/
+EntityConfiguration/{Entidade}/
+MapperProfiles/{Entidade}/
+Migrations/
+Repositories/{Entidade}/
+Seeding/
+FinanceControlDataModule.cs
+```
+
+### Application — `FinanceControl.Services`
+```
+{Entidade}/{Entidade}AppService.cs
+FinanceControlAppServicesModule.cs
+```
+
+### Application — `FinanceControl.Web.Api`
+```
+Authentication/
+Authorization/
+Configuration/
+Controllers/{Entidade}/
+Extensions/
+AppConsts.cs
+FinanceControlWebApiModule.cs
+```
+
+### Presentation — `FinanceControl.Client.Services`
+```
+Constants.cs
+DependencyInjection/       ← registo HttpClient
+Integrated/{Entidade}/     ← CliService
+Interfaces/{Entidade}/     ← ICliService
+Options/                   ← ApiClientOptions
+FinanceControlClientServicesModule.cs
+```
+
+### Presentation — `FinanceControl.Web.App` (MVC)
+```
+Controllers/{Entidade}/    ← rotas da UI
+Models/ViewModels/{Entidade}/
+Views/
+  Shared/                  ← _Layout, _Nav, partials
+  {Entidade}/Index.cshtml
+wwwroot/js/{entidade}/
+FinanceControlWebAppModule.cs
+Program.cs
+```
+
+**Rotas principais da UI**
+
+| URL | Controller |
+|-----|------------|
+| `/` | `Login` |
+| `/home` | `Home` |
+| `/register` | `Register` |
+| `/transacoes` | `Transactions` |
+| `/categorias` | `Categories` |
+| `/tipos-transacao` | `TransactionTypes` |
+| `/dashboards/geral` | `Dashboards` |
+| `/relatorios` | `Reports` → redirect dashboards |
+| `/transactions` | `Transactions` → redirect `/transacoes` |
+
+> **Não usar `Pages/`** — a UI é só MVC (`Controllers` + `Views`).
+
+## Módulos (`*Module.cs`)
+
+Cada projeto tem um ficheiro `*Module.cs` como ponto de registo DI (padrão Seven). A implementação dos registos fica em `Program.cs` (API/Web) ou `DependencyInjection/` (Client.Services).
 
 ## Comandos úteis
 
 ```bash
-# Compilar tudo
 dotnet build FinanceControl.sln
-
-# Testes
 dotnet test src/Tests/FinanceControl.Tests/FinanceControl.Tests.csproj
 ```
 
+## Banco de dados (MySQL)
+
+Uma única migration `InitialCreate` cria todas as tabelas. Ver **[DATABASE.md](DATABASE.md)**.
+
+- Ao iniciar a **API**, migrations + seed de demonstração rodam automaticamente.
+- Ou manualmente: `dotnet ef database update` em `FinanceControl.Data` (startup: Web.Api).
+
 ## Arranque (F5)
 
-- **Site (UI):** `FinanceControl.Web`
-- **API:** `FinanceControl.Web.Api`  
-- Não uses **FinanceControl.Tests** como startup (é só para `dotnet test` / Test Explorer).
+- **Site (UI):** `FinanceControl.Web` → pasta `FinanceControl.Web.App`
+- **API:** `FinanceControl.Web.Api`
+
+## Notas
+
+- CRUDs de Categorias, Meios de pagamento e Transações usam modal + `CliService` + API REST.
+- `IFinanceControlApiClient` permanece para login/registo e dashboard; entidades CRUD usam `I{Entidade}CliService`.

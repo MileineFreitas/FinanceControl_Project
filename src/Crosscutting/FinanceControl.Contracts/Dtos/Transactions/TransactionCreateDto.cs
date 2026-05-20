@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
-using FinanceControl.Domain.Enums;
+using FinanceControl.Contracts.Enumerators.Transactions;
 
-namespace FinanceControl.Domain.Entities;
+namespace FinanceControl.Contracts.Dtos.Transactions;
 
 public class TransactionCreateDto
 {
@@ -14,8 +14,12 @@ public class TransactionCreateDto
 
     public DateTime Date { get; set; }
 
+    /// <summary>Receita ou despesa — informado somente no cadastro da transação.</summary>
     [Range(1, 2)]
-    public int TransactionTypeId { get; set; }
+    public TransactionTypeKind TransactionTypeKind { get; set; }
+
+    /// <summary>Meio de pagamento (opcional), informado somente no cadastro da transação.</summary>
+    public PaymentKind? PaymentKind { get; set; }
 
     public int CategoryId { get; set; }
 

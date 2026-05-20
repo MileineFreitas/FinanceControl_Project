@@ -1,7 +1,7 @@
-namespace FinanceControl.Domain.Enums;
+namespace FinanceControl.Contracts.Enumerators.Transactions;
 
 public enum TransactionStatus
 {
-    Pendente = 1,
-    Pago = 2
+    Pendente = 0,
+    Pago = 1
 }

@@ -1,3 +1,4 @@
+using FinanceControl.Domain.Entities.Accounts;
 using FinanceControl.Domain.Entities.Categories;
 using FinanceControl.Domain.Entities.Users;
 using FinanceControl.Domain.Enums;
@@ -15,6 +16,7 @@ internal static class IntegrationSeed
         await using var scope = services.CreateAsyncScope();
         var db = scope.ServiceProvider.GetRequiredService<FinanceDbContext>();
         await db.Database.EnsureCreatedAsync();
+        FinanceControl.Infrastructure.Seeding.FinanceDbContextSeed.EnsureDemoUserAccountAndCategories(db);
     }
 
     /// <summary>Garante schema + seed do modelo (TransactionTypes, Accounts via HasData) e cria usuário + categoria.</summary>
@@ -41,11 +43,24 @@ internal static class IntegrationSeed
             CategoryName = $"Categoria_{suffix}",
             Description = "Seed teste",
             DateCreated = DateTime.UtcNow,
-            TransactionTypeId = 2,
             UserId = user.UserId
         };
         db.Categories.Add(category);
         await db.SaveChangesAsync();
+
+        if (!await db.Accounts.AnyAsync(a => a.AccountId == 1, cancellationToken: default))
+        {
+            db.Accounts.Add(new Account
+            {
+                AccountId = 1,
+                Name = "Principal",
+                InitialBalance = 0,
+                CurrentBalance = 0,
+                CreatedAt = DateTime.UtcNow,
+                UserId = user.UserId
+            });
+            await db.SaveChangesAsync();
+        }
 
         return (user.UserId, category.CategoryId);
     }

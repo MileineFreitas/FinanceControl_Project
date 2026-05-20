@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace FinanceControl.Domain.Entities;
+namespace FinanceControl.Contracts.Dtos.Users;
 
-public class RegisterUserDto
+public class UserRegisterDto
 {
     [Required(ErrorMessage = "Nome de usuário é obrigatório")]
     [MinLength(3, ErrorMessage = "Mínimo 3 caracteres")]

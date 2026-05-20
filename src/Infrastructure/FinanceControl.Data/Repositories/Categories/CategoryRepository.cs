@@ -1,66 +1,77 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using FinanceControl.Contracts.Dtos.Categories;
+using FinanceControl.Contracts.Dtos.Common;
+using FinanceControl.Contracts.Filters;
 using FinanceControl.Domain.Entities.Categories;
 using FinanceControl.Domain.Interfaces.Repositories.Categories;
+using FinanceControl.Domain.MapperProfiles.Categories;
 using FinanceControl.Infrastructure.Contexts;
+using FinanceControl.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinanceControl.Infrastructure.Repositories.Categories;
 
-public class CategoryRepository : ICategoryRepository
+public class CategoryRepository(FinanceDbContext context) : ICategoryRepository
 {
-    private readonly FinanceDbContext _context;
-
-    public CategoryRepository(FinanceDbContext context)
+    public async Task<DataResultDto<CategoryDto>> FilterAsync(DataFilterDto filter, CancellationToken cancellationToken = default)
     {
-        _context = context;
+        var query = context.Categories
+            .AsNoTracking()
+            .OrderBy(c => c.CategoryName)
+            .AsQueryable();
+
+        if (filter.Filters != null &&
+            filter.Filters.TryGetValue("search", out var search) &&
+            !string.IsNullOrWhiteSpace(search))
+        {
+            var term = search.Trim().ToLowerInvariant();
+            query = query.Where(c => c.CategoryName != null && c.CategoryName.ToLower().Contains(term));
+        }
+
+        var total = await query.CountAsync(cancellationToken);
+        var items = await query
+            .Page(filter.Page, filter.PageSize)
+            .ToListAsync(cancellationToken);
+
+        return new DataResultDto<CategoryDto>
+        {
+            Page = filter.Page,
+            Total = total,
+            Result = items.Select(CategoryMapper.ToDto).ToList()
+        };
     }
 
-    public IEnumerable<Category> GetCategories()
+    public async Task<CategoryDto?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        var categories = _context.Categories.AsNoTracking().ToList();
-        if (categories == null)
-            throw new KeyNotFoundException("Categorias não encontradas");
-        return categories;
+        var entity = await context.Categories
+            .AsNoTracking()
+            .FirstOrDefaultAsync(c => c.CategoryId == id, cancellationToken);
+
+        return entity == null ? null : CategoryMapper.ToDto(entity);
     }
 
-    public Category GetCategoryById(int id)
+    public async Task<Category> AddAsync(Category category, CancellationToken cancellationToken = default)
     {
-        var category = _context.Categories.AsNoTracking().FirstOrDefault(c => c.CategoryId == id);
-        if (category == null)
-            throw new KeyNotFoundException($"Categoria com id:{id} não localizada...");
+        context.Categories.Add(category);
+        await context.SaveChangesAsync(cancellationToken);
         return category;
     }
 
-    public Category CreateCategory(Category category)
-    {
-        if (category == null)
-            throw new ArgumentException(nameof(category), "Erro ao criar categoria");
+    public Task<Category?> FindTrackedAsync(int id, CancellationToken cancellationToken = default) =>
+        context.Categories.FirstOrDefaultAsync(c => c.CategoryId == id, cancellationToken);
 
-        _context.Categories.Add(category);
-        _context.SaveChanges();
-        return category;
+    public Task SaveChangesAsync(CancellationToken cancellationToken = default) =>
+        context.SaveChangesAsync(cancellationToken);
+
+    public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var entity = await context.Categories.FirstOrDefaultAsync(c => c.CategoryId == id, cancellationToken);
+        if (entity == null) return false;
+
+        context.Categories.Remove(entity);
+        await context.SaveChangesAsync(cancellationToken);
+        return true;
     }
 
-    public Category UpdateCategory(Category category)
-    {
-        if (category == null)
-            throw new ArgumentException(nameof(category));
-
-        _context.Entry(category).State = EntityState.Modified;
-        _context.SaveChanges();
-        return category;
-    }
-
-    public Category DeleteCategory(int id)
-    {
-        var category = _context.Categories.Find(id);
-        if (category == null)
-            throw new KeyNotFoundException(nameof(category));
-
-        _context.Categories.Remove(category);
-        _context.SaveChanges();
-        return category;
-    }
+    public async Task<int?> GetFirstUserIdAsync(CancellationToken cancellationToken = default) =>
+        await context.Users.OrderBy(u => u.UserId).Select(u => (int?)u.UserId).FirstOrDefaultAsync(cancellationToken);
 }

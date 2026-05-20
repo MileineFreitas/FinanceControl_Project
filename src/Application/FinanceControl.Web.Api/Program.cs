@@ -1,14 +1,35 @@
+using FinanceControl.Domain.Interfaces.AppServices.Accounts;
+using FinanceControl.Domain.Interfaces.AppServices.Categories;
+using FinanceControl.Domain.Interfaces.AppServices.TransactionTypes;
+using FinanceControl.Domain.Interfaces.AppServices.Transactions;
 using FinanceControl.Domain.Interfaces.AppServices.Users;
-using FinanceControl.Domain.Services.Users;
+using FinanceControl.Domain.Interfaces.DomService.Accounts;
+using FinanceControl.Domain.Interfaces.DomService.Categories;
+using FinanceControl.Domain.Interfaces.DomService.TransactionTypes;
+using FinanceControl.Domain.Interfaces.DomService.Transactions;
 using FinanceControl.Domain.Interfaces.DomService.Users;
+using FinanceControl.Domain.Interfaces.Repositories.Accounts;
 using FinanceControl.Domain.Interfaces.Repositories.Categories;
+using FinanceControl.Domain.Interfaces.Repositories.TransactionTypes;
 using FinanceControl.Domain.Interfaces.Repositories.Transactions;
 using FinanceControl.Domain.Interfaces.Repositories.Users;
+using FinanceControl.Domain.Services.Accounts;
+using FinanceControl.Domain.Services.Categories;
+using FinanceControl.Domain.Services.TransactionTypes;
+using FinanceControl.Domain.Services.Transactions;
+using FinanceControl.Domain.Services.Users;
 using FinanceControl.Infrastructure.Contexts;
-using FinanceControl.Infrastructure.Seeding;
+using FinanceControl.Infrastructure.Repositories.Accounts;
 using FinanceControl.Infrastructure.Repositories.Categories;
+using FinanceControl.Infrastructure.Repositories.TransactionTypes;
 using FinanceControl.Infrastructure.Repositories.Transactions;
 using FinanceControl.Infrastructure.Repositories.Users;
+using FinanceControl.Infrastructure.Seeding;
+using FinanceControl.Services.Accounts;
+using FinanceControl.Services.Categories;
+using FinanceControl.Services.TransactionTypes;
+using FinanceControl.Services.Transactions;
+using FinanceControl.Services.Users;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
@@ -37,18 +58,30 @@ Console.WriteLine(builder.Configuration.GetConnectionString("DefaultConnection")
 builder.Services.AddDbContext<FinanceDbContext>(options =>
     options.UseMySql(mySqlConnection, ServerVersion.AutoDetect(mySqlConnection)));
 
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IUserAppService, UserDomService>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ICategoryDomService, CategoryDomService>();
+builder.Services.AddScoped<ICategoryAppService, CategoryAppService>();
+
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
+builder.Services.AddScoped<ITransactionDomService, TransactionDomService>();
+builder.Services.AddScoped<ITransactionAppService, TransactionAppService>();
+
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddScoped<IAccountDomService, AccountDomService>();
+builder.Services.AddScoped<IAccountAppService, AccountAppService>();
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserDomService, UserDomService>();
+builder.Services.AddScoped<IUserAppService, UserAppService>();
+
+builder.Services.AddScoped<ITransactionTypeRepository, TransactionTypeRepository>();
+builder.Services.AddScoped<ITransactionTypeDomService, TransactionTypeDomService>();
+builder.Services.AddScoped<ITransactionTypeAppService, TransactionTypeAppService>();
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<FinanceDbContext>();
-    FinanceDbContextSeed.EnsureDemoUserAccountAndCategories(db);
-}
+if (!app.Environment.IsEnvironment("Testing"))
+    app.Services.ApplyMigrationsAndSeed(app.Logger);
 
 if (app.Environment.IsDevelopment())
 {
@@ -60,7 +93,6 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-
 app.UseDefaultFiles();
 app.UseStaticFiles();
 app.UseCors();
@@ -71,6 +103,5 @@ if (!app.Environment.IsEnvironment("Testing"))
 
 app.UseAuthorization();
 app.MapControllers();
-
 
 app.Run();
