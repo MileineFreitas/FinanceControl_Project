@@ -1,4 +1,3 @@
-using FinanceControl.Contracts.Constants;
 using FinanceControl.Contracts.Dtos.Accounts;
 using FinanceControl.Domain.Entities.Accounts;
 using FinanceControl.Domain.Interfaces.DomService.Accounts;
@@ -21,8 +20,6 @@ public class AccountDomService : IAccountDomService
 
     public void ValidateDelete(Guid accountId, bool hasTransactions)
     {
-        if (accountId == SeedIds.DefaultAccount)
-            throw new InvalidOperationException("A conta padrão (Principal) não pode ser excluída.");
         if (hasTransactions)
             throw new InvalidOperationException("Não é possível excluir: existem transações vinculadas a esta conta.");
     }

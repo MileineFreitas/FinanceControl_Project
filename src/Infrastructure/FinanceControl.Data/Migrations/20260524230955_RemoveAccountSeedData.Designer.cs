@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinanceControl.Data.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    [Migration("20260524213716_MigrateToGuidAndPaymentMethods")]
-    partial class MigrateToGuidAndPaymentMethods
+    [Migration("20260524230955_RemoveAccountSeedData")]
+    partial class RemoveAccountSeedData
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -61,17 +61,6 @@ namespace FinanceControl.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Accounts", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            AccountId = new Guid("a1000001-0001-4001-8001-000000000001"),
-                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CurrentBalance = 0m,
-                            InitialBalance = 0m,
-                            IsActive = true,
-                            Name = "Principal"
-                        });
                 });
 
             modelBuilder.Entity("FinanceControl.Domain.Entities.Categories.Category", b =>
@@ -197,8 +186,8 @@ namespace FinanceControl.Data.Migrations
                     b.Property<DateTimeOffset>("Date")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("PaymentKind")
-                        .HasColumnType("int");
+                    b.Property<Guid>("PaymentMethodId")
+                        .HasColumnType("char(36)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -227,6 +216,8 @@ namespace FinanceControl.Data.Migrations
                     b.HasIndex("AccountId");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("PaymentMethodId");
 
                     b.HasIndex("UserId");
 
@@ -316,6 +307,12 @@ namespace FinanceControl.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("FinanceControl.Domain.Entities.PaymentMethods.PaymentMethod", "PaymentMethod")
+                        .WithMany()
+                        .HasForeignKey("PaymentMethodId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("FinanceControl.Domain.Entities.Users.User", "User")
                         .WithMany("Transactions")
                         .HasForeignKey("UserId")
@@ -325,6 +322,8 @@ namespace FinanceControl.Data.Migrations
                     b.Navigation("Account");
 
                     b.Navigation("Category");
+
+                    b.Navigation("PaymentMethod");
 
                     b.Navigation("User");
                 });

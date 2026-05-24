@@ -11,7 +11,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.ToTable("Users");
         builder.HasKey(u => u.UserId);
         builder.Property(u => u.UserId)
-            .HasDefaultValueSql("(NEWID())")
+            .HasDefaultValueSql("(UUID())")
             .IsRequired();
 
         builder.Property(u => u.UserName).HasMaxLength(100).IsRequired();

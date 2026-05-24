@@ -7,8 +7,7 @@ namespace FinanceControl.Infrastructure.Seeding;
 
 public static class DatabaseMigrationExtensions
 {
-    /// <summary>Aplica migrations pendentes e popula dados iniciais (uma vez por base vazia).</summary>
-    public static void ApplyMigrationsAndSeed(this IServiceProvider services, ILogger? logger = null)
+    public static void ApplyMigrations(this IServiceProvider services, ILogger? logger = null)
     {
         using var scope = services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<FinanceDbContext>();
@@ -32,8 +31,5 @@ public static class DatabaseMigrationExtensions
             db.Database.EnsureCreated();
             logger?.LogDebug("Base em memória criada (EnsureCreated).");
         }
-
-        FinanceDbContextSeed.EnsureDemoUserAccountAndCategories(db);
-        logger?.LogInformation("Seed de demonstração verificado.");
     }
 }

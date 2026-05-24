@@ -1,7 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
-using FinanceControl.Contracts.Constants;
 
 namespace FinanceControl.Tests.Integration;
 
@@ -60,24 +59,14 @@ public class AccountCrudTests : IClassFixture<FinanceApiFactory>
     }
 
     [Fact]
-    public async Task Delete_NonDefault_ReturnsNoContent_WhenNoTransactions()
+    public async Task Delete_ReturnsNoContent_WhenNoTransactions()
     {
         using var client = _factory.CreateApiClient();
         var create = await client.PostAsJsonAsync("/api/Account", new { name = "ToDelete", initialBalance = 0m, userId = (Guid?)null });
         Assert.Equal(HttpStatusCode.Created, create.StatusCode);
         var id = JsonResponse.GetIdFromCreatedLocation(create);
-        if (id == SeedIds.DefaultAccount)
-            return;
 
         var res = await client.DeleteAsync($"/api/Account/{id}");
         Assert.Equal(HttpStatusCode.NoContent, res.StatusCode);
-    }
-
-    [Fact]
-    public async Task Delete_DefaultAccount_ReturnsBadRequest()
-    {
-        using var client = _factory.CreateApiClient();
-        var res = await client.DeleteAsync($"/api/Account/{SeedIds.DefaultAccount}");
-        Assert.Equal(HttpStatusCode.BadRequest, res.StatusCode);
     }
 }

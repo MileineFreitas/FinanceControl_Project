@@ -14,7 +14,7 @@ public class PaymentMethodConfiguration : IEntityTypeConfiguration<PaymentMethod
         builder.HasKey(p => p.PaymentMethodId);
 
         builder.Property(p => p.PaymentMethodId)
-            .HasDefaultValueSql("(NEWID())")
+            .HasDefaultValueSql("(UUID())")
             .IsRequired();
 
         builder.Property(p => p.Name)

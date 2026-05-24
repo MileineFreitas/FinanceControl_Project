@@ -8,7 +8,7 @@ public sealed class HomeIndexViewModel
 
     public IReadOnlyList<DashboardTxRowVm> TransacoesResumo { get; set; } = [];
 
-    public int TotalTransacoesExemplo { get; set; }
+    public int TotalTransacoes { get; set; }
 
     public int TransacoesMostradas { get; set; }
 

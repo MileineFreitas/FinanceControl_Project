@@ -1,10 +1,8 @@
-using FinanceControl.Contracts.Constants;
 using FinanceControl.Domain.Entities.Accounts;
 using FinanceControl.Domain.Entities.Categories;
 using FinanceControl.Domain.Entities.PaymentMethods;
 using FinanceControl.Domain.Entities.Users;
 using FinanceControl.Infrastructure.Contexts;
-using FinanceControl.Infrastructure.Seeding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,12 +10,11 @@ namespace FinanceControl.Tests.Integration;
 
 internal static class IntegrationSeed
 {
-    public static async Task EnsureDatabaseAndSeedAsync(IServiceProvider services)
+    public static async Task EnsureDatabaseAsync(IServiceProvider services)
     {
         await using var scope = services.CreateAsyncScope();
         var db = scope.ServiceProvider.GetRequiredService<FinanceDbContext>();
         await db.Database.EnsureCreatedAsync();
-        FinanceDbContextSeed.EnsureDemoUserAccountAndCategories(db);
     }
 
     public static async Task<(Guid UserId, Guid CategoryId, Guid AccountId, Guid PaymentMethodId)> EnsureUserAndCategoryAsync(IServiceProvider services)
@@ -56,24 +53,19 @@ internal static class IntegrationSeed
             DateCreated = DateTimeOffset.UtcNow
         };
         db.PaymentMethods.Add(paymentMethod);
+
+        var account = new Account
+        {
+            Name = $"Conta_{suffix}",
+            InitialBalance = 0,
+            CurrentBalance = 0,
+            CreatedAt = DateTime.UtcNow,
+            UserId = user.UserId,
+            IsActive = true
+        };
+        db.Accounts.Add(account);
         await db.SaveChangesAsync();
 
-        var accountId = SeedIds.DefaultAccount;
-        if (!await db.Accounts.AnyAsync(a => a.AccountId == accountId))
-        {
-            db.Accounts.Add(new Account
-            {
-                AccountId = accountId,
-                Name = "Principal",
-                InitialBalance = 0,
-                CurrentBalance = 0,
-                CreatedAt = DateTime.UtcNow,
-                UserId = user.UserId,
-                IsActive = true
-            });
-            await db.SaveChangesAsync();
-        }
-
-        return (user.UserId, category.CategoryId, accountId, paymentMethod.PaymentMethodId);
+        return (user.UserId, category.CategoryId, account.AccountId, paymentMethod.PaymentMethodId);
     }
 }

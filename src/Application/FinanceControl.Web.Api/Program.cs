@@ -81,7 +81,7 @@ builder.Services.AddScoped<IPaymentMethodAppService, PaymentMethodAppService>();
 var app = builder.Build();
 
 if (!app.Environment.IsEnvironment("Testing"))
-    app.Services.ApplyMigrationsAndSeed(app.Logger);
+    app.Services.ApplyMigrations(app.Logger);
 
 if (app.Environment.IsDevelopment())
 {

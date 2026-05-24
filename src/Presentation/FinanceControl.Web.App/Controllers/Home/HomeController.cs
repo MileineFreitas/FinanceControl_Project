@@ -1,12 +1,12 @@
-using System.Globalization;
-using System.Text.Json;
 using FinanceControl.Client.Services.Interfaces;
-using FinanceControl.Contracts.Constants;
+using FinanceControl.Client.Services.Interfaces.Accounts;
 using FinanceControl.Contracts.Dtos.Common;
 using FinanceControl.Contracts.Enumerators.Transactions;
 using FinanceControl.Web.Models.ViewModels;
 using FinanceControl.Web.Models.ViewModels.Home;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
+using System.Text.Json;
 
 namespace FinanceControl.Web.Controllers.Home;
 
@@ -14,10 +14,16 @@ namespace FinanceControl.Web.Controllers.Home;
 public class HomeController : Controller
 {
     private static readonly JsonSerializerOptions JsonOpts = new() { PropertyNameCaseInsensitive = true };
+    private static readonly CultureInfo PtBr = CultureInfo.GetCultureInfo("pt-BR");
 
     private readonly IFinanceControlApiClient _api;
+    private readonly IAccountCliService _accountCli;
 
-    public HomeController(IFinanceControlApiClient api) => _api = api;
+    public HomeController(IFinanceControlApiClient api, IAccountCliService accountCli)
+    {
+        _api = api;
+        _accountCli = accountCli;
+    }
 
     [HttpGet("")]
     [HttpGet("Index")]
@@ -34,21 +40,24 @@ public class HomeController : Controller
                 var data = await JsonSerializer.DeserializeAsync<DataResultDto<TxJson>>(stream, JsonOpts);
                 txs = data?.Result;
             }
+            else
+            {
+                vm.ApiMensagem = "Não foi possível carregar transações da API.";
+            }
         }
         catch
         {
-            vm.ApiMensagem = "Não foi possível carregar dados da API — exibindo valores de exemplo.";
+            vm.ApiMensagem = "Não foi possível conectar à API. Verifique se o serviço está em execução.";
         }
 
         if (txs is not { Count: > 0 })
         {
-            CarregarMetricasEListaExemplo(vm);
+            await PreencherEstadoVazioAsync(vm);
             return View("Index", vm);
         }
 
         var nomePorCategoriaId = await CarregarNomesCategoriasAsync();
 
-        var culture = CultureInfo.GetCultureInfo("pt-BR");
         var now = DateTime.UtcNow;
         var inicioMes = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc);
         var fimMes = inicioMes.AddMonths(1);
@@ -64,47 +73,32 @@ public class HomeController : Controller
                 receitasMes += t.TransactionValue;
         }
 
-        decimal saldoConta = receitasMes - gastosMes;
-        try
-        {
-            var accRes = await _api.GetAccountByIdAsync(SeedIds.DefaultAccount);
-            if (accRes.IsSuccessStatusCode)
-            {
-                await using var s = await accRes.Content.ReadAsStreamAsync();
-                var acc = await JsonSerializer.DeserializeAsync<AccountJson>(s, JsonOpts);
-                if (acc != null)
-                    saldoConta = acc.CurrentBalance;
-            }
-        }
-        catch
-        {
-            /* mantém estimativa */
-        }
+        var saldoConta = await ObterSaldoTotalContasAsync();
 
         vm.Metrics =
         [
             new DashboardMetricVm(
                 "Gasto total no mês",
-                "R$ " + gastosMes.ToString("N2", culture),
-                "Despesas (tipo saída) no mês vigente",
+                gastosMes.ToString("C", PtBr),
+                "Despesas no mês vigente",
                 true,
                 "chart"),
             new DashboardMetricVm(
                 "Receitas no mês",
-                "R$ " + receitasMes.ToString("N2", culture),
-                "Entradas confirmadas no mês vigente",
+                receitasMes.ToString("C", PtBr),
+                "Entradas no mês vigente",
                 false,
                 "bank"),
             new DashboardMetricVm(
-                "Saldo conta principal",
-                "R$ " + saldoConta.ToString("N2", culture),
-                "Após lançamentos com status pago",
+                "Saldo em contas",
+                saldoConta.ToString("C", PtBr),
+                "Soma do saldo atual das contas",
                 saldoConta < 0,
                 "rocket"),
         ];
 
         var ordered = txs.OrderByDescending(x => x.Date).ThenByDescending(x => x.TransactionId).ToList();
-        vm.TotalTransacoesExemplo = ordered.Count;
+        vm.TotalTransacoes = ordered.Count;
         var top = ordered.Take(8).ToList();
         vm.TransacoesMostradas = top.Count;
 
@@ -114,9 +108,9 @@ public class HomeController : Controller
             var catNome = nomeCat.ToUpperInvariant();
             var isRec = t.TransactionTypeKind == TransactionTypeKind.Receita;
             var abs = Math.Abs(t.TransactionValue);
-            var valorFmt = (isRec ? "+ R$ " : "- R$ ") + abs.ToString("N2", culture);
-            var sub = $"#{t.TransactionId} • Conta {t.AccountId}";
-            var dataFmt = t.Date.ToString("dd MMM, yyyy HH:mm", culture);
+            var valorFmt = (isRec ? "+ " : "- ") + abs.ToString("C", PtBr);
+            var sub = $"Conta {t.AccountId}";
+            var dataFmt = t.Date.ToString("dd MMM, yyyy HH:mm", PtBr);
             return new DashboardTxRowVm(
                 dataFmt,
                 t.TransactionDescription ?? "—",
@@ -128,6 +122,37 @@ public class HomeController : Controller
         }).ToList();
 
         return View("Index", vm);
+    }
+
+    private async Task PreencherEstadoVazioAsync(HomeIndexViewModel vm)
+    {
+        vm.ApiMensagem ??= "Nenhuma transação ainda. Cadastre conta, categorias, meios de pagamento e lançamentos para ver o dashboard.";
+        var saldoConta = await ObterSaldoTotalContasAsync();
+
+        vm.Metrics =
+        [
+            new DashboardMetricVm("Gasto total no mês", 0m.ToString("C", PtBr), "—", false, "chart"),
+            new DashboardMetricVm("Receitas no mês", 0m.ToString("C", PtBr), "—", false, "bank"),
+            new DashboardMetricVm(
+                "Saldo em contas",
+                saldoConta.ToString("C", PtBr),
+                saldoConta == 0 ? "Cadastre uma conta para começar" : "Saldo atual das contas",
+                saldoConta < 0,
+                "rocket"),
+        ];
+    }
+
+    private async Task<decimal> ObterSaldoTotalContasAsync()
+    {
+        try
+        {
+            var contas = await _accountCli.ListAsync();
+            return contas?.Sum(c => c.CurrentBalance) ?? 0m;
+        }
+        catch
+        {
+            return 0m;
+        }
     }
 
     private static string ResolverNomeCategoria(TxJson t, IReadOnlyDictionary<Guid, string> nomePorCategoriaId)
@@ -163,43 +188,6 @@ public class HomeController : Controller
         return map;
     }
 
-    private void CarregarMetricasEListaExemplo(HomeIndexViewModel vm)
-    {
-        vm.Metrics =
-        [
-            new DashboardMetricVm(
-                "Gasto total no mês",
-                "R$ 4.280,50",
-                "↑ 12% em relação ao mês anterior",
-                true,
-                "chart"),
-            new DashboardMetricVm(
-                "Saldo líquido de entrada",
-                "R$ 12.540,00",
-                "↓ Fluxo de caixa saudável",
-                false,
-                "bank"),
-            new DashboardMetricVm(
-                "Investimentos / poupança",
-                "R$ 184.920,33",
-                "↗ +8,4% Rendimento anualizado",
-                false,
-                "rocket"),
-        ];
-
-        vm.TransacoesResumo =
-        [
-            new("12 out., 2023 14:30", "Apple Store — iPhone Pro", "#882910 • Cartão final 4829", "TECNOLOGIA", "- R$ 1.299,00", false, "shopping_bag"),
-            new("11 out., 2023 09:15", "Transferência recebida — Freelance", "PIX • Conta corrente", "RENDA", "+ R$ 4.500,00", true, "payments"),
-            new("10 out., 2023 19:42", "Supermercado Central", "Débito automático", "ALIMENTAÇÃO", "- R$ 287,45", false, "shopping_cart"),
-            new("09 out., 2023 11:00", "Netflix assinatura", "Renovação mensal", "LAZER", "- R$ 55,90", false, "movie"),
-            new("08 out., 2023 16:20", "Dividendos ITUB4", "Corretora XP • Conta investimento", "INVESTIMENTOS", "+ R$ 612,00", true, "show_chart"),
-        ];
-
-        vm.TotalTransacoesExemplo = 42;
-        vm.TransacoesMostradas = vm.TransacoesResumo.Count;
-    }
-
     private static string IconForCategory(string? cat)
     {
         if (string.IsNullOrWhiteSpace(cat)) return "receipt_long";
@@ -233,10 +221,5 @@ public class HomeController : Controller
     {
         public Guid CategoryId { get; set; }
         public string? CategoryName { get; set; }
-    }
-
-    private sealed class AccountJson
-    {
-        public decimal CurrentBalance { get; set; }
     }
 }

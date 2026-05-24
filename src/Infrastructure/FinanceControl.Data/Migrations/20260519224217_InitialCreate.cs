@@ -164,21 +164,6 @@ namespace FinanceControl.Data.Migrations
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
-            migrationBuilder.InsertData(
-                table: "Accounts",
-                columns: new[] { "AccountId", "CreatedAt", "CurrentBalance", "InitialBalance", "Name", "UserId" },
-                values: new object[] { 1, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 0m, 0m, "Principal", null });
-
-            migrationBuilder.InsertData(
-                table: "TransactionTypes",
-                columns: new[] { "TransactionTypeId", "Code", "CreatedAt", "Description", "IsActive", "IsSystem", "Name", "PaymentKind", "UpdatedAt", "UserId" },
-                values: new object[,]
-                {
-                    { 1, "DEBITO", new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, true, true, "Débito", 1, null, null },
-                    { 2, "CREDITO", new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, true, true, "Crédito", 2, null, null },
-                    { 3, "DINHEIRO", new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, true, true, "Dinheiro", 3, null, null }
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_Accounts_UserId",
                 table: "Accounts",

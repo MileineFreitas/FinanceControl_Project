@@ -18,13 +18,24 @@ namespace FinanceControl.Data.Migrations
                 name: "FK_Categories_Users_UserId",
                 table: "Categories");
 
+            migrationBuilder.DropForeignKey(
+                name: "FK_Accounts_Users_UserId",
+                table: "Accounts");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Transactions_Accounts_AccountId",
+                table: "Transactions");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Transactions_Categories_CategoryId",
+                table: "Transactions");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Transactions_Users_UserId",
+                table: "Transactions");
+
             migrationBuilder.DropTable(
                 name: "TransactionTypes");
-
-            migrationBuilder.DeleteData(
-                table: "Accounts",
-                keyColumn: "AccountId",
-                keyValue: 1);
 
             migrationBuilder.DropColumn(
                 name: "UserType",
@@ -53,7 +64,7 @@ namespace FinanceControl.Data.Migrations
                 table: "Users",
                 type: "char(36)",
                 nullable: false,
-                defaultValueSql: "(NEWID())",
+                defaultValueSql: "(UUID())",
                 collation: "ascii_general_ci",
                 oldClrType: typeof(int),
                 oldType: "int")
@@ -116,7 +127,7 @@ namespace FinanceControl.Data.Migrations
                 table: "Transactions",
                 type: "char(36)",
                 nullable: false,
-                defaultValueSql: "(NEWID())",
+                defaultValueSql: "(UUID())",
                 collation: "ascii_general_ci",
                 oldClrType: typeof(int),
                 oldType: "int")
@@ -198,7 +209,7 @@ namespace FinanceControl.Data.Migrations
                 table: "Categories",
                 type: "char(36)",
                 nullable: false,
-                defaultValueSql: "(NEWID())",
+                defaultValueSql: "(UUID())",
                 comment: "Identificador único da categoria (GUID)",
                 collation: "ascii_general_ci",
                 oldClrType: typeof(int),
@@ -228,7 +239,7 @@ namespace FinanceControl.Data.Migrations
                 table: "Accounts",
                 type: "char(36)",
                 nullable: false,
-                defaultValueSql: "(NEWID())",
+                defaultValueSql: "(UUID())",
                 collation: "ascii_general_ci",
                 oldClrType: typeof(int),
                 oldType: "int")
@@ -245,7 +256,7 @@ namespace FinanceControl.Data.Migrations
                 name: "PaymentMethods",
                 columns: table => new
                 {
-                    PaymentMethodId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(NEWID())", collation: "ascii_general_ci"),
+                    PaymentMethodId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())", collation: "ascii_general_ci"),
                     Name = table.Column<string>(type: "varchar(40)", maxLength: 40, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Icon = table.Column<string>(type: "varchar(16)", maxLength: 16, nullable: false, defaultValue: "💳")
@@ -270,11 +281,6 @@ namespace FinanceControl.Data.Migrations
                 comment: "Meios de pagamento cadastrados pelo utilizador")
                 .Annotation("MySql:CharSet", "utf8mb4");
 
-            migrationBuilder.InsertData(
-                table: "Accounts",
-                columns: new[] { "AccountId", "CreatedAt", "CurrentBalance", "InitialBalance", "IsActive", "Name", "UserId" },
-                values: new object[] { new Guid("a1000001-0001-4001-8001-000000000001"), new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 0m, 0m, true, "Principal", null });
-
             migrationBuilder.CreateIndex(
                 name: "IX_PaymentMethods_UserId_Name",
                 table: "PaymentMethods",
@@ -284,6 +290,38 @@ namespace FinanceControl.Data.Migrations
             migrationBuilder.AddForeignKey(
                 name: "FK_Categories_Users_UserId",
                 table: "Categories",
+                column: "UserId",
+                principalTable: "Users",
+                principalColumn: "UserId",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Accounts_Users_UserId",
+                table: "Accounts",
+                column: "UserId",
+                principalTable: "Users",
+                principalColumn: "UserId",
+                onDelete: ReferentialAction.SetNull);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Transactions_Accounts_AccountId",
+                table: "Transactions",
+                column: "AccountId",
+                principalTable: "Accounts",
+                principalColumn: "AccountId",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Transactions_Categories_CategoryId",
+                table: "Transactions",
+                column: "CategoryId",
+                principalTable: "Categories",
+                principalColumn: "CategoryId",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Transactions_Users_UserId",
+                table: "Transactions",
                 column: "UserId",
                 principalTable: "Users",
                 principalColumn: "UserId",
@@ -299,11 +337,6 @@ namespace FinanceControl.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "PaymentMethods");
-
-            migrationBuilder.DeleteData(
-                table: "Accounts",
-                keyColumn: "AccountId",
-                keyValue: new Guid("a1000001-0001-4001-8001-000000000001"));
 
             migrationBuilder.DropColumn(
                 name: "IsActive",
@@ -342,7 +375,7 @@ namespace FinanceControl.Data.Migrations
                 nullable: false,
                 oldClrType: typeof(Guid),
                 oldType: "char(36)",
-                oldDefaultValueSql: "(NEWID())")
+                oldDefaultValueSql: "(UUID())")
                 .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn)
                 .OldAnnotation("Relational:Collation", "ascii_general_ci");
 
@@ -405,7 +438,7 @@ namespace FinanceControl.Data.Migrations
                 nullable: false,
                 oldClrType: typeof(Guid),
                 oldType: "char(36)",
-                oldDefaultValueSql: "(NEWID())")
+                oldDefaultValueSql: "(UUID())")
                 .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn)
                 .OldAnnotation("Relational:Collation", "ascii_general_ci");
 
@@ -487,7 +520,7 @@ namespace FinanceControl.Data.Migrations
                 nullable: false,
                 oldClrType: typeof(Guid),
                 oldType: "char(36)",
-                oldDefaultValueSql: "(NEWID())",
+                oldDefaultValueSql: "(UUID())",
                 oldComment: "Identificador único da categoria (GUID)")
                 .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn)
                 .OldAnnotation("Relational:Collation", "ascii_general_ci");
@@ -509,7 +542,7 @@ namespace FinanceControl.Data.Migrations
                 nullable: false,
                 oldClrType: typeof(Guid),
                 oldType: "char(36)",
-                oldDefaultValueSql: "(NEWID())")
+                oldDefaultValueSql: "(UUID())")
                 .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn)
                 .OldAnnotation("Relational:Collation", "ascii_general_ci");
 

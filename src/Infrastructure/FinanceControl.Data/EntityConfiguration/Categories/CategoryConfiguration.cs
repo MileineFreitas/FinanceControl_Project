@@ -13,7 +13,7 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
 
         builder.HasKey(c => c.CategoryId);
         builder.Property(c => c.CategoryId)
-            .HasDefaultValueSql("(NEWID())")
+            .HasDefaultValueSql("(UUID())")
             .IsRequired()
             .HasComment("Identificador único da categoria (GUID)");
 

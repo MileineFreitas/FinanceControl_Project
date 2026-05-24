@@ -105,36 +105,14 @@ public class CategoriesController(ICategoryCliService categoryCli) : Controller
         try
         {
             var data = await categoryCli.ListAsync(filter);
-            if (data?.Result is { Count: > 0 })
-            {
-                vm.UsandoDadosDemo = false;
-                vm.Categorias = data.Result.Select(CategoryViewModelMapper.ToItem).ToList();
-                return;
-            }
+            vm.Categorias = (data?.Result ?? []).Select(CategoryViewModelMapper.ToItem).ToList();
         }
-        catch
+        catch (Exception ex)
         {
-            /* demo fallback */
-        }
-
-        vm.UsandoDadosDemo = true;
-        vm.Categorias = GetDemoFallback();
-        if (!string.IsNullOrWhiteSpace(vm.Busca))
-        {
-            var term = vm.Busca.Trim();
-            vm.Categorias = vm.Categorias
-                .Where(c => c.Nome.Contains(term, StringComparison.OrdinalIgnoreCase))
-                .ToList();
+            vm.ErroPagina = $"Não foi possível carregar categorias: {ex.Message}";
+            vm.Categorias = [];
         }
     }
-
-    private static List<CategoryItemVm> GetDemoFallback() =>
-    [
-        new(null, "💼", "Salário", "Receitas fixas"),
-        new(null, "📈", "Investimentos", "Rendimentos"),
-        new(null, "🏠", "Moradia", "Aluguel e condomínio"),
-        new(null, "🛒", "Alimentação", "Mercado e refeições"),
-    ];
 
     private static async Task<string> ReadErrorAsync(HttpResponseMessage response)
     {

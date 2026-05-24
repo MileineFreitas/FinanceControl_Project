@@ -30,7 +30,7 @@ namespace FinanceControl.Data.Migrations
                     b.Property<Guid>("AccountId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)")
-                        .HasDefaultValueSql("(NEWID())");
+                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
@@ -79,7 +79,7 @@ namespace FinanceControl.Data.Migrations
                     b.Property<Guid>("CategoryId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)")
-                        .HasDefaultValueSql("(NEWID())")
+                        .HasDefaultValueSql("(UUID())")
                         .HasComment("Identificador único da categoria (GUID)");
 
                     b.Property<string>("CategoryName")
@@ -134,7 +134,7 @@ namespace FinanceControl.Data.Migrations
                     b.Property<Guid>("PaymentMethodId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)")
-                        .HasDefaultValueSql("(NEWID())");
+                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<DateTimeOffset>("DateCreated")
                         .HasColumnType("datetime(6)");
@@ -183,7 +183,7 @@ namespace FinanceControl.Data.Migrations
                     b.Property<Guid>("TransactionId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)")
-                        .HasDefaultValueSql("(NEWID())");
+                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<Guid>("AccountId")
                         .HasColumnType("char(36)");
@@ -240,7 +240,7 @@ namespace FinanceControl.Data.Migrations
                     b.Property<Guid>("UserId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)")
-                        .HasDefaultValueSql("(NEWID())");
+                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime(6)");

@@ -17,8 +17,6 @@ public class CategoryViewModel
 
     public string? ErroPagina { get; set; }
 
-    public bool UsandoDadosDemo { get; set; }
-
     public List<CategoryItemVm> Categorias { get; set; } = [];
 
     public IReadOnlyList<string> IconesDisponiveis { get; } = CategoryIcons.Available;
