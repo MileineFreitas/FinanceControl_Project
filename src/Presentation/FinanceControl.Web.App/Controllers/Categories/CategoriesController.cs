@@ -35,7 +35,7 @@ public class CategoriesController(ICategoryCliService categoryCli) : Controller
         vm.Input.Icon = CategoryIcons.Normalize(vm.Input.Icon);
 
         HttpResponseMessage response;
-        if (vm.EditingId is int id && id > 0)
+        if (vm.EditingId is Guid id && id != Guid.Empty)
         {
             var update = new CategoryUpdateDto
             {
@@ -60,8 +60,8 @@ public class CategoriesController(ICategoryCliService categoryCli) : Controller
         return RedirectToAction(nameof(Index), new { busca = vm.Busca });
     }
 
-    [HttpGet("Edit/{id:int}")]
-    public async Task<IActionResult> Edit(int id, string? busca)
+    [HttpGet("Edit/{id:guid}")]
+    public async Task<IActionResult> Edit(Guid id, string? busca)
     {
         var vm = new CategoryViewModel { EditingId = id, ModalAberto = true, Busca = busca };
         var dto = await categoryCli.GetByIdAsync(id);
@@ -79,9 +79,9 @@ public class CategoriesController(ICategoryCliService categoryCli) : Controller
         return View("Index", vm);
     }
 
-    [HttpPost("Delete/{id:int}")]
+    [HttpPost("Delete/{id:guid}")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Delete(int id, string? busca)
+    public async Task<IActionResult> Delete(Guid id, string? busca)
     {
         var vm = new CategoryViewModel { Busca = busca };
         var res = await categoryCli.DeleteAsync(id);

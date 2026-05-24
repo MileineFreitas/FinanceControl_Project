@@ -27,15 +27,15 @@ public sealed class FinanceControlApiClient(HttpClient httpClient) : IFinanceCon
     public Task<HttpResponseMessage> CreateTransactionAsync(TransactionCreateDto request) =>
         httpClient.PostAsJsonAsync("api/Transaction", request);
 
-    public Task<HttpResponseMessage> GetTransactionTypesAsync() =>
-        httpClient.GetAsync("api/TransactionTypes");
+    public Task<HttpResponseMessage> GetPaymentMethodsAsync() =>
+        httpClient.GetAsync("api/PaymentMethods");
 
-    public Task<HttpResponseMessage> DeleteCategoryAsync(int categoryId) =>
+    public Task<HttpResponseMessage> DeleteCategoryAsync(Guid categoryId) =>
         httpClient.DeleteAsync($"api/Category/{categoryId}");
 
-    public Task<HttpResponseMessage> DeleteTransactionAsync(int transactionId) =>
+    public Task<HttpResponseMessage> DeleteTransactionAsync(Guid transactionId) =>
         httpClient.DeleteAsync($"api/Transaction/{transactionId}");
 
-    public Task<HttpResponseMessage> GetAccountByIdAsync(int accountId) =>
+    public Task<HttpResponseMessage> GetAccountByIdAsync(Guid accountId) =>
         httpClient.GetAsync($"api/Account/{accountId}");
 }

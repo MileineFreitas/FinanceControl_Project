@@ -8,11 +8,11 @@ public interface IAccountAppService
 {
     Task<DataResultDto<AccountDto>> FilterAsync(DataFilterDto filter);
 
-    Task<AccountDto?> GetByIdAsync(int id);
+    Task<AccountDto?> GetByIdAsync(Guid id);
 
     Task<AccountDto> CreateAsync(AccountCreateDto dto);
 
     Task<AccountDto?> UpdateAsync(AccountUpdateDto dto);
 
-    Task<bool> DeleteAsync(int id);
+    Task<bool> DeleteAsync(Guid id);
 }

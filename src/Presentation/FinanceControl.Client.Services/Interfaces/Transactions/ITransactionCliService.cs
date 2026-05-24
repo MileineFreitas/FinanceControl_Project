@@ -8,11 +8,11 @@ public interface ITransactionCliService
 {
     Task<DataResultDto<TransactionDto>?> ListAsync(DataFilterDto? filter = null);
 
-    Task<TransactionDto?> GetByIdAsync(int id);
+    Task<TransactionDto?> GetByIdAsync(Guid id);
 
     Task<HttpResponseMessage> CreateAsync(TransactionCreateDto dto);
 
-    Task<HttpResponseMessage> UpdateAsync(int id, TransactionUpdateDto dto);
+    Task<HttpResponseMessage> UpdateAsync(Guid id, TransactionUpdateDto dto);
 
-    Task<HttpResponseMessage> DeleteAsync(int id);
+    Task<HttpResponseMessage> DeleteAsync(Guid id);
 }

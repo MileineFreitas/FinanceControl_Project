@@ -18,7 +18,7 @@ public class UserAppService(
         return domService.Login(user);
     }
 
-    public async Task<UserDto> RegisterAsync(UserRegisterDto dto)
+    public async Task<UserDto> RegisterAsync(RegisterUserDto dto)
     {
         domService.ValidateRegister(dto);
         if (await repository.EmailExistsAsync(dto.Email.Trim()))
@@ -32,7 +32,7 @@ public class UserAppService(
     public Task<DataResultDto<UserDto>> FilterAsync(DataFilterDto filter) =>
         repository.FilterAsync(filter);
 
-    public Task<UserDto?> GetByIdAsync(int id) =>
+    public Task<UserDto?> GetByIdAsync(Guid id) =>
         repository.GetByIdAsync(id);
 
     public async Task<UserDto?> UpdateAsync(UserUpdateDto dto)
@@ -45,6 +45,6 @@ public class UserAppService(
         return await repository.GetByIdAsync(entity.UserId);
     }
 
-    public Task<bool> DeleteAsync(int id) =>
+    public Task<bool> DeleteAsync(Guid id) =>
         repository.DeleteAsync(id);
 }

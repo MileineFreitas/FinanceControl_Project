@@ -20,11 +20,11 @@ public interface IFinanceControlApiClient
 
     Task<HttpResponseMessage> CreateTransactionAsync(TransactionCreateDto request);
 
-    Task<HttpResponseMessage> GetTransactionTypesAsync();
+    Task<HttpResponseMessage> GetPaymentMethodsAsync();
 
-    Task<HttpResponseMessage> DeleteCategoryAsync(int categoryId);
+    Task<HttpResponseMessage> DeleteCategoryAsync(Guid categoryId);
 
-    Task<HttpResponseMessage> DeleteTransactionAsync(int transactionId);
+    Task<HttpResponseMessage> DeleteTransactionAsync(Guid transactionId);
 
-    Task<HttpResponseMessage> GetAccountByIdAsync(int accountId);
+    Task<HttpResponseMessage> GetAccountByIdAsync(Guid accountId);
 }

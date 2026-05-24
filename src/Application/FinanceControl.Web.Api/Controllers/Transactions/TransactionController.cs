@@ -30,8 +30,8 @@ public class TransactionController(ITransactionAppService appService) : Controll
         return Ok(await appService.FilterAsync(filter));
     }
 
-    [HttpGet("{id:int:min(1)}", Name = "GetTransactionById")]
-    public async Task<IActionResult> GetById(int id)
+    [HttpGet("{id:guid}", Name = "GetTransactionById")]
+    public async Task<IActionResult> GetById(Guid id)
     {
         var dto = await appService.GetByIdAsync(id);
         return dto == null ? NotFound() : Ok(dto);
@@ -52,8 +52,8 @@ public class TransactionController(ITransactionAppService appService) : Controll
         }
     }
 
-    [HttpPut("{id:int:min(1)}")]
-    public async Task<IActionResult> Put(int id, [FromBody] TransactionUpdateDto dto)
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> Put(Guid id, [FromBody] TransactionUpdateDto dto)
     {
         if (id != dto.TransactionId) return BadRequest();
         try
@@ -67,8 +67,8 @@ public class TransactionController(ITransactionAppService appService) : Controll
         }
     }
 
-    [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete(int id)
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> Delete(Guid id)
     {
         var deleted = await appService.DeleteAsync(id);
         return deleted ? NoContent() : NotFound();

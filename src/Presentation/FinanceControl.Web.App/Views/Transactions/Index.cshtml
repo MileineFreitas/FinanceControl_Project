@@ -102,7 +102,7 @@
                                 <td><span class="wt-badge @badgeClass">@t.CategoriaNome</span></td>
                                 <td style="text-align:right" class="@numClass">@formatted</td>
                                 <td style="text-align:right">
-                                    @if (t.Id > 0)
+                                    @if (t.Id != Guid.Empty)
                                     {
                                         <div style="display:inline-flex;gap:.25rem;justify-content:flex-end">
                                             <a class="wt-btn wt-btn--ghost"
@@ -178,7 +178,7 @@
 <div class="wt-modal-overlay @(showModal ? "" : "is-hidden")" id="wt-tx-modal">
     <div class="wt-modal" data-wt-stop-propagation="1">
         <form method="post" asp-controller="Transactions" asp-action="Salvar">
-            @if (Model.EditingId is int editId)
+            @if (Model.EditingId is Guid editId && editId != Guid.Empty)
             {
                 <input type="hidden" asp-for="EditingId" />
                 <input type="hidden" asp-for="AccountIdEdicao" />

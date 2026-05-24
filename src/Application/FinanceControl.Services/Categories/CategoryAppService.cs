@@ -16,7 +16,7 @@ public class CategoryAppService(
     public Task<DataResultDto<CategoryDto>> FilterAsync(DataFilterDto filter) =>
         repository.FilterAsync(filter);
 
-    public Task<CategoryDto?> GetByIdAsync(int id) =>
+    public Task<CategoryDto?> GetByIdAsync(Guid id) =>
         repository.GetByIdAsync(id);
 
     public async Task<CategoryDto> CreateAsync(CategoryRegisterDto dto)
@@ -37,7 +37,7 @@ public class CategoryAppService(
         return await repository.GetByIdAsync(entity.CategoryId);
     }
 
-    public async Task<bool> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(Guid id)
     {
         try
         {

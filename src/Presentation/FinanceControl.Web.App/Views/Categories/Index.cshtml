@@ -48,7 +48,7 @@
                         {
                             <p class="wt-hint" style="margin-top:.35rem">@cat.Descricao</p>
                         }
-                        @if (cat.CategoryId is int cid && cid > 0)
+                        @if (cat.CategoryId is Guid cid && cid != Guid.Empty)
                         {
                             <div style="display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap">
                                 <a asp-action="Edit" asp-route-id="@cid" asp-route-busca="@Model.Busca" class="wt-btn wt-btn--ghost" title="Editar">?</a>
@@ -72,7 +72,7 @@
     <div class="wt-modal" data-wt-stop-propagation>
         <form method="post" asp-action="Save" id="category-form" class="wt-cat-form">
             @Html.AntiForgeryToken()
-            @if (Model.EditingId is int editId)
+            @if (Model.EditingId is Guid editId && editId != Guid.Empty)
             {
                 <input type="hidden" name="EditingId" value="@editId" />
             }

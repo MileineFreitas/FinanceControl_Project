@@ -1,5 +1,5 @@
+using FinanceControl.Contracts.Constants;
 using FinanceControl.Domain.Entities.Accounts;
-using FinanceControl.Infrastructure.Seeding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -11,6 +11,9 @@ public class AccountConfiguration : IEntityTypeConfiguration<Account>
     {
         builder.ToTable("Accounts");
         builder.HasKey(a => a.AccountId);
+        builder.Property(a => a.AccountId)
+            .HasDefaultValueSql("(NEWID())")
+            .IsRequired();
         builder.Property(a => a.Name).HasMaxLength(120).IsRequired();
         builder.Property(a => a.InitialBalance).HasPrecision(18, 2);
         builder.Property(a => a.CurrentBalance).HasPrecision(18, 2);

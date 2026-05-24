@@ -21,7 +21,7 @@ public class AccountRepository(FinanceDbContext context) : IAccountRepository
 
         if (filter.Filters != null &&
             filter.Filters.TryGetValue("userId", out var userIdStr) &&
-            int.TryParse(userIdStr, out var userId))
+            Guid.TryParse(userIdStr, out var userId))
         {
             query = query.Where(a => a.UserId == userId || a.UserId == null);
         }
@@ -39,7 +39,7 @@ public class AccountRepository(FinanceDbContext context) : IAccountRepository
         };
     }
 
-    public async Task<AccountDto?> GetByIdAsync(int accountId)
+    public async Task<AccountDto?> GetByIdAsync(Guid accountId)
     {
         var entity = await context.Accounts
             .AsNoTracking()
@@ -55,13 +55,13 @@ public class AccountRepository(FinanceDbContext context) : IAccountRepository
         return account;
     }
 
-    public Task<Account?> FindTrackedAsync(int id) =>
+    public Task<Account?> FindTrackedAsync(Guid id) =>
         context.Accounts.FirstOrDefaultAsync(a => a.AccountId == id);
 
     public Task SaveChangesAsync() =>
         context.SaveChangesAsync();
 
-    public async Task<bool> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(Guid id)
     {
         var entity = await context.Accounts.FirstOrDefaultAsync(a => a.AccountId == id);
         if (entity == null) return false;
@@ -71,10 +71,10 @@ public class AccountRepository(FinanceDbContext context) : IAccountRepository
         return true;
     }
 
-    public Task<bool> HasTransactionsAsync(int accountId) =>
+    public Task<bool> HasTransactionsAsync(Guid accountId) =>
         context.Transactions.AnyAsync(t => t.AccountId == accountId);
 
-    public async Task AdjustBalanceAsync(int accountId, decimal delta)
+    public async Task AdjustBalanceAsync(Guid accountId, decimal delta)
     {
         var account = await context.Accounts.FindAsync([accountId]);
         if (account == null) return;

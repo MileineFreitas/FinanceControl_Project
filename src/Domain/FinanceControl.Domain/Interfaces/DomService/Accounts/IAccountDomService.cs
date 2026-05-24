@@ -1,5 +1,6 @@
 using FinanceControl.Contracts.Dtos.Accounts;
 using FinanceControl.Domain.Entities.Accounts;
+using FinanceControl.Domain.Interfaces.DomService.Accounts;
 
 namespace FinanceControl.Domain.Interfaces.DomService.Accounts;
 
@@ -9,5 +10,5 @@ public interface IAccountDomService
 
     void ApplyUpdate(Account entity, AccountUpdateDto dto);
 
-    void ValidateDelete(int accountId, bool hasTransactions);
+    void ValidateDelete(Guid accountId, bool hasTransactions);
 }

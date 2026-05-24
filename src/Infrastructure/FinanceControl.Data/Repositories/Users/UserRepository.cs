@@ -42,7 +42,7 @@ public class UserRepository(FinanceDbContext context) : IUserRepository
         };
     }
 
-    public async Task<UserDto?> GetByIdAsync(int id)
+    public async Task<UserDto?> GetByIdAsync(Guid id)
     {
         var entity = await context.Users
             .AsNoTracking()
@@ -58,13 +58,13 @@ public class UserRepository(FinanceDbContext context) : IUserRepository
         return user;
     }
 
-    public Task<User?> FindTrackedAsync(int id) =>
+    public Task<User?> FindTrackedAsync(Guid id) =>
         context.Users.FirstOrDefaultAsync(u => u.UserId == id);
 
     public Task SaveChangesAsync() =>
         context.SaveChangesAsync();
 
-    public async Task<bool> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(Guid id)
     {
         var entity = await context.Users.FirstOrDefaultAsync(u => u.UserId == id);
         if (entity == null) return false;

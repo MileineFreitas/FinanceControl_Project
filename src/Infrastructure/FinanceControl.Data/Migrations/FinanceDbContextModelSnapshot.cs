@@ -24,11 +24,10 @@ namespace FinanceControl.Data.Migrations
 
             modelBuilder.Entity("FinanceControl.Domain.Entities.Accounts.Account", b =>
                 {
-                    b.Property<int>("AccountId")
+                    b.Property<Guid>("AccountId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("AccountId"));
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(NEWID())");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
@@ -41,13 +40,18 @@ namespace FinanceControl.Data.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(true);
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(120)
                         .HasColumnType("varchar(120)");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("char(36)");
 
                     b.HasKey("AccountId");
 
@@ -58,67 +62,78 @@ namespace FinanceControl.Data.Migrations
                     b.HasData(
                         new
                         {
-                            AccountId = 1,
+                            AccountId = new Guid("a1000001-0001-4001-8001-000000000001"),
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             CurrentBalance = 0m,
                             InitialBalance = 0m,
+                            IsActive = true,
                             Name = "Principal"
                         });
                 });
 
             modelBuilder.Entity("FinanceControl.Domain.Entities.Categories.Category", b =>
                 {
-                    b.Property<int>("CategoryId")
+                    b.Property<Guid>("CategoryId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("CategoryId"));
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(NEWID())")
+                        .HasComment("Identificador único da categoria (GUID)");
 
                     b.Property<string>("CategoryName")
                         .IsRequired()
                         .HasMaxLength(40)
-                        .HasColumnType("varchar(40)");
+                        .HasColumnType("varchar(40)")
+                        .HasComment("Nome da categoria");
 
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("datetime(6)");
+                    b.Property<DateTimeOffset>("DateCreated")
+                        .HasColumnType("datetime(6)")
+                        .HasComment("Data de criação do registro");
 
                     b.Property<string>("Description")
-                        .HasColumnType("longtext");
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasComment("Descrição opcional da categoria");
 
                     b.Property<string>("Icon")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(16)
                         .HasColumnType("varchar(16)")
-                        .HasDefaultValue("📁");
+                        .HasDefaultValue("📁")
+                        .HasComment("Ícone representativo da categoria");
 
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime(6)");
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(true)
+                        .HasComment("Indica se a categoria está ativa para novos lançamentos");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasComment("Data da última atualização");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("char(36)")
+                        .HasComment("Referência ao usuário proprietário da categoria");
 
                     b.HasKey("CategoryId");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories", null, t =>
+                        {
+                            t.HasComment("Tabela de categorias de transações");
+                        });
                 });
 
-            modelBuilder.Entity("FinanceControl.Domain.Entities.TransactionTypes.TransactionTypeDefinition", b =>
+            modelBuilder.Entity("FinanceControl.Domain.Entities.PaymentMethods.PaymentMethod", b =>
                 {
-                    b.Property<int>("TransactionTypeId")
+                    b.Property<Guid>("PaymentMethodId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(NEWID())");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("TransactionTypeId"));
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
-
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTimeOffset>("DateCreated")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Description")
@@ -133,91 +148,53 @@ namespace FinanceControl.Data.Migrations
                         .HasDefaultValue("💳");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<bool>("IsSystem")
-                        .HasColumnType("tinyint(1)");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(40)
                         .HasColumnType("varchar(40)");
 
-                    b.Property<int?>("PaymentKind")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("char(36)");
 
-                    b.HasKey("TransactionTypeId");
+                    b.HasKey("PaymentMethodId");
 
-                    b.HasIndex("Code")
-                        .IsUnique();
+                    b.HasIndex("UserId", "Name")
+                        .IsUnique()
+                        .HasDatabaseName("IX_PaymentMethods_UserId_Name");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("TransactionTypes", (string)null);
-
-                    b.HasData(
-                        new
+                    b.ToTable("PaymentMethods", null, t =>
                         {
-                            TransactionTypeId = 1,
-                            Code = "DEBITO",
-                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Icon = "💳",
-                            IsActive = true,
-                            IsSystem = true,
-                            Name = "Débito",
-                            PaymentKind = 1
-                        },
-                        new
-                        {
-                            TransactionTypeId = 2,
-                            Code = "CREDITO",
-                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Icon = "💳",
-                            IsActive = true,
-                            IsSystem = true,
-                            Name = "Crédito",
-                            PaymentKind = 2
-                        },
-                        new
-                        {
-                            TransactionTypeId = 3,
-                            Code = "DINHEIRO",
-                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Icon = "💵",
-                            IsActive = true,
-                            IsSystem = true,
-                            Name = "Dinheiro",
-                            PaymentKind = 3
+                            t.HasComment("Meios de pagamento cadastrados pelo utilizador");
                         });
                 });
 
             modelBuilder.Entity("FinanceControl.Domain.Entities.Transactions.Transaction", b =>
                 {
-                    b.Property<int>("TransactionId")
+                    b.Property<Guid>("TransactionId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(NEWID())");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("TransactionId"));
+                    b.Property<Guid>("AccountId")
+                        .HasColumnType("char(36)");
 
-                    b.Property<int>("AccountId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("char(36)");
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<DateTime>("Date")
+                    b.Property<DateTimeOffset>("Date")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int?>("PaymentKind")
+                    b.Property<int>("PaymentKind")
                         .HasColumnType("int");
 
                     b.Property<int>("Status")
@@ -236,11 +213,11 @@ namespace FinanceControl.Data.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)");
 
                     b.HasKey("TransactionId");
 
@@ -255,14 +232,18 @@ namespace FinanceControl.Data.Migrations
 
             modelBuilder.Entity("FinanceControl.Domain.Entities.Users.User", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<Guid>("UserId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("UserId"));
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(NEWID())");
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Password")
                         .IsRequired()
@@ -270,7 +251,8 @@ namespace FinanceControl.Data.Migrations
                         .HasColumnType("varchar(20)");
 
                     b.Property<string>("ProfilePhoto")
-                        .HasColumnType("longtext");
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
 
                     b.Property<string>("UserEmail")
                         .IsRequired()
@@ -281,9 +263,6 @@ namespace FinanceControl.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
-
-                    b.Property<int>("UserType")
-                        .HasColumnType("int");
 
                     b.HasKey("UserId");
 
@@ -304,17 +283,18 @@ namespace FinanceControl.Data.Migrations
                 {
                     b.HasOne("FinanceControl.Domain.Entities.Users.User", "User")
                         .WithMany("Categories")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("FinanceControl.Domain.Entities.TransactionTypes.TransactionTypeDefinition", b =>
+            modelBuilder.Entity("FinanceControl.Domain.Entities.PaymentMethods.PaymentMethod", b =>
                 {
                     b.HasOne("FinanceControl.Domain.Entities.Users.User", "User")
-                        .WithMany()
+                        .WithMany("PaymentMethods")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("User");
                 });
@@ -361,6 +341,8 @@ namespace FinanceControl.Data.Migrations
                     b.Navigation("Accounts");
 
                     b.Navigation("Categories");
+
+                    b.Navigation("PaymentMethods");
 
                     b.Navigation("Transactions");
                 });

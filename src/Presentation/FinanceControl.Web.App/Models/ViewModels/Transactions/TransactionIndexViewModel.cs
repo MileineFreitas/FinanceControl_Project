@@ -14,7 +14,7 @@ public sealed class TransactionIndexViewModel
 
     public string? FiltroTipo { get; set; }
 
-    public int? FiltroCategoriaId { get; set; }
+    public Guid? FiltroCategoriaId { get; set; }
 
     public string? Busca { get; set; }
 
@@ -26,15 +26,15 @@ public sealed class TransactionIndexViewModel
 
     public TransacaoFormInput Input { get; set; } = new();
 
-    public int? EditingId { get; set; }
+    public Guid? EditingId { get; set; }
 
-    public int AccountIdEdicao { get; set; }
+    public Guid AccountIdEdicao { get; set; }
 
     public TransactionStatus StatusEdicao { get; set; } = TransactionStatus.Pago;
 
     public bool ModalAberto { get; set; }
 
-    public bool ModoEdicao => EditingId is > 0;
+    public bool ModoEdicao => EditingId is not null && EditingId != Guid.Empty;
 
     public string? ErroModal { get; set; }
 
@@ -59,7 +59,7 @@ public sealed class TransactionIndexViewModel
             ["Pag"] = (pag ?? Pag).ToString()
         };
         if (!string.IsNullOrEmpty(FiltroTipo)) rotas["FiltroTipo"] = FiltroTipo;
-        if (FiltroCategoriaId is int cat && cat > 0) rotas["FiltroCategoriaId"] = cat.ToString();
+        if (FiltroCategoriaId is Guid cat && cat != Guid.Empty) rotas["FiltroCategoriaId"] = cat.ToString();
         if (!string.IsNullOrWhiteSpace(Busca)) rotas["Busca"] = Busca.Trim();
         return rotas;
     }
@@ -96,21 +96,21 @@ public sealed class TransacaoFormInput
 
     public int TipoTransacao { get; set; } = (int)TransactionTypeKind.Receita;
 
-    public int PaymentMethodId { get; set; }
+    public Guid PaymentMethodId { get; set; }
 
     public string Descricao { get; set; } = "";
 
     public decimal Valor { get; set; }
 
-    public int CategoryId { get; set; }
+    public Guid CategoryId { get; set; }
 }
 
 public sealed record TransacaoListaVm(
-    int Id,
+    Guid Id,
     DateTime Data,
     string Descricao,
     string CategoriaNome,
-    int CategoriaId,
+    Guid CategoriaId,
     TransactionTypeKind TransactionTypeKind,
     string? MeioPagamento,
     decimal Valor)
@@ -118,6 +118,6 @@ public sealed record TransacaoListaVm(
     public bool IsReceita => TransactionTypeKind == TransactionTypeKind.Receita;
 }
 
-public sealed record CategoriaOpcaoVm(int Id, string Nome, string Icone = "📁");
+public sealed record CategoriaOpcaoVm(Guid Id, string Nome, string Icone = "📁");
 
-public sealed record MeioPagamentoOpcaoVm(int Id, string Nome, string Icone, PaymentKind? PaymentKind);
+public sealed record MeioPagamentoOpcaoVm(Guid Id, string Nome, string Icone, PaymentKind? PaymentKind);

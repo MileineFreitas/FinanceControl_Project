@@ -3,7 +3,7 @@
     var isHome = path is "home" or "";
     var isTrans = path.StartsWith("transacoes", StringComparison.Ordinal) || path.StartsWith("transactions", StringComparison.Ordinal);
     var isCat = path.StartsWith("categorias", StringComparison.Ordinal);
-    var isPay = path.StartsWith("tipos-transacao", StringComparison.Ordinal);
+    var isPay = path.StartsWith("meios-pagamento", StringComparison.Ordinal) || path.StartsWith("tipos-transacao", StringComparison.Ordinal);
     var isInv = path.StartsWith("dashboards", StringComparison.Ordinal);
     var isRel = path.StartsWith("relatorios", StringComparison.Ordinal);
 }
@@ -30,7 +30,7 @@
                 <span class="sidebar__label">Categorias</span>
             </a>
 
-            <a class="sidebar__item @(isPay ? "sidebar__item--active" : null)" href="~/tipos-transacao" title="Meios de pagamento">
+            <a class="sidebar__item @(isPay ? "sidebar__item--active" : null)" href="~/meios-pagamento" title="Meios de pagamento">
                 <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4V8h16v10zm-6-6h-2v2h2v-2z"/></svg>
                 <span class="sidebar__label">Meios de pagamento</span>
             </a>

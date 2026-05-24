@@ -25,8 +25,8 @@ public class AccountController(IAccountAppService appService) : ControllerBase
         return Ok(result.Result);
     }
 
-    [HttpGet("{id:int:min(1)}", Name = "GetAccountById")]
-    public async Task<IActionResult> GetById(int id)
+    [HttpGet("{id:guid}", Name = "GetAccountById")]
+    public async Task<IActionResult> GetById(Guid id)
     {
         var dto = await appService.GetByIdAsync(id);
         return dto == null ? NotFound() : Ok(dto);
@@ -47,16 +47,16 @@ public class AccountController(IAccountAppService appService) : ControllerBase
         }
     }
 
-    [HttpPut("{id:int:min(1)}")]
-    public async Task<IActionResult> Put(int id, [FromBody] AccountUpdateDto dto)
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> Put(Guid id, [FromBody] AccountUpdateDto dto)
     {
         if (id != dto.AccountId) return BadRequest();
         var updated = await appService.UpdateAsync(dto);
         return updated == null ? NotFound() : NoContent();
     }
 
-    [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete(int id)
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> Delete(Guid id)
     {
         try
         {

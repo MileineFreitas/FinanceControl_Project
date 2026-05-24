@@ -105,7 +105,7 @@
         { t: 'Dashboard', u: '/home', k: 'dashboard início home painel principal' },
         { t: 'Transações', u: '/transacoes', k: 'transações lançamentos movimentações extrato' },
         { t: 'Categorias', u: '/categorias', k: 'categorias classificação etiquetas' },
-        { t: 'Meios de pagamento', u: '/tipos-transacao', k: 'pagamento pix débito crédito dinheiro meios' },
+        { t: 'Meios de pagamento', u: '/meios-pagamento', k: 'pagamento pix débito crédito dinheiro meios' },
         { t: 'Investimentos', u: '/dashboards/geral', k: 'investimentos gráficos portfolio ações' },
         { t: 'Relatórios', u: '/relatorios', k: 'relatórios exportar resumo' }
     ];

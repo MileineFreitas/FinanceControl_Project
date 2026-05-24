@@ -2,7 +2,7 @@ using System.Globalization;
 using FinanceControl.Client.Services.Interfaces.Accounts;
 using FinanceControl.Client.Services.Interfaces.Categories;
 using FinanceControl.Client.Services.Interfaces.Transactions;
-using FinanceControl.Client.Services.Interfaces.TransactionTypes;
+using FinanceControl.Client.Services.Interfaces.PaymentMethods;
 using FinanceControl.Contracts.Constants;
 using FinanceControl.Contracts.Dtos.Transactions;
 using FinanceControl.Contracts.Enumerators.Transactions;
@@ -19,17 +19,17 @@ public class TransactionsController : Controller
 
     private readonly ITransactionCliService _transactionCli;
     private readonly ICategoryCliService _categoryCli;
-    private readonly ITransactionTypeCliService _paymentMethodCli;
+    private readonly IPaymentMethodCliService _paymentMethodCli;
     private readonly IAccountCliService _accountCli;
 
     private List<TransacaoListaVm> _todas = [];
-    private int? _contaPadraoId;
-    private int? _usuarioPadraoId;
+    private Guid? _contaPadraoId;
+    private Guid? _usuarioPadraoId;
 
     public TransactionsController(
         ITransactionCliService transactionCli,
         ICategoryCliService categoryCli,
-        ITransactionTypeCliService paymentMethodCli,
+        IPaymentMethodCliService paymentMethodCli,
         IAccountCliService accountCli)
     {
         _transactionCli = transactionCli;
@@ -54,10 +54,10 @@ public class TransactionsController : Controller
     public IActionResult TransactionsRedirect() =>
         RedirectToActionPermanent(nameof(Index));
 
-    [HttpGet("Editar/{id:int}")]
-    public async Task<IActionResult> Editar(int id, TransactionIndexViewModel vm)
+    [HttpGet("Editar/{id:guid}")]
+    public async Task<IActionResult> Editar(Guid id, TransactionIndexViewModel vm)
     {
-        if (id <= 0)
+        if (id == Guid.Empty)
             return RedirectToAction(nameof(Index), vm.RotasPagina());
 
         vm.EditingId = id;
@@ -109,15 +109,15 @@ public class TransactionsController : Controller
             return View("Index", vm);
         }
 
-        var dataUtc = DateTime.SpecifyKind(vm.Input.Data.Date, DateTimeKind.Utc);
+        var dataUtc = new DateTimeOffset(DateTime.SpecifyKind(vm.Input.Data.Date, DateTimeKind.Utc));
 
         try
         {
             HttpResponseMessage response;
-            if (vm.EditingId is int editId && editId > 0)
+            if (vm.EditingId is Guid editId && editId != Guid.Empty)
             {
-                var accountId = vm.AccountIdEdicao > 0 ? vm.AccountIdEdicao : _contaPadraoId ?? 0;
-                if (accountId <= 0)
+                var accountId = vm.AccountIdEdicao != Guid.Empty ? vm.AccountIdEdicao : _contaPadraoId ?? Guid.Empty;
+                if (accountId == Guid.Empty)
                 {
                     vm.ErroModal = "Conta da transação não disponível.";
                     AplicarFiltrosEPaginar(vm);
@@ -131,16 +131,15 @@ public class TransactionsController : Controller
                     TransactionValue = vm.Input.Valor,
                     Date = dataUtc,
                     TransactionTypeKind = tipo,
-                    PaymentKind = meio,
+                    PaymentKind = meio ?? PaymentKind.Debit,
                     CategoryId = vm.Input.CategoryId,
-                    AccountId = accountId,
-                    Status = vm.StatusEdicao
+                    AccountId = accountId
                 };
                 response = await _transactionCli.UpdateAsync(editId, update);
             }
             else
             {
-                if (_contaPadraoId is not int accountId || _usuarioPadraoId is not int userId)
+                if (_contaPadraoId is not Guid accountId || _usuarioPadraoId is not Guid userId)
                 {
                     vm.ErroModal = "Conta padrão não disponível. Verifique se a API está em execução.";
                     AplicarFiltrosEPaginar(vm);
@@ -153,11 +152,10 @@ public class TransactionsController : Controller
                     TransactionValue = vm.Input.Valor,
                     Date = dataUtc,
                     TransactionTypeKind = tipo,
-                    PaymentKind = meio,
+                    PaymentKind = meio ?? PaymentKind.Debit,
                     CategoryId = vm.Input.CategoryId,
                     AccountId = accountId,
-                    UserId = userId,
-                    Status = TransactionStatus.Pago
+                    UserId = userId
                 };
                 response = await _transactionCli.CreateAsync(create);
             }
@@ -182,11 +180,11 @@ public class TransactionsController : Controller
         }
     }
 
-    [HttpPost("Excluir/{id:int}")]
+    [HttpPost("Excluir/{id:guid}")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Excluir(int id, TransactionIndexViewModel vm)
+    public async Task<IActionResult> Excluir(Guid id, TransactionIndexViewModel vm)
     {
-        if (id <= 0)
+        if (id == Guid.Empty)
             return RedirectToAction(nameof(Index), vm.RotasPagina());
 
         try
@@ -208,7 +206,7 @@ public class TransactionsController : Controller
         IEnumerable<TransacaoListaVm> q = _todas;
         if (vm.FiltroTipo == "1" || vm.FiltroTipo == "2")
             q = q.Where(t => (int)t.TransactionTypeKind == int.Parse(vm.FiltroTipo));
-        if (vm.FiltroCategoriaId is int categoriaFiltro && categoriaFiltro > 0)
+        if (vm.FiltroCategoriaId is Guid categoriaFiltro && categoriaFiltro != Guid.Empty)
             q = q.Where(t => t.CategoriaId == categoriaFiltro);
 
         if (!string.IsNullOrWhiteSpace(vm.Busca))
@@ -243,7 +241,7 @@ public class TransactionsController : Controller
             }
 
             _contaPadraoId = conta.AccountId;
-            _usuarioPadraoId = conta.UserId ?? 1;
+            _usuarioPadraoId = conta.UserId;
         }
         catch (Exception ex)
         {
@@ -290,10 +288,10 @@ public class TransactionsController : Controller
                 foreach (var m in list.Where(t => t.IsActive).OrderBy(t => t.Name))
                 {
                     vm.MeiosPagamentoOpcoes.Add(new MeioPagamentoOpcaoVm(
-                        m.TransactionTypeId,
+                        m.PaymentMethodId,
                         m.Name,
                         PaymentMethodIcons.Normalize(m.Icon),
-                        m.PaymentKind));
+                        PaymentMethodKindResolver.FromName(m.Name)));
                 }
             }
         }
@@ -345,7 +343,7 @@ public class TransactionsController : Controller
 
         return new TransacaoListaVm(
             t.TransactionId,
-            t.Date,
+            t.Date.UtcDateTime,
             t.TransactionDescription ?? "",
             categoria,
             t.CategoryId,
@@ -401,9 +399,7 @@ public class TransactionsController : Controller
 
     private void PreencherFormularioEdicao(TransactionIndexViewModel vm, TransactionDto dto)
     {
-        var dataLocal = dto.Date.Kind == DateTimeKind.Utc
-            ? dto.Date.ToLocalTime().Date
-            : dto.Date.Date;
+        var dataLocal = dto.Date.UtcDateTime.Date;
 
         vm.Input = new TransacaoFormInput
         {
@@ -415,13 +411,12 @@ public class TransactionsController : Controller
             PaymentMethodId = ResolverPaymentMethodId(vm, dto.PaymentKind)
         };
         vm.AccountIdEdicao = dto.AccountId;
-        vm.StatusEdicao = dto.Status;
     }
 
-    private int ResolverPaymentMethodId(TransactionIndexViewModel vm, PaymentKind? paymentKind)
+    private Guid ResolverPaymentMethodId(TransactionIndexViewModel vm, PaymentKind? paymentKind)
     {
-        if (paymentKind is null) return 0;
-        return vm.MeiosPagamentoOpcoes.FirstOrDefault(m => m.PaymentKind == paymentKind)?.Id ?? 0;
+        if (paymentKind is null) return Guid.Empty;
+        return vm.MeiosPagamentoOpcoes.FirstOrDefault(m => m.PaymentKind == paymentKind)?.Id ?? Guid.Empty;
     }
 
     private bool ValidarFormulario(TransactionIndexViewModel vm, out TransactionTypeKind tipo, out PaymentKind? meio)
@@ -441,7 +436,7 @@ public class TransactionsController : Controller
             return false;
         }
 
-        if (vm.Input.CategoryId <= 0)
+        if (vm.Input.CategoryId == Guid.Empty)
         {
             vm.ErroModal = "Selecione uma categoria.";
             return false;
@@ -451,7 +446,7 @@ public class TransactionsController : Controller
             ? (TransactionTypeKind)vm.Input.TipoTransacao
             : TransactionTypeKind.Receita;
 
-        if (vm.Input.PaymentMethodId > 0)
+        if (vm.Input.PaymentMethodId != Guid.Empty)
         {
             var metodo = vm.MeiosPagamentoOpcoes.FirstOrDefault(m => m.Id == vm.Input.PaymentMethodId);
             if (metodo == null)

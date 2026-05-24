@@ -28,12 +28,12 @@ public sealed class UserCliService(HttpClient httpClient) : IUserCliService
         return await httpClient.GetFromJsonAsync<DataResultDto<UserDto>>(BaseRoute + query);
     }
 
-    public Task<UserDto?> GetByIdAsync(int id) =>
+    public Task<UserDto?> GetByIdAsync(Guid id) =>
         httpClient.GetFromJsonAsync<UserDto>($"{BaseRoute}/{id}");
 
-    public Task<HttpResponseMessage> UpdateAsync(int id, UserUpdateDto dto) =>
+    public Task<HttpResponseMessage> UpdateAsync(Guid id, UserUpdateDto dto) =>
         httpClient.PutAsJsonAsync($"{BaseRoute}/{id}/user-update", dto);
 
-    public Task<HttpResponseMessage> DeleteAsync(int id) =>
+    public Task<HttpResponseMessage> DeleteAsync(Guid id) =>
         httpClient.DeleteAsync($"{BaseRoute}/{id}");
 }

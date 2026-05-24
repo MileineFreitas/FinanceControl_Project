@@ -18,8 +18,8 @@ public class UserController(IUserAppService appService) : ControllerBase
         return Ok(await appService.FilterAsync(filter));
     }
 
-    [HttpGet("{id:int:min(1)}", Name = "ObterUsuario")]
-    public async Task<IActionResult> GetUserId(int id)
+    [HttpGet("{id:guid}", Name = "ObterUsuario")]
+    public async Task<IActionResult> GetUserId(Guid id)
     {
         var user = await appService.GetByIdAsync(id);
         return user == null ? NotFound("Usuario não encontrado...") : Ok(user);
@@ -54,8 +54,8 @@ public class UserController(IUserAppService appService) : ControllerBase
         }
     }
 
-    [HttpPut("{id:int:min(1)}/user-update")]
-    public async Task<IActionResult> Put(int id, [FromBody] UserUpdateDto dto)
+    [HttpPut("{id:guid}/user-update")]
+    public async Task<IActionResult> Put(Guid id, [FromBody] UserUpdateDto dto)
     {
         if (id != dto.UserId) return BadRequest("Id invalido...");
         try
@@ -69,8 +69,8 @@ public class UserController(IUserAppService appService) : ControllerBase
         }
     }
 
-    [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete(int id)
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> Delete(Guid id)
     {
         var deleted = await appService.DeleteAsync(id);
         return deleted ? Ok("Usuario excluido") : NotFound("Id invalido");

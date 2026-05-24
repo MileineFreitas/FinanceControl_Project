@@ -17,8 +17,8 @@ public class CategoryController(ICategoryAppService appService) : ControllerBase
         return Ok(await appService.FilterAsync(filter));
     }
 
-    [HttpGet("{id:int:min(1)}", Name = "ObterCategoria")]
-    public async Task<IActionResult> GetById(int id)
+    [HttpGet("{id:guid}", Name = "ObterCategoria")]
+    public async Task<IActionResult> GetById(Guid id)
     {
         var dto = await appService.GetByIdAsync(id);
         return dto == null ? NotFound("Categoria não encontrada.") : Ok(dto);
@@ -36,16 +36,16 @@ public class CategoryController(ICategoryAppService appService) : ControllerBase
     public Task<IActionResult> RegisterCategory([FromBody] CategoryRegisterDto dto) =>
         Post(dto);
 
-    [HttpPut("{id:int:min(1)}")]
-    public async Task<IActionResult> Put(int id, [FromBody] CategoryUpdateDto dto)
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> Put(Guid id, [FromBody] CategoryUpdateDto dto)
     {
         if (id != dto.CategoryId) return BadRequest("Id inválido.");
         var updated = await appService.UpdateAsync(dto);
         return updated == null ? NotFound("Categoria não encontrada.") : Ok(updated);
     }
 
-    [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete(int id)
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> Delete(Guid id)
     {
         try
         {

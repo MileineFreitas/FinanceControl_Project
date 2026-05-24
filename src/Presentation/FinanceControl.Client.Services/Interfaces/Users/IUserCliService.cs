@@ -13,9 +13,9 @@ public interface IUserCliService
 
     Task<DataResultDto<UserDto>?> ListAsync(DataFilterDto? filter = null);
 
-    Task<UserDto?> GetByIdAsync(int id);
+    Task<UserDto?> GetByIdAsync(Guid id);
 
-    Task<HttpResponseMessage> UpdateAsync(int id, UserUpdateDto dto);
+    Task<HttpResponseMessage> UpdateAsync(Guid id, UserUpdateDto dto);
 
-    Task<HttpResponseMessage> DeleteAsync(int id);
+    Task<HttpResponseMessage> DeleteAsync(Guid id);
 }

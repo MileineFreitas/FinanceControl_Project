@@ -14,7 +14,7 @@ public class AccountAppService(
     public Task<DataResultDto<AccountDto>> FilterAsync(DataFilterDto filter) =>
         repository.FilterAsync(filter);
 
-    public Task<AccountDto?> GetByIdAsync(int id) =>
+    public Task<AccountDto?> GetByIdAsync(Guid id) =>
         repository.GetByIdAsync(id);
 
     public async Task<AccountDto> CreateAsync(AccountCreateDto dto)
@@ -34,7 +34,7 @@ public class AccountAppService(
         return await repository.GetByIdAsync(entity.AccountId);
     }
 
-    public async Task<bool> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(Guid id)
     {
         var hasTx = await repository.HasTransactionsAsync(id);
         domService.ValidateDelete(id, hasTx);

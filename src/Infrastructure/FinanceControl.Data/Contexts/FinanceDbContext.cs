@@ -1,7 +1,6 @@
 using FinanceControl.Domain.Entities.Accounts;
 using FinanceControl.Domain.Entities.Categories;
 using FinanceControl.Domain.Entities.PaymentMethods;
-using FinanceControl.Domain.Entities.TransactionTypes;
 using FinanceControl.Domain.Entities.Transactions;
 using FinanceControl.Domain.Entities.Users;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +17,6 @@ public class FinanceDbContext : DbContext
     public DbSet<Transaction> Transactions { get; set; } = null!;
     public DbSet<Category> Categories { get; set; } = null!;
     public DbSet<Account> Accounts { get; set; } = null!;
-    public DbSet<TransactionTypeDefinition> TransactionTypes { get; set; } = null!;
     public DbSet<PaymentMethod> PaymentMethods { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

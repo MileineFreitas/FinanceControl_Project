@@ -1,6 +1,8 @@
 using System.Globalization;
 using System.Text.Json;
 using FinanceControl.Client.Services.Interfaces;
+using FinanceControl.Contracts.Constants;
+using FinanceControl.Contracts.Dtos.Common;
 using FinanceControl.Contracts.Enumerators.Transactions;
 using FinanceControl.Web.Models.ViewModels;
 using FinanceControl.Web.Models.ViewModels.Home;
@@ -29,7 +31,8 @@ public class HomeController : Controller
             if (resTx.IsSuccessStatusCode)
             {
                 await using var stream = await resTx.Content.ReadAsStreamAsync();
-                txs = await JsonSerializer.DeserializeAsync<List<TxJson>>(stream, JsonOpts);
+                var data = await JsonSerializer.DeserializeAsync<DataResultDto<TxJson>>(stream, JsonOpts);
+                txs = data?.Result;
             }
         }
         catch
@@ -64,7 +67,7 @@ public class HomeController : Controller
         decimal saldoConta = receitasMes - gastosMes;
         try
         {
-            var accRes = await _api.GetAccountByIdAsync(1);
+            var accRes = await _api.GetAccountByIdAsync(SeedIds.DefaultAccount);
             if (accRes.IsSuccessStatusCode)
             {
                 await using var s = await accRes.Content.ReadAsStreamAsync();
@@ -89,7 +92,7 @@ public class HomeController : Controller
             new DashboardMetricVm(
                 "Receitas no mês",
                 "R$ " + receitasMes.ToString("N2", culture),
-                "Entradas confirmadas no período",
+                "Entradas confirmadas no mês vigente",
                 false,
                 "bank"),
             new DashboardMetricVm(
@@ -127,7 +130,7 @@ public class HomeController : Controller
         return View("Index", vm);
     }
 
-    private static string ResolverNomeCategoria(TxJson t, IReadOnlyDictionary<int, string> nomePorCategoriaId)
+    private static string ResolverNomeCategoria(TxJson t, IReadOnlyDictionary<Guid, string> nomePorCategoriaId)
     {
         if (!string.IsNullOrWhiteSpace(t.Category?.CategoryName))
             return t.Category.CategoryName.Trim();
@@ -136,9 +139,9 @@ public class HomeController : Controller
         return "Categoria";
     }
 
-    private async Task<Dictionary<int, string>> CarregarNomesCategoriasAsync()
+    private async Task<Dictionary<Guid, string>> CarregarNomesCategoriasAsync()
     {
-        var map = new Dictionary<int, string>();
+        var map = new Dictionary<Guid, string>();
         try
         {
             var res = await _api.GetCategoriesAsync();
@@ -146,10 +149,10 @@ public class HomeController : Controller
                 return map;
 
             await using var stream = await res.Content.ReadAsStreamAsync();
-            var arr = await JsonSerializer.DeserializeAsync<List<CategoryRowJson>>(stream, JsonOpts);
-            if (arr == null)
+            var data = await JsonSerializer.DeserializeAsync<DataResultDto<CategoryRowJson>>(stream, JsonOpts);
+            if (data?.Result == null)
                 return map;
-            foreach (var c in arr)
+            foreach (var c in data.Result)
                 map[c.CategoryId] = c.CategoryName?.Trim() ?? $"#{c.CategoryId}";
         }
         catch
@@ -211,13 +214,13 @@ public class HomeController : Controller
 
     private sealed class TxJson
     {
-        public int TransactionId { get; set; }
+        public Guid TransactionId { get; set; }
         public string? TransactionDescription { get; set; }
         public decimal TransactionValue { get; set; }
         public DateTime Date { get; set; }
         public TransactionTypeKind TransactionTypeKind { get; set; }
-        public int CategoryId { get; set; }
-        public int AccountId { get; set; }
+        public Guid CategoryId { get; set; }
+        public Guid AccountId { get; set; }
         public CategoryMini? Category { get; set; }
     }
 
@@ -228,7 +231,7 @@ public class HomeController : Controller
 
     private sealed class CategoryRowJson
     {
-        public int CategoryId { get; set; }
+        public Guid CategoryId { get; set; }
         public string? CategoryName { get; set; }
     }
 

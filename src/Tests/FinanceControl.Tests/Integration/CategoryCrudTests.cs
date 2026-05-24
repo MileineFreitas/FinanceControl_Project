@@ -44,7 +44,7 @@ public class CategoryCrudTests : IClassFixture<FinanceApiFactory>
             categoryDescription = "x"
         });
         var json = await reg.Content.ReadFromJsonAsync<JsonElement>(JsonOpts);
-        var id = JsonResponse.GetInt32(json, "categoryId", "CategoryId");
+        var id = JsonResponse.GetGuid(json, "categoryId", "CategoryId");
 
         var put = new { categoryId = id, categoryName = "Editada", description = "d", icon = "🛒" };
         var res = await client.PutAsJsonAsync($"/api/Category/{id}", put);
@@ -61,7 +61,7 @@ public class CategoryCrudTests : IClassFixture<FinanceApiFactory>
             categoryDescription = "y"
         });
         var json = await reg.Content.ReadFromJsonAsync<JsonElement>(JsonOpts);
-        var id = JsonResponse.GetInt32(json, "categoryId", "CategoryId");
+        var id = JsonResponse.GetGuid(json, "categoryId", "CategoryId");
 
         var res = await client.DeleteAsync($"/api/Category/{id}");
         Assert.Equal(HttpStatusCode.NoContent, res.StatusCode);

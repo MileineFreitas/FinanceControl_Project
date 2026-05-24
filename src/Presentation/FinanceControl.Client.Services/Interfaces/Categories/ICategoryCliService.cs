@@ -8,11 +8,11 @@ public interface ICategoryCliService
 {
     Task<DataResultDto<CategoryDto>?> ListAsync(DataFilterDto? filter = null);
 
-    Task<CategoryDto?> GetByIdAsync(int id);
+    Task<CategoryDto?> GetByIdAsync(Guid id);
 
     Task<HttpResponseMessage> CreateAsync(CategoryRegisterDto dto);
 
-    Task<HttpResponseMessage> UpdateAsync(int id, CategoryUpdateDto dto);
+    Task<HttpResponseMessage> UpdateAsync(Guid id, CategoryUpdateDto dto);
 
-    Task<HttpResponseMessage> DeleteAsync(int id);
+    Task<HttpResponseMessage> DeleteAsync(Guid id);
 }

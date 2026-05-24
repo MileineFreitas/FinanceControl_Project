@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
+using FinanceControl.Contracts.Constants;
 
 namespace FinanceControl.Tests.Integration;
 
@@ -26,18 +27,18 @@ public class AccountCrudTests : IClassFixture<FinanceApiFactory>
     public async Task Post_Create_ReturnsCreated_WithId()
     {
         using var client = _factory.CreateApiClient();
-        var body = new { name = $"Conta_{Guid.NewGuid():N}", initialBalance = 100m, userId = (int?)null };
+        var body = new { name = $"Conta_{Guid.NewGuid():N}", initialBalance = 100m, userId = (Guid?)null };
         var res = await client.PostAsJsonAsync("/api/Account", body);
         Assert.Equal(HttpStatusCode.Created, res.StatusCode);
         var id = JsonResponse.GetIdFromCreatedLocation(res);
-        Assert.True(id > 0);
+        Assert.NotEqual(Guid.Empty, id);
     }
 
     [Fact]
     public async Task Get_ById_ReturnsOk_WhenExists()
     {
         using var client = _factory.CreateApiClient();
-        var create = await client.PostAsJsonAsync("/api/Account", new { name = "GetById", initialBalance = 0m, userId = (int?)null });
+        var create = await client.PostAsJsonAsync("/api/Account", new { name = "GetById", initialBalance = 0m, userId = (Guid?)null });
         Assert.Equal(HttpStatusCode.Created, create.StatusCode);
         var id = JsonResponse.GetIdFromCreatedLocation(create);
 
@@ -49,7 +50,7 @@ public class AccountCrudTests : IClassFixture<FinanceApiFactory>
     public async Task Put_Update_ReturnsNoContent()
     {
         using var client = _factory.CreateApiClient();
-        var create = await client.PostAsJsonAsync("/api/Account", new { name = "PutTest", initialBalance = 50m, userId = (int?)null });
+        var create = await client.PostAsJsonAsync("/api/Account", new { name = "PutTest", initialBalance = 50m, userId = (Guid?)null });
         Assert.Equal(HttpStatusCode.Created, create.StatusCode);
         var id = JsonResponse.GetIdFromCreatedLocation(create);
 
@@ -62,10 +63,10 @@ public class AccountCrudTests : IClassFixture<FinanceApiFactory>
     public async Task Delete_NonDefault_ReturnsNoContent_WhenNoTransactions()
     {
         using var client = _factory.CreateApiClient();
-        var create = await client.PostAsJsonAsync("/api/Account", new { name = "ToDelete", initialBalance = 0m, userId = (int?)null });
+        var create = await client.PostAsJsonAsync("/api/Account", new { name = "ToDelete", initialBalance = 0m, userId = (Guid?)null });
         Assert.Equal(HttpStatusCode.Created, create.StatusCode);
         var id = JsonResponse.GetIdFromCreatedLocation(create);
-        if (id == 1)
+        if (id == SeedIds.DefaultAccount)
             return;
 
         var res = await client.DeleteAsync($"/api/Account/{id}");
@@ -76,7 +77,7 @@ public class AccountCrudTests : IClassFixture<FinanceApiFactory>
     public async Task Delete_DefaultAccount_ReturnsBadRequest()
     {
         using var client = _factory.CreateApiClient();
-        var res = await client.DeleteAsync("/api/Account/1");
+        var res = await client.DeleteAsync($"/api/Account/{SeedIds.DefaultAccount}");
         Assert.Equal(HttpStatusCode.BadRequest, res.StatusCode);
     }
 }

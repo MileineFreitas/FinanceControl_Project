@@ -10,6 +10,9 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
     {
         builder.ToTable("Users");
         builder.HasKey(u => u.UserId);
+        builder.Property(u => u.UserId)
+            .HasDefaultValueSql("(NEWID())")
+            .IsRequired();
 
         builder.Property(u => u.UserName).HasMaxLength(100).IsRequired();
         builder.Property(u => u.UserEmail).HasMaxLength(200).IsRequired();

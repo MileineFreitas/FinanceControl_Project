@@ -40,7 +40,7 @@ public class CategoryRepository(FinanceDbContext context) : ICategoryRepository
         };
     }
 
-    public async Task<CategoryDto?> GetByIdAsync(int id)
+    public async Task<CategoryDto?> GetByIdAsync(Guid id)
     {
         var entity = await context.Categories
             .AsNoTracking()
@@ -56,13 +56,13 @@ public class CategoryRepository(FinanceDbContext context) : ICategoryRepository
         return category;
     }
 
-    public Task<Category?> FindTrackedAsync(int id) =>
+    public Task<Category?> FindTrackedAsync(Guid id) =>
         context.Categories.FirstOrDefaultAsync(c => c.CategoryId == id);
 
     public Task SaveChangesAsync() =>
         context.SaveChangesAsync();
 
-    public async Task<bool> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(Guid id)
     {
         var entity = await context.Categories.FirstOrDefaultAsync(c => c.CategoryId == id);
         if (entity == null) return false;
@@ -72,6 +72,6 @@ public class CategoryRepository(FinanceDbContext context) : ICategoryRepository
         return true;
     }
 
-    public async Task<int?> GetFirstUserIdAsync() =>
-        await context.Users.OrderBy(u => u.UserId).Select(u => (int?)u.UserId).FirstOrDefaultAsync();
+    public async Task<Guid?> GetFirstUserIdAsync() =>
+        await context.Users.OrderBy(u => u.UserId).Select(u => (Guid?)u.UserId).FirstOrDefaultAsync();
 }

@@ -7,15 +7,15 @@ namespace FinanceControl.Domain.Interfaces.AppServices.Users;
 
 public interface IUserAppService
 {
-    Task<LoginResponseDto?> LoginAsync(LoginRequestDto request);
-
-    Task<UserDto> RegisterAsync(UserRegisterDto dto);
-
     Task<DataResultDto<UserDto>> FilterAsync(DataFilterDto filter);
 
-    Task<UserDto?> GetByIdAsync(int id);
+    Task<LoginResponseDto?> LoginAsync(LoginRequestDto request);
+
+    Task<UserDto?> GetByIdAsync(Guid id);
+
+    Task<UserDto> RegisterAsync(RegisterUserDto dto);
 
     Task<UserDto?> UpdateAsync(UserUpdateDto dto);
 
-    Task<bool> DeleteAsync(int id);
+    Task<bool> DeleteAsync(Guid id);
 }

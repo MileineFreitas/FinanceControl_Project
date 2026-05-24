@@ -9,7 +9,7 @@ public class CategoryViewModel
 
     public CategoryRegisterDto Input { get; set; } = new();
 
-    public int? EditingId { get; set; }
+    public Guid? EditingId { get; set; }
 
     public bool ModalAberto { get; set; }
 
@@ -24,7 +24,7 @@ public class CategoryViewModel
     public IReadOnlyList<string> IconesDisponiveis { get; } = CategoryIcons.Available;
 }
 
-public sealed record CategoryItemVm(int? CategoryId, string Icone, string Nome, string? Descricao);
+public sealed record CategoryItemVm(Guid? CategoryId, string Icone, string Nome, string? Descricao);
 
 public static class CategoryViewModelMapper
 {

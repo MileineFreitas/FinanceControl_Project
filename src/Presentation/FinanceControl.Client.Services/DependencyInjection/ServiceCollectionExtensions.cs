@@ -1,13 +1,13 @@
 using FinanceControl.Client.Services.Integrated;
 using FinanceControl.Client.Services.Integrated.Accounts;
 using FinanceControl.Client.Services.Integrated.Categories;
-using FinanceControl.Client.Services.Integrated.TransactionTypes;
+using FinanceControl.Client.Services.Integrated.PaymentMethods;
 using FinanceControl.Client.Services.Integrated.Transactions;
 using FinanceControl.Client.Services.Integrated.Users;
 using FinanceControl.Client.Services.Interfaces;
 using FinanceControl.Client.Services.Interfaces.Accounts;
 using FinanceControl.Client.Services.Interfaces.Categories;
-using FinanceControl.Client.Services.Interfaces.TransactionTypes;
+using FinanceControl.Client.Services.Interfaces.PaymentMethods;
 using FinanceControl.Client.Services.Interfaces.Transactions;
 using FinanceControl.Client.Services.Interfaces.Users;
 using FinanceControl.Client.Services.Options;
@@ -28,7 +28,7 @@ public static class ServiceCollectionExtensions
         services.AddHttpClient<ITransactionCliService, TransactionCliService>(ConfigureClient);
         services.AddHttpClient<IAccountCliService, AccountCliService>(ConfigureClient);
         services.AddHttpClient<IUserCliService, UserCliService>(ConfigureClient);
-        services.AddHttpClient<ITransactionTypeCliService, TransactionTypeCliService>(ConfigureClient);
+        services.AddHttpClient<IPaymentMethodCliService, PaymentMethodCliService>(ConfigureClient);
 
         return services;
     }
