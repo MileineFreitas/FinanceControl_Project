@@ -18,7 +18,7 @@ public class TransactionRepository(FinanceDbContext context) : ITransactionRepos
             .Include(t => t.Category)
             .Include(t => t.Account);
 
-    public async Task<DataResultDto<TransactionDto>> FilterAsync(DataFilterDto filter, CancellationToken cancellationToken = default)
+    public async Task<DataResultDto<TransactionDto>> FilterAsync(DataFilterDto filter)
     {
         var query = BaseQuery()
             .OrderByDescending(t => t.Date)
@@ -39,10 +39,10 @@ public class TransactionRepository(FinanceDbContext context) : ITransactionRepos
             query = query.Where(t => t.AccountId == accountId);
         }
 
-        var total = await query.CountAsync(cancellationToken);
+        var total = await query.CountAsync();
         var items = await query
             .Page(filter.Page, filter.PageSize)
-            .ToListAsync(cancellationToken);
+            .ToListAsync();
 
         return new DataResultDto<TransactionDto>
         {
@@ -52,43 +52,43 @@ public class TransactionRepository(FinanceDbContext context) : ITransactionRepos
         };
     }
 
-    public async Task<TransactionDto?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<TransactionDto?> GetByIdAsync(Guid id)
     {
         var entity = await BaseQuery()
-            .FirstOrDefaultAsync(t => t.TransactionId == id, cancellationToken);
+            .FirstOrDefaultAsync(t => t.TransactionId == id);
 
         return entity == null ? null : TransactionMapper.ToDto(entity);
     }
 
-    public async Task<Transaction> AddAsync(Transaction transaction, CancellationToken cancellationToken = default)
+    public async Task<Transaction> AddAsync(Transaction transaction)
     {
         context.Transactions.Add(transaction);
-        await context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync();
         return transaction;
     }
 
-    public Task<Transaction?> FindTrackedAsync(Guid id, CancellationToken cancellationToken = default) =>
-        context.Transactions.FirstOrDefaultAsync(t => t.TransactionId == id, cancellationToken);
+    public Task<Transaction?> FindTrackedAsync(Guid id) =>
+        context.Transactions.FirstOrDefaultAsync(t => t.TransactionId == id);
 
-    public Task SaveChangesAsync(CancellationToken cancellationToken = default) =>
-        context.SaveChangesAsync(cancellationToken);
+    public Task SaveChangesAsync() =>
+        context.SaveChangesAsync();
 
-    public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<bool> DeleteAsync(Guid id)
     {
-        var entity = await context.Transactions.FirstOrDefaultAsync(t => t.TransactionId == id, cancellationToken);
+        var entity = await context.Transactions.FirstOrDefaultAsync(t => t.TransactionId == id);
         if (entity == null) return false;
 
         context.Transactions.Remove(entity);
-        await context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync();
         return true;
     }
 
-    public Task<bool> CategoryExistsAsync(Guid categoryId, CancellationToken cancellationToken = default) =>
-        context.Categories.AnyAsync(c => c.CategoryId == categoryId, cancellationToken);
+    public Task<bool> CategoryExistsAsync(Guid categoryId) =>
+        context.Categories.AnyAsync(c => c.CategoryId == categoryId);
 
-    public Task<bool> AccountExistsAsync(Guid accountId, CancellationToken cancellationToken = default) =>
-        context.Accounts.AnyAsync(a => a.AccountId == accountId, cancellationToken);
+    public Task<bool> AccountExistsAsync(Guid accountId) =>
+        context.Accounts.AnyAsync(a => a.AccountId == accountId);
 
-    public Task<bool> UserExistsAsync(Guid userId, CancellationToken cancellationToken = default) =>
-        context.Users.AnyAsync(u => u.UserId == userId, cancellationToken);
+    public Task<bool> UserExistsAsync(Guid userId) =>
+        context.Users.AnyAsync(u => u.UserId == userId);
 }

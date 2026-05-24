@@ -7,19 +7,19 @@ namespace FinanceControl.Domain.Interfaces.Repositories.Users;
 
 public interface IUserRepository
 {
-    Task<DataResultDto<UserDto>> FilterAsync(DataFilterDto filter, CancellationToken cancellationToken = default);
+    Task<DataResultDto<UserDto>> FilterAsync(DataFilterDto filter);
 
-    Task<UserDto?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
+    Task<UserDto?> GetByIdAsync(int id);
 
-    Task<User> AddAsync(User user, CancellationToken cancellationToken = default);
+    Task<User> AddAsync(User user);
 
-    Task<User?> FindTrackedAsync(int id, CancellationToken cancellationToken = default);
+    Task<User?> FindTrackedAsync(int id);
 
-    Task SaveChangesAsync(CancellationToken cancellationToken = default);
+    Task SaveChangesAsync();
 
-    Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default);
+    Task<bool> DeleteAsync(int id);
 
-    Task<User?> FindByEmailAndPasswordAsync(string email, string password, CancellationToken cancellationToken = default);
+    Task<User?> FindByEmailAndPasswordAsync(string email, string password);
 
-    Task<bool> EmailExistsAsync(string email, CancellationToken cancellationToken = default);
+    Task<bool> EmailExistsAsync(string email);
 }

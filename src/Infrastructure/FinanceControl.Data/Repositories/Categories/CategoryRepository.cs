@@ -12,7 +12,7 @@ namespace FinanceControl.Infrastructure.Repositories.Categories;
 
 public class CategoryRepository(FinanceDbContext context) : ICategoryRepository
 {
-    public async Task<DataResultDto<CategoryDto>> FilterAsync(DataFilterDto filter, CancellationToken cancellationToken = default)
+    public async Task<DataResultDto<CategoryDto>> FilterAsync(DataFilterDto filter)
     {
         var query = context.Categories
             .AsNoTracking()
@@ -27,10 +27,10 @@ public class CategoryRepository(FinanceDbContext context) : ICategoryRepository
             query = query.Where(c => c.CategoryName != null && c.CategoryName.ToLower().Contains(term));
         }
 
-        var total = await query.CountAsync(cancellationToken);
+        var total = await query.CountAsync();
         var items = await query
             .Page(filter.Page, filter.PageSize)
-            .ToListAsync(cancellationToken);
+            .ToListAsync();
 
         return new DataResultDto<CategoryDto>
         {
@@ -40,38 +40,38 @@ public class CategoryRepository(FinanceDbContext context) : ICategoryRepository
         };
     }
 
-    public async Task<CategoryDto?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<CategoryDto?> GetByIdAsync(int id)
     {
         var entity = await context.Categories
             .AsNoTracking()
-            .FirstOrDefaultAsync(c => c.CategoryId == id, cancellationToken);
+            .FirstOrDefaultAsync(c => c.CategoryId == id);
 
         return entity == null ? null : CategoryMapper.ToDto(entity);
     }
 
-    public async Task<Category> AddAsync(Category category, CancellationToken cancellationToken = default)
+    public async Task<Category> AddAsync(Category category)
     {
         context.Categories.Add(category);
-        await context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync();
         return category;
     }
 
-    public Task<Category?> FindTrackedAsync(int id, CancellationToken cancellationToken = default) =>
-        context.Categories.FirstOrDefaultAsync(c => c.CategoryId == id, cancellationToken);
+    public Task<Category?> FindTrackedAsync(int id) =>
+        context.Categories.FirstOrDefaultAsync(c => c.CategoryId == id);
 
-    public Task SaveChangesAsync(CancellationToken cancellationToken = default) =>
-        context.SaveChangesAsync(cancellationToken);
+    public Task SaveChangesAsync() =>
+        context.SaveChangesAsync();
 
-    public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<bool> DeleteAsync(int id)
     {
-        var entity = await context.Categories.FirstOrDefaultAsync(c => c.CategoryId == id, cancellationToken);
+        var entity = await context.Categories.FirstOrDefaultAsync(c => c.CategoryId == id);
         if (entity == null) return false;
 
         context.Categories.Remove(entity);
-        await context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync();
         return true;
     }
 
-    public async Task<int?> GetFirstUserIdAsync(CancellationToken cancellationToken = default) =>
-        await context.Users.OrderBy(u => u.UserId).Select(u => (int?)u.UserId).FirstOrDefaultAsync(cancellationToken);
+    public async Task<int?> GetFirstUserIdAsync() =>
+        await context.Users.OrderBy(u => u.UserId).Select(u => (int?)u.UserId).FirstOrDefaultAsync();
 }

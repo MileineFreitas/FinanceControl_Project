@@ -80,7 +80,7 @@ builder.Services.AddDbContext<FinanceDbContext>(options =>
 ## Coding Conventions
 
 1. **Nullability**: `#nullable enable` in all projects; use `?` for optional properties
-2. **Async/await**: All I/O operations are async; use `CancellationToken` parameter
+2. **Async/await**: All I/O operations are async (`async`/`await`); no `CancellationToken` in method signatures
 3. **Scoped lifetimes**: No static dependencies; DI everywhere
 4. **DTO validation**: `ModelState.IsValid` in controllers; custom logic in `DomService`
 5. **Naming**: `IXxxService` (interface), `XxxService` (class), `XxxDto` (contract), `XxxMapper` (mapper static class)

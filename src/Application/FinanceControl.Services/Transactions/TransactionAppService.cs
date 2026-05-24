@@ -1,4 +1,4 @@
-﻿using FinanceControl.Contracts.Dtos.Common;
+using FinanceControl.Contracts.Dtos.Common;
 using FinanceControl.Contracts.Dtos.Transactions;
 using FinanceControl.Contracts.Filters;
 using FinanceControl.Domain.Interfaces.AppServices.Transactions;
@@ -14,36 +14,36 @@ public class TransactionAppService(
     ITransactionDomService domService,
     IAccountRepository accountRepository) : ITransactionAppService
 {
-    public Task<DataResultDto<TransactionDto>> FilterAsync(DataFilterDto filter, CancellationToken cancellationToken = default) =>
-        repository.FilterAsync(filter, cancellationToken);
+    public Task<DataResultDto<TransactionDto>> FilterAsync(DataFilterDto filter) =>
+        repository.FilterAsync(filter);
 
-    public Task<TransactionDto?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
-        repository.GetByIdAsync(id, cancellationToken);
+    public Task<TransactionDto?> GetByIdAsync(Guid id) =>
+        repository.GetByIdAsync(id);
 
-    public async Task<TransactionDto> CreateAsync(TransactionCreateDto dto, CancellationToken cancellationToken = default)
+    public async Task<TransactionDto> CreateAsync(TransactionCreateDto dto)
     {
-        await ValidateReferencesAsync(dto.CategoryId, dto.AccountId, dto.UserId, cancellationToken);
+        await ValidateReferencesAsync(dto.CategoryId, dto.AccountId, dto.UserId);
 
         var entity = domService.CreateFromCreateDto(dto);
-        await repository.AddAsync(entity, cancellationToken);
+        await repository.AddAsync(entity);
 
         var delta = domService.GetBalanceDelta(entity.TransactionValue, entity.TransactionTypeKind);
-        await accountRepository.AdjustBalanceAsync(entity.AccountId, delta, cancellationToken);
+        await accountRepository.AdjustBalanceAsync(entity.AccountId, delta);
 
-        return await repository.GetByIdAsync(entity.TransactionId, cancellationToken)
+        return await repository.GetByIdAsync(entity.TransactionId)
                ?? TransactionMapper.ToDto(entity);
     }
 
-    public async Task<bool> UpdateAsync(Guid id, TransactionUpdateDto dto, CancellationToken cancellationToken = default)
+    public async Task<bool> UpdateAsync(Guid id, TransactionUpdateDto dto)
     {
         if (id != dto.TransactionId) return false;
 
-        var entity = await repository.FindTrackedAsync(id, cancellationToken);
+        var entity = await repository.FindTrackedAsync(id);
         if (entity == null) return false;
 
-        if (!await repository.CategoryExistsAsync(dto.CategoryId, cancellationToken))
+        if (!await repository.CategoryExistsAsync(dto.CategoryId))
             throw new InvalidOperationException($"Não existe categoria com CategoryId={dto.CategoryId}.");
-        if (!await repository.AccountExistsAsync(dto.AccountId, cancellationToken))
+        if (!await repository.AccountExistsAsync(dto.AccountId))
             throw new InvalidOperationException($"Conta AccountId={dto.AccountId} não encontrada.");
 
         var oldAccountId = entity.AccountId;
@@ -51,35 +51,35 @@ public class TransactionAppService(
         var oldKind = entity.TransactionTypeKind;
 
         var revertDelta = -domService.GetBalanceDelta(oldValue, oldKind);
-        await accountRepository.AdjustBalanceAsync(oldAccountId, revertDelta, cancellationToken);
+        await accountRepository.AdjustBalanceAsync(oldAccountId, revertDelta);
 
         domService.ApplyUpdate(entity, dto);
-        await repository.SaveChangesAsync(cancellationToken);
+        await repository.SaveChangesAsync();
 
         var delta = domService.GetBalanceDelta(entity.TransactionValue, entity.TransactionTypeKind);
-        await accountRepository.AdjustBalanceAsync(entity.AccountId, delta, cancellationToken);
+        await accountRepository.AdjustBalanceAsync(entity.AccountId, delta);
 
         return true;
     }
 
-    public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<bool> DeleteAsync(Guid id)
     {
-        var entity = await repository.FindTrackedAsync(id, cancellationToken);
+        var entity = await repository.FindTrackedAsync(id);
         if (entity == null) return false;
 
         var revertDelta = -domService.GetBalanceDelta(entity.TransactionValue, entity.TransactionTypeKind);
-        await accountRepository.AdjustBalanceAsync(entity.AccountId, revertDelta, cancellationToken);
+        await accountRepository.AdjustBalanceAsync(entity.AccountId, revertDelta);
 
-        return await repository.DeleteAsync(id, cancellationToken);
+        return await repository.DeleteAsync(id);
     }
 
-    private async Task ValidateReferencesAsync(Guid categoryId, Guid accountId, Guid userId, CancellationToken cancellationToken)
+    private async Task ValidateReferencesAsync(Guid categoryId, Guid accountId, Guid userId)
     {
-        if (!await repository.CategoryExistsAsync(categoryId, cancellationToken))
+        if (!await repository.CategoryExistsAsync(categoryId))
             throw new InvalidOperationException($"Não existe categoria com CategoryId={categoryId}. Cadastre categorias antes de lançar transações.");
-        if (!await repository.AccountExistsAsync(accountId, cancellationToken))
+        if (!await repository.AccountExistsAsync(accountId))
             throw new InvalidOperationException($"Conta AccountId={accountId} não encontrada.");
-        if (!await repository.UserExistsAsync(userId, cancellationToken))
+        if (!await repository.UserExistsAsync(userId))
             throw new InvalidOperationException($"Utilizador UserId={userId} não encontrado.");
     }
 }

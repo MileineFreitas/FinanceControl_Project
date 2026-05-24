@@ -18,7 +18,7 @@ public class RegisterController : Controller
     [HttpPost("")]
     [HttpPost("Index")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Index(RegisterViewModel vm, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index(RegisterViewModel vm)
     {
         if (!TryValidateModel(vm.Register))
             return View("Index", vm);
@@ -26,16 +26,16 @@ public class RegisterController : Controller
         if (vm.ProfilePhotoFile is { Length: > 0 })
         {
             await using var ms = new MemoryStream();
-            await vm.ProfilePhotoFile.CopyToAsync(ms, cancellationToken);
+            await vm.ProfilePhotoFile.CopyToAsync(ms);
             vm.Register.ProfilePhoto = Convert.ToBase64String(ms.ToArray());
         }
 
         try
         {
-            var response = await _api.RegisterAsync(vm.Register, cancellationToken);
+            var response = await _api.RegisterAsync(vm.Register);
             if (!response.IsSuccessStatusCode)
             {
-                vm.ErrorMessage = $"Erro ao criar conta: {await response.Content.ReadAsStringAsync(cancellationToken)}";
+                vm.ErrorMessage = $"Erro ao criar conta: {await response.Content.ReadAsStringAsync()}";
                 return View("Index", vm);
             }
 

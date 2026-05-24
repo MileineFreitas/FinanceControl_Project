@@ -12,19 +12,19 @@ public class CategoriesController(ICategoryCliService categoryCli) : Controller
 {
     [HttpGet("")]
     [HttpGet("Index")]
-    public async Task<IActionResult> Index(string? busca, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index(string? busca)
     {
         var vm = new CategoryViewModel { Busca = busca };
-        await LoadListAsync(vm, cancellationToken);
+        await LoadListAsync(vm);
         return View(vm);
     }
 
     [HttpPost("Save")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Save(CategoryViewModel vm, CancellationToken cancellationToken)
+    public async Task<IActionResult> Save(CategoryViewModel vm)
     {
         vm.ModalAberto = true;
-        await LoadListAsync(vm, cancellationToken);
+        await LoadListAsync(vm);
 
         if (string.IsNullOrWhiteSpace(vm.Input.CategoryName) || vm.Input.CategoryName.Length < 2)
         {
@@ -44,16 +44,16 @@ public class CategoriesController(ICategoryCliService categoryCli) : Controller
                 Description = vm.Input.CategoryDescription?.Trim(),
                 Icon = vm.Input.Icon
             };
-            response = await categoryCli.UpdateAsync(id, update, cancellationToken);
+            response = await categoryCli.UpdateAsync(id, update);
         }
         else
         {
-            response = await categoryCli.CreateAsync(vm.Input, cancellationToken);
+            response = await categoryCli.CreateAsync(vm.Input);
         }
 
         if (!response.IsSuccessStatusCode)
         {
-            vm.ErroModal = await ReadErrorAsync(response, cancellationToken);
+            vm.ErroModal = await ReadErrorAsync(response);
             return View("Index", vm);
         }
 
@@ -61,10 +61,10 @@ public class CategoriesController(ICategoryCliService categoryCli) : Controller
     }
 
     [HttpGet("Edit/{id:int}")]
-    public async Task<IActionResult> Edit(int id, string? busca, CancellationToken cancellationToken)
+    public async Task<IActionResult> Edit(int id, string? busca)
     {
         var vm = new CategoryViewModel { EditingId = id, ModalAberto = true, Busca = busca };
-        var dto = await categoryCli.GetByIdAsync(id, cancellationToken);
+        var dto = await categoryCli.GetByIdAsync(id);
         if (dto != null)
         {
             vm.Input = new CategoryRegisterDto
@@ -75,28 +75,28 @@ public class CategoriesController(ICategoryCliService categoryCli) : Controller
             };
         }
 
-        await LoadListAsync(vm, cancellationToken);
+        await LoadListAsync(vm);
         return View("Index", vm);
     }
 
     [HttpPost("Delete/{id:int}")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Delete(int id, string? busca, CancellationToken cancellationToken)
+    public async Task<IActionResult> Delete(int id, string? busca)
     {
         var vm = new CategoryViewModel { Busca = busca };
-        var res = await categoryCli.DeleteAsync(id, cancellationToken);
+        var res = await categoryCli.DeleteAsync(id);
         if (!res.IsSuccessStatusCode)
         {
             vm.ErroPagina = res.StatusCode == System.Net.HttpStatusCode.Conflict
                 ? "Não é possível excluir: existem transações vinculadas."
-                : await ReadErrorAsync(res, cancellationToken);
+                : await ReadErrorAsync(res);
         }
 
-        await LoadListAsync(vm, cancellationToken);
+        await LoadListAsync(vm);
         return View("Index", vm);
     }
 
-    private async Task LoadListAsync(CategoryViewModel vm, CancellationToken cancellationToken)
+    private async Task LoadListAsync(CategoryViewModel vm)
     {
         var filter = new DataFilterDto { Page = 1, PageSize = 200 };
         if (!string.IsNullOrWhiteSpace(vm.Busca))
@@ -104,7 +104,7 @@ public class CategoriesController(ICategoryCliService categoryCli) : Controller
 
         try
         {
-            var data = await categoryCli.ListAsync(filter, cancellationToken);
+            var data = await categoryCli.ListAsync(filter);
             if (data?.Result is { Count: > 0 })
             {
                 vm.UsandoDadosDemo = false;
@@ -136,9 +136,9 @@ public class CategoriesController(ICategoryCliService categoryCli) : Controller
         new(null, "🛒", "Alimentação", "Mercado e refeições"),
     ];
 
-    private static async Task<string> ReadErrorAsync(HttpResponseMessage response, CancellationToken cancellationToken)
+    private static async Task<string> ReadErrorAsync(HttpResponseMessage response)
     {
-        var body = await response.Content.ReadAsStringAsync(cancellationToken);
+        var body = await response.Content.ReadAsStringAsync();
         return string.IsNullOrWhiteSpace(body)
             ? $"Erro HTTP {(int)response.StatusCode}"
             : body;

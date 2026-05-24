@@ -11,37 +11,37 @@ namespace FinanceControl.API.Controllers.Users;
 public class UserController(IUserAppService appService) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] DataFilterDto filter, CancellationToken cancellationToken)
+    public async Task<IActionResult> Get([FromQuery] DataFilterDto filter)
     {
         if (filter.Page < 1) filter.Page = 1;
         if (filter.PageSize < 1) filter.PageSize = 100;
-        return Ok(await appService.FilterAsync(filter, cancellationToken));
+        return Ok(await appService.FilterAsync(filter));
     }
 
     [HttpGet("{id:int:min(1)}", Name = "ObterUsuario")]
-    public async Task<IActionResult> GetUserId(int id, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetUserId(int id)
     {
-        var user = await appService.GetByIdAsync(id, cancellationToken);
+        var user = await appService.GetByIdAsync(id);
         return user == null ? NotFound("Usuario não encontrado...") : Ok(user);
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginRequestDto request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Login([FromBody] LoginRequestDto request)
     {
         if (request == null) return BadRequest("Requisição inválida...");
-        var result = await appService.LoginAsync(request, cancellationToken);
+        var result = await appService.LoginAsync(request);
         return result == null ? Unauthorized("Email ou senha inválidos...") : Ok(result);
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> CreateUser([FromBody] RegisterUserDto dto, CancellationToken cancellationToken)
+    public async Task<IActionResult> CreateUser([FromBody] RegisterUserDto dto)
     {
         if (dto == null) return BadRequest();
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
         try
         {
-            var created = await appService.RegisterAsync(dto, cancellationToken);
+            var created = await appService.RegisterAsync(dto);
             return CreatedAtRoute("ObterUsuario", new { id = created.UserId }, created);
         }
         catch (InvalidOperationException ex)
@@ -55,12 +55,12 @@ public class UserController(IUserAppService appService) : ControllerBase
     }
 
     [HttpPut("{id:int:min(1)}/user-update")]
-    public async Task<IActionResult> Put(int id, [FromBody] UserUpdateDto dto, CancellationToken cancellationToken)
+    public async Task<IActionResult> Put(int id, [FromBody] UserUpdateDto dto)
     {
         if (id != dto.UserId) return BadRequest("Id invalido...");
         try
         {
-            var updated = await appService.UpdateAsync(dto, cancellationToken);
+            var updated = await appService.UpdateAsync(dto);
             return updated == null ? NotFound("Usuario não encontrado...") : Ok(updated);
         }
         catch (ArgumentException ex)
@@ -70,9 +70,9 @@ public class UserController(IUserAppService appService) : ControllerBase
     }
 
     [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+    public async Task<IActionResult> Delete(int id)
     {
-        var deleted = await appService.DeleteAsync(id, cancellationToken);
+        var deleted = await appService.DeleteAsync(id);
         return deleted ? Ok("Usuario excluido") : NotFound("Id invalido");
     }
 }

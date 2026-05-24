@@ -6,13 +6,13 @@ namespace FinanceControl.Domain.Interfaces.AppServices.Categories;
 
 public interface ICategoryAppService
 {
-    Task<DataResultDto<CategoryDto>> FilterAsync(DataFilterDto filter, CancellationToken cancellationToken = default);
+    Task<DataResultDto<CategoryDto>> FilterAsync(DataFilterDto filter);
 
-    Task<CategoryDto?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
+    Task<CategoryDto?> GetByIdAsync(int id);
 
-    Task<CategoryDto> CreateAsync(CategoryRegisterDto dto, CancellationToken cancellationToken = default);
+    Task<CategoryDto> CreateAsync(CategoryRegisterDto dto);
 
-    Task<CategoryDto?> UpdateAsync(CategoryUpdateDto dto, CancellationToken cancellationToken = default);
+    Task<CategoryDto?> UpdateAsync(CategoryUpdateDto dto);
 
-    Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default);
+    Task<bool> DeleteAsync(int id);
 }

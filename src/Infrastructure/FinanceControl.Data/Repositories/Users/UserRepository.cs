@@ -12,7 +12,7 @@ namespace FinanceControl.Infrastructure.Repositories.Users;
 
 public class UserRepository(FinanceDbContext context) : IUserRepository
 {
-    public async Task<DataResultDto<UserDto>> FilterAsync(DataFilterDto filter, CancellationToken cancellationToken = default)
+    public async Task<DataResultDto<UserDto>> FilterAsync(DataFilterDto filter)
     {
         var query = context.Users
             .AsNoTracking()
@@ -29,10 +29,10 @@ public class UserRepository(FinanceDbContext context) : IUserRepository
                 (u.UserEmail != null && u.UserEmail.ToLower().Contains(term)));
         }
 
-        var total = await query.CountAsync(cancellationToken);
+        var total = await query.CountAsync();
         var items = await query
             .Page(filter.Page, filter.PageSize)
-            .ToListAsync(cancellationToken);
+            .ToListAsync();
 
         return new DataResultDto<UserDto>
         {
@@ -42,43 +42,42 @@ public class UserRepository(FinanceDbContext context) : IUserRepository
         };
     }
 
-    public async Task<UserDto?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<UserDto?> GetByIdAsync(int id)
     {
         var entity = await context.Users
             .AsNoTracking()
-            .FirstOrDefaultAsync(u => u.UserId == id, cancellationToken);
+            .FirstOrDefaultAsync(u => u.UserId == id);
 
         return entity == null ? null : UserMapper.ToDto(entity);
     }
 
-    public async Task<User> AddAsync(User user, CancellationToken cancellationToken = default)
+    public async Task<User> AddAsync(User user)
     {
         context.Users.Add(user);
-        await context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync();
         return user;
     }
 
-    public Task<User?> FindTrackedAsync(int id, CancellationToken cancellationToken = default) =>
-        context.Users.FirstOrDefaultAsync(u => u.UserId == id, cancellationToken);
+    public Task<User?> FindTrackedAsync(int id) =>
+        context.Users.FirstOrDefaultAsync(u => u.UserId == id);
 
-    public Task SaveChangesAsync(CancellationToken cancellationToken = default) =>
-        context.SaveChangesAsync(cancellationToken);
+    public Task SaveChangesAsync() =>
+        context.SaveChangesAsync();
 
-    public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<bool> DeleteAsync(int id)
     {
-        var entity = await context.Users.FirstOrDefaultAsync(u => u.UserId == id, cancellationToken);
+        var entity = await context.Users.FirstOrDefaultAsync(u => u.UserId == id);
         if (entity == null) return false;
 
         context.Users.Remove(entity);
-        await context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync();
         return true;
     }
 
-    public Task<User?> FindByEmailAndPasswordAsync(string email, string password, CancellationToken cancellationToken = default) =>
+    public Task<User?> FindByEmailAndPasswordAsync(string email, string password) =>
         context.Users.FirstOrDefaultAsync(
-            u => u.UserEmail == email && u.Password == password,
-            cancellationToken);
+            u => u.UserEmail == email && u.Password == password);
 
-    public Task<bool> EmailExistsAsync(string email, CancellationToken cancellationToken = default) =>
-        context.Users.AnyAsync(u => u.UserEmail == email, cancellationToken);
+    public Task<bool> EmailExistsAsync(string email) =>
+        context.Users.AnyAsync(u => u.UserEmail == email);
 }

@@ -10,7 +10,7 @@ namespace FinanceControl.API.Controllers.Accounts;
 public class AccountController(IAccountAppService appService) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] DataFilterDto filter, CancellationToken cancellationToken)
+    public async Task<IActionResult> Get([FromQuery] DataFilterDto filter)
     {
         if (filter.Page < 1) filter.Page = 1;
         if (filter.PageSize < 1) filter.PageSize = 100;
@@ -21,24 +21,24 @@ public class AccountController(IAccountAppService appService) : ControllerBase
             filter.Filters["userId"] = userId!;
         }
 
-        var result = await appService.FilterAsync(filter, cancellationToken);
+        var result = await appService.FilterAsync(filter);
         return Ok(result.Result);
     }
 
     [HttpGet("{id:int:min(1)}", Name = "GetAccountById")]
-    public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetById(int id)
     {
-        var dto = await appService.GetByIdAsync(id, cancellationToken);
+        var dto = await appService.GetByIdAsync(id);
         return dto == null ? NotFound() : Ok(dto);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] AccountCreateDto dto, CancellationToken cancellationToken)
+    public async Task<IActionResult> Post([FromBody] AccountCreateDto dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
         try
         {
-            var created = await appService.CreateAsync(dto, cancellationToken);
+            var created = await appService.CreateAsync(dto);
             return CreatedAtRoute("GetAccountById", new { id = created.AccountId }, created);
         }
         catch (ArgumentException ex)
@@ -48,19 +48,19 @@ public class AccountController(IAccountAppService appService) : ControllerBase
     }
 
     [HttpPut("{id:int:min(1)}")]
-    public async Task<IActionResult> Put(int id, [FromBody] AccountUpdateDto dto, CancellationToken cancellationToken)
+    public async Task<IActionResult> Put(int id, [FromBody] AccountUpdateDto dto)
     {
         if (id != dto.AccountId) return BadRequest();
-        var updated = await appService.UpdateAsync(dto, cancellationToken);
+        var updated = await appService.UpdateAsync(dto);
         return updated == null ? NotFound() : NoContent();
     }
 
     [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+    public async Task<IActionResult> Delete(int id)
     {
         try
         {
-            var deleted = await appService.DeleteAsync(id, cancellationToken);
+            var deleted = await appService.DeleteAsync(id);
             return deleted ? NoContent() : NotFound();
         }
         catch (InvalidOperationException ex)

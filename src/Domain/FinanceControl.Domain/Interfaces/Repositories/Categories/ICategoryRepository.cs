@@ -7,17 +7,17 @@ namespace FinanceControl.Domain.Interfaces.Repositories.Categories;
 
 public interface ICategoryRepository
 {
-    Task<DataResultDto<CategoryDto>> FilterAsync(DataFilterDto filter, CancellationToken cancellationToken = default);
+    Task<DataResultDto<CategoryDto>> FilterAsync(DataFilterDto filter);
 
-    Task<CategoryDto?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
+    Task<CategoryDto?> GetByIdAsync(int id);
 
-    Task<Category> AddAsync(Category category, CancellationToken cancellationToken = default);
+    Task<Category> AddAsync(Category category);
 
-    Task<Category?> FindTrackedAsync(int id, CancellationToken cancellationToken = default);
+    Task<Category?> FindTrackedAsync(int id);
 
-    Task SaveChangesAsync(CancellationToken cancellationToken = default);
+    Task SaveChangesAsync();
 
-    Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default);
+    Task<bool> DeleteAsync(int id);
 
-    Task<int?> GetFirstUserIdAsync(CancellationToken cancellationToken = default);
+    Task<int?> GetFirstUserIdAsync();
 }

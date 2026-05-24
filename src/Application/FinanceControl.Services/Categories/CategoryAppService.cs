@@ -1,4 +1,4 @@
-﻿using FinanceControl.Contracts.Dtos.Categories;
+using FinanceControl.Contracts.Dtos.Categories;
 using FinanceControl.Contracts.Dtos.Common;
 using FinanceControl.Contracts.Filters;
 using FinanceControl.Domain.Interfaces.AppServices.Categories;
@@ -13,35 +13,35 @@ public class CategoryAppService(
     ICategoryRepository repository,
     ICategoryDomService domService) : ICategoryAppService
 {
-    public Task<DataResultDto<CategoryDto>> FilterAsync(DataFilterDto filter, CancellationToken cancellationToken = default) =>
-        repository.FilterAsync(filter, cancellationToken);
+    public Task<DataResultDto<CategoryDto>> FilterAsync(DataFilterDto filter) =>
+        repository.FilterAsync(filter);
 
-    public Task<CategoryDto?> GetByIdAsync(int id, CancellationToken cancellationToken = default) =>
-        repository.GetByIdAsync(id, cancellationToken);
+    public Task<CategoryDto?> GetByIdAsync(int id) =>
+        repository.GetByIdAsync(id);
 
-    public async Task<CategoryDto> CreateAsync(CategoryRegisterDto dto, CancellationToken cancellationToken = default)
+    public async Task<CategoryDto> CreateAsync(CategoryRegisterDto dto)
     {
-        var userId = await repository.GetFirstUserIdAsync(cancellationToken);
+        var userId = await repository.GetFirstUserIdAsync();
         var entity = domService.CreateFromRegister(dto, userId);
-        await repository.AddAsync(entity, cancellationToken);
-        return (await repository.GetByIdAsync(entity.CategoryId, cancellationToken))!;
+        await repository.AddAsync(entity);
+        return (await repository.GetByIdAsync(entity.CategoryId))!;
     }
 
-    public async Task<CategoryDto?> UpdateAsync(CategoryUpdateDto dto, CancellationToken cancellationToken = default)
+    public async Task<CategoryDto?> UpdateAsync(CategoryUpdateDto dto)
     {
-        var entity = await repository.FindTrackedAsync(dto.CategoryId, cancellationToken);
+        var entity = await repository.FindTrackedAsync(dto.CategoryId);
         if (entity == null) return null;
 
         domService.ApplyUpdate(entity, dto);
-        await repository.SaveChangesAsync(cancellationToken);
-        return await repository.GetByIdAsync(entity.CategoryId, cancellationToken);
+        await repository.SaveChangesAsync();
+        return await repository.GetByIdAsync(entity.CategoryId);
     }
 
-    public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<bool> DeleteAsync(int id)
     {
         try
         {
-            return await repository.DeleteAsync(id, cancellationToken);
+            return await repository.DeleteAsync(id);
         }
         catch (DbUpdateException)
         {

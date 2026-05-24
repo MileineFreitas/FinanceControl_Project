@@ -40,12 +40,12 @@ public class TransactionsController : Controller
 
     [HttpGet("")]
     [HttpGet("Index")]
-    public async Task<IActionResult> Index(TransactionIndexViewModel vm, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index(TransactionIndexViewModel vm)
     {
-        await CarregarContaPadraoAsync(vm, cancellationToken);
-        await CarregarCategoriasAsync(vm, cancellationToken);
-        await CarregarMeiosPagamentoAsync(vm, cancellationToken);
-        await CarregarTransacoesAsync(vm, cancellationToken);
+        await CarregarContaPadraoAsync(vm);
+        await CarregarCategoriasAsync(vm);
+        await CarregarMeiosPagamentoAsync(vm);
+        await CarregarTransacoesAsync(vm);
         AplicarFiltrosEPaginar(vm);
         return View("Index", vm);
     }
@@ -55,7 +55,7 @@ public class TransactionsController : Controller
         RedirectToActionPermanent(nameof(Index));
 
     [HttpGet("Editar/{id:int}")]
-    public async Task<IActionResult> Editar(int id, TransactionIndexViewModel vm, CancellationToken cancellationToken)
+    public async Task<IActionResult> Editar(int id, TransactionIndexViewModel vm)
     {
         if (id <= 0)
             return RedirectToAction(nameof(Index), vm.RotasPagina());
@@ -63,14 +63,14 @@ public class TransactionsController : Controller
         vm.EditingId = id;
         vm.ModalAberto = true;
 
-        await CarregarContaPadraoAsync(vm, cancellationToken);
-        await CarregarCategoriasAsync(vm, cancellationToken);
-        await CarregarMeiosPagamentoAsync(vm, cancellationToken);
-        await CarregarTransacoesAsync(vm, cancellationToken);
+        await CarregarContaPadraoAsync(vm);
+        await CarregarCategoriasAsync(vm);
+        await CarregarMeiosPagamentoAsync(vm);
+        await CarregarTransacoesAsync(vm);
 
         try
         {
-            var dto = await _transactionCli.GetByIdAsync(id, cancellationToken);
+            var dto = await _transactionCli.GetByIdAsync(id);
             if (dto == null)
             {
                 vm.ApiMensagem = "Transação não encontrada.";
@@ -95,13 +95,13 @@ public class TransactionsController : Controller
 
     [HttpPost("Salvar")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Salvar(TransactionIndexViewModel vm, CancellationToken cancellationToken)
+    public async Task<IActionResult> Salvar(TransactionIndexViewModel vm)
     {
         vm.ModalAberto = true;
-        await CarregarContaPadraoAsync(vm, cancellationToken);
-        await CarregarCategoriasAsync(vm, cancellationToken);
-        await CarregarMeiosPagamentoAsync(vm, cancellationToken);
-        await CarregarTransacoesAsync(vm, cancellationToken);
+        await CarregarContaPadraoAsync(vm);
+        await CarregarCategoriasAsync(vm);
+        await CarregarMeiosPagamentoAsync(vm);
+        await CarregarTransacoesAsync(vm);
 
         if (!ValidarFormulario(vm, out var tipo, out var meio))
         {
@@ -136,7 +136,7 @@ public class TransactionsController : Controller
                     AccountId = accountId,
                     Status = vm.StatusEdicao
                 };
-                response = await _transactionCli.UpdateAsync(editId, update, cancellationToken);
+                response = await _transactionCli.UpdateAsync(editId, update);
             }
             else
             {
@@ -159,12 +159,12 @@ public class TransactionsController : Controller
                     UserId = userId,
                     Status = TransactionStatus.Pago
                 };
-                response = await _transactionCli.CreateAsync(create, cancellationToken);
+                response = await _transactionCli.CreateAsync(create);
             }
 
             if (!response.IsSuccessStatusCode)
             {
-                var body = await response.Content.ReadAsStringAsync(cancellationToken);
+                var body = await response.Content.ReadAsStringAsync();
                 vm.ErroModal = string.IsNullOrWhiteSpace(body)
                     ? $"Erro ao salvar ({(int)response.StatusCode})."
                     : body;
@@ -184,14 +184,14 @@ public class TransactionsController : Controller
 
     [HttpPost("Excluir/{id:int}")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Excluir(int id, TransactionIndexViewModel vm, CancellationToken cancellationToken)
+    public async Task<IActionResult> Excluir(int id, TransactionIndexViewModel vm)
     {
         if (id <= 0)
             return RedirectToAction(nameof(Index), vm.RotasPagina());
 
         try
         {
-            var res = await _transactionCli.DeleteAsync(id, cancellationToken);
+            var res = await _transactionCli.DeleteAsync(id);
             if (!res.IsSuccessStatusCode)
                 vm.ApiMensagem = $"Não foi possível excluir a transação ({(int)res.StatusCode}).";
         }
@@ -228,13 +228,13 @@ public class TransactionsController : Controller
         vm.Transacoes = list.Skip((vm.Pag - 1) * vm.TamanhoPagina).Take(vm.TamanhoPagina).ToList();
     }
 
-    private async Task CarregarContaPadraoAsync(TransactionIndexViewModel vm, CancellationToken cancellationToken)
+    private async Task CarregarContaPadraoAsync(TransactionIndexViewModel vm)
     {
         _contaPadraoId = null;
         _usuarioPadraoId = null;
         try
         {
-            var contas = await _accountCli.ListAsync(cancellationToken: cancellationToken);
+            var contas = await _accountCli.ListAsync();
             var conta = contas?.OrderBy(c => c.AccountId).FirstOrDefault();
             if (conta == null)
             {
@@ -251,14 +251,13 @@ public class TransactionsController : Controller
         }
     }
 
-    private async Task CarregarCategoriasAsync(TransactionIndexViewModel vm, CancellationToken cancellationToken)
+    private async Task CarregarCategoriasAsync(TransactionIndexViewModel vm)
     {
         vm.CategoriasOpcoes.Clear();
         try
         {
             var data = await _categoryCli.ListAsync(
-                new DataFilterDto { Page = 1, PageSize = 200 },
-                cancellationToken);
+                new DataFilterDto { Page = 1, PageSize = 200 });
 
             if (data?.Result is { Count: > 0 })
             {
@@ -280,12 +279,12 @@ public class TransactionsController : Controller
         }
     }
 
-    private async Task CarregarMeiosPagamentoAsync(TransactionIndexViewModel vm, CancellationToken cancellationToken)
+    private async Task CarregarMeiosPagamentoAsync(TransactionIndexViewModel vm)
     {
         vm.MeiosPagamentoOpcoes.Clear();
         try
         {
-            var list = await _paymentMethodCli.ListAsync(includeInactive: false, cancellationToken);
+            var list = await _paymentMethodCli.ListAsync(includeInactive: false);
             if (list is { Count: > 0 })
             {
                 foreach (var m in list.Where(t => t.IsActive).OrderBy(t => t.Name))
@@ -304,14 +303,13 @@ public class TransactionsController : Controller
         }
     }
 
-    private async Task CarregarTransacoesAsync(TransactionIndexViewModel vm, CancellationToken cancellationToken)
+    private async Task CarregarTransacoesAsync(TransactionIndexViewModel vm)
     {
         _todas = [];
         try
         {
             var data = await _transactionCli.ListAsync(
-                new DataFilterDto { Page = 1, PageSize = 500 },
-                cancellationToken);
+                new DataFilterDto { Page = 1, PageSize = 500 });
 
             if (data?.Result is not { Count: > 0 })
             {

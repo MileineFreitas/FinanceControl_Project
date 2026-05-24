@@ -47,7 +47,7 @@ internal static class IntegrationSeed
         db.Categories.Add(category);
         await db.SaveChangesAsync();
 
-        if (!await db.Accounts.AnyAsync(a => a.AccountId == SeedIds.DefaultAccount, cancellationToken: default))
+        if (!await db.Accounts.AnyAsync(a => a.AccountId == SeedIds.DefaultAccount))
         {
             db.Accounts.Add(new Account
             {

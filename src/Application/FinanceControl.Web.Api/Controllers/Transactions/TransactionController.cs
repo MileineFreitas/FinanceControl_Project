@@ -10,7 +10,7 @@ namespace FinanceControl.API.Controllers.Transactions;
 public class TransactionController(ITransactionAppService appService) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] DataFilterDto filter, CancellationToken cancellationToken)
+    public async Task<IActionResult> Get([FromQuery] DataFilterDto filter)
     {
         if (filter.Page < 1) filter.Page = 1;
         if (filter.PageSize < 1) filter.PageSize = 100;
@@ -27,23 +27,23 @@ public class TransactionController(ITransactionAppService appService) : Controll
             filter.Filters["accountId"] = accountId!;
         }
 
-        return Ok(await appService.FilterAsync(filter, cancellationToken));
+        return Ok(await appService.FilterAsync(filter));
     }
 
     [HttpGet("{id:int:min(1)}", Name = "GetTransactionById")]
-    public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetById(int id)
     {
-        var dto = await appService.GetByIdAsync(id, cancellationToken);
+        var dto = await appService.GetByIdAsync(id);
         return dto == null ? NotFound() : Ok(dto);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] TransactionCreateDto dto, CancellationToken cancellationToken)
+    public async Task<IActionResult> Post([FromBody] TransactionCreateDto dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
         try
         {
-            var created = await appService.CreateAsync(dto, cancellationToken);
+            var created = await appService.CreateAsync(dto);
             return CreatedAtRoute("GetTransactionById", new { id = created.TransactionId }, created);
         }
         catch (InvalidOperationException ex)
@@ -53,12 +53,12 @@ public class TransactionController(ITransactionAppService appService) : Controll
     }
 
     [HttpPut("{id:int:min(1)}")]
-    public async Task<IActionResult> Put(int id, [FromBody] TransactionUpdateDto dto, CancellationToken cancellationToken)
+    public async Task<IActionResult> Put(int id, [FromBody] TransactionUpdateDto dto)
     {
         if (id != dto.TransactionId) return BadRequest();
         try
         {
-            var updated = await appService.UpdateAsync(id, dto, cancellationToken);
+            var updated = await appService.UpdateAsync(id, dto);
             return updated ? NoContent() : NotFound();
         }
         catch (InvalidOperationException ex)
@@ -68,9 +68,9 @@ public class TransactionController(ITransactionAppService appService) : Controll
     }
 
     [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+    public async Task<IActionResult> Delete(int id)
     {
-        var deleted = await appService.DeleteAsync(id, cancellationToken);
+        var deleted = await appService.DeleteAsync(id);
         return deleted ? NoContent() : NotFound();
     }
 }

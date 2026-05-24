@@ -21,7 +21,7 @@ public class LoginController : Controller
     [HttpPost("")]
     [HttpPost("login")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Index(LoginViewModel vm, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index(LoginViewModel vm)
     {
         if (string.IsNullOrWhiteSpace(vm.LoginRequest.Email) || string.IsNullOrWhiteSpace(vm.LoginRequest.Password))
         {
@@ -33,12 +33,12 @@ public class LoginController : Controller
 
         try
         {
-            var response = await _api.LoginAsync(vm.LoginRequest, cancellationToken);
+            var response = await _api.LoginAsync(vm.LoginRequest);
 
             if (response.IsSuccessStatusCode)
             {
                 var result = await response.Content.ReadFromJsonAsync<LoginResponseDto>(
-                    cancellationToken: cancellationToken);
+                    );
 
                 if (result != null)
                     vm.Message = $"Bem-vindo, {result.Name}!";
@@ -52,7 +52,7 @@ public class LoginController : Controller
                 return View(vm);
             }
 
-            var body = await response.Content.ReadAsStringAsync(cancellationToken);
+            var body = await response.Content.ReadAsStringAsync();
             vm.Message = $"Status: {response.StatusCode} — {body}";
         }
         catch (Exception ex)

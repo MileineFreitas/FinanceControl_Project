@@ -1,4 +1,4 @@
-﻿using System.Net.Http.Json;
+using System.Net.Http.Json;
 using FinanceControl.Client.Services.Interfaces.Transactions;
 using FinanceControl.Contracts.Dtos.Common;
 using FinanceControl.Contracts.Dtos.Transactions;
@@ -10,7 +10,7 @@ public sealed class TransactionCliService(HttpClient httpClient) : ITransactionC
 {
     private const string BaseRoute = "api/Transaction";
 
-    public async Task<DataResultDto<TransactionDto>?> ListAsync(DataFilterDto? filter = null, CancellationToken cancellationToken = default)
+    public async Task<DataResultDto<TransactionDto>?> ListAsync(DataFilterDto? filter = null)
     {
         filter ??= new DataFilterDto { Page = 1, PageSize = 200 };
         var query = $"?page={filter.Page}&pageSize={filter.PageSize}";
@@ -20,18 +20,18 @@ public sealed class TransactionCliService(HttpClient httpClient) : ITransactionC
                 query += $"&filters[{kv.Key}]={Uri.EscapeDataString(kv.Value)}";
         }
 
-        return await httpClient.GetFromJsonAsync<DataResultDto<TransactionDto>>(BaseRoute + query, cancellationToken);
+        return await httpClient.GetFromJsonAsync<DataResultDto<TransactionDto>>(BaseRoute + query);
     }
 
-    public Task<TransactionDto?> GetByIdAsync(int id, CancellationToken cancellationToken = default) =>
-        httpClient.GetFromJsonAsync<TransactionDto>($"{BaseRoute}/{id}", cancellationToken);
+    public Task<TransactionDto?> GetByIdAsync(int id) =>
+        httpClient.GetFromJsonAsync<TransactionDto>($"{BaseRoute}/{id}");
 
-    public Task<HttpResponseMessage> CreateAsync(TransactionCreateDto dto, CancellationToken cancellationToken = default) =>
-        httpClient.PostAsJsonAsync(BaseRoute, dto, cancellationToken);
+    public Task<HttpResponseMessage> CreateAsync(TransactionCreateDto dto) =>
+        httpClient.PostAsJsonAsync(BaseRoute, dto);
 
-    public Task<HttpResponseMessage> UpdateAsync(int id, TransactionUpdateDto dto, CancellationToken cancellationToken = default) =>
-        httpClient.PutAsJsonAsync($"{BaseRoute}/{id}", dto, cancellationToken);
+    public Task<HttpResponseMessage> UpdateAsync(int id, TransactionUpdateDto dto) =>
+        httpClient.PutAsJsonAsync($"{BaseRoute}/{id}", dto);
 
-    public Task<HttpResponseMessage> DeleteAsync(int id, CancellationToken cancellationToken = default) =>
-        httpClient.DeleteAsync($"{BaseRoute}/{id}", cancellationToken);
+    public Task<HttpResponseMessage> DeleteAsync(int id) =>
+        httpClient.DeleteAsync($"{BaseRoute}/{id}");
 }

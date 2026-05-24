@@ -1,4 +1,4 @@
-﻿using System.Net.Http.Json;
+using System.Net.Http.Json;
 using FinanceControl.Client.Services.Interfaces.Categories;
 using FinanceControl.Contracts.Dtos.Categories;
 using FinanceControl.Contracts.Dtos.Common;
@@ -10,7 +10,7 @@ public sealed class CategoryCliService(HttpClient httpClient) : ICategoryCliServ
 {
     private const string BaseRoute = "api/Category";
 
-    public async Task<DataResultDto<CategoryDto>?> ListAsync(DataFilterDto? filter = null, CancellationToken cancellationToken = default)
+    public async Task<DataResultDto<CategoryDto>?> ListAsync(DataFilterDto? filter = null)
     {
         filter ??= new DataFilterDto { Page = 1, PageSize = 200 };
         var query = $"?page={filter.Page}&pageSize={filter.PageSize}";
@@ -20,18 +20,18 @@ public sealed class CategoryCliService(HttpClient httpClient) : ICategoryCliServ
                 query += $"&filters[{kv.Key}]={Uri.EscapeDataString(kv.Value)}";
         }
 
-        return await httpClient.GetFromJsonAsync<DataResultDto<CategoryDto>>(BaseRoute + query, cancellationToken);
+        return await httpClient.GetFromJsonAsync<DataResultDto<CategoryDto>>(BaseRoute + query);
     }
 
-    public Task<CategoryDto?> GetByIdAsync(int id, CancellationToken cancellationToken = default) =>
-        httpClient.GetFromJsonAsync<CategoryDto>($"{BaseRoute}/{id}", cancellationToken);
+    public Task<CategoryDto?> GetByIdAsync(int id) =>
+        httpClient.GetFromJsonAsync<CategoryDto>($"{BaseRoute}/{id}");
 
-    public Task<HttpResponseMessage> CreateAsync(CategoryRegisterDto dto, CancellationToken cancellationToken = default) =>
-        httpClient.PostAsJsonAsync($"{BaseRoute}/registerCategory", dto, cancellationToken);
+    public Task<HttpResponseMessage> CreateAsync(CategoryRegisterDto dto) =>
+        httpClient.PostAsJsonAsync($"{BaseRoute}/registerCategory", dto);
 
-    public Task<HttpResponseMessage> UpdateAsync(int id, CategoryUpdateDto dto, CancellationToken cancellationToken = default) =>
-        httpClient.PutAsJsonAsync($"{BaseRoute}/{id}", dto, cancellationToken);
+    public Task<HttpResponseMessage> UpdateAsync(int id, CategoryUpdateDto dto) =>
+        httpClient.PutAsJsonAsync($"{BaseRoute}/{id}", dto);
 
-    public Task<HttpResponseMessage> DeleteAsync(int id, CancellationToken cancellationToken = default) =>
-        httpClient.DeleteAsync($"{BaseRoute}/{id}", cancellationToken);
+    public Task<HttpResponseMessage> DeleteAsync(int id) =>
+        httpClient.DeleteAsync($"{BaseRoute}/{id}");
 }

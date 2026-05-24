@@ -235,7 +235,7 @@ Interfaces em **Domain**; implementações de repositório em **Infrastructure**
 ### Convenções de código
 
 1. **Nullability:** `#nullable enable` em todos os projetos; `?` para propriedades opcionais.
-2. **Async:** operações I/O assíncronas com parâmetro `CancellationToken`.
+2. **Async:** operações I/O assíncronas (`async`/`await`); sem `CancellationToken` nas assinaturas.
 3. **DI:** sem dependências estáticas; tudo via injeção scoped.
 4. **Validação:** `ModelState.IsValid` nos controllers; lógica customizada no `DomService`.
 5. **Nomes:** `IXxxService`, `XxxService`, `XxxDto`, `XxxMapper`.

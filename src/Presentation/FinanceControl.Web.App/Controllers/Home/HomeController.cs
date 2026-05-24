@@ -19,17 +19,17 @@ public class HomeController : Controller
 
     [HttpGet("")]
     [HttpGet("Index")]
-    public async Task<IActionResult> Index(CancellationToken cancellationToken)
+    public async Task<IActionResult> Index()
     {
         var vm = new HomeIndexViewModel();
         List<TxJson>? txs = null;
         try
         {
-            var resTx = await _api.GetTransactionsAsync(cancellationToken);
+            var resTx = await _api.GetTransactionsAsync();
             if (resTx.IsSuccessStatusCode)
             {
-                await using var stream = await resTx.Content.ReadAsStreamAsync(cancellationToken);
-                txs = await JsonSerializer.DeserializeAsync<List<TxJson>>(stream, JsonOpts, cancellationToken);
+                await using var stream = await resTx.Content.ReadAsStreamAsync();
+                txs = await JsonSerializer.DeserializeAsync<List<TxJson>>(stream, JsonOpts);
             }
         }
         catch
@@ -43,7 +43,7 @@ public class HomeController : Controller
             return View("Index", vm);
         }
 
-        var nomePorCategoriaId = await CarregarNomesCategoriasAsync(cancellationToken);
+        var nomePorCategoriaId = await CarregarNomesCategoriasAsync();
 
         var culture = CultureInfo.GetCultureInfo("pt-BR");
         var now = DateTime.UtcNow;
@@ -64,11 +64,11 @@ public class HomeController : Controller
         decimal saldoConta = receitasMes - gastosMes;
         try
         {
-            var accRes = await _api.GetAccountByIdAsync(1, cancellationToken);
+            var accRes = await _api.GetAccountByIdAsync(1);
             if (accRes.IsSuccessStatusCode)
             {
-                await using var s = await accRes.Content.ReadAsStreamAsync(cancellationToken);
-                var acc = await JsonSerializer.DeserializeAsync<AccountJson>(s, JsonOpts, cancellationToken);
+                await using var s = await accRes.Content.ReadAsStreamAsync();
+                var acc = await JsonSerializer.DeserializeAsync<AccountJson>(s, JsonOpts);
                 if (acc != null)
                     saldoConta = acc.CurrentBalance;
             }
@@ -136,17 +136,17 @@ public class HomeController : Controller
         return "Categoria";
     }
 
-    private async Task<Dictionary<int, string>> CarregarNomesCategoriasAsync(CancellationToken cancellationToken)
+    private async Task<Dictionary<int, string>> CarregarNomesCategoriasAsync()
     {
         var map = new Dictionary<int, string>();
         try
         {
-            var res = await _api.GetCategoriesAsync(cancellationToken);
+            var res = await _api.GetCategoriesAsync();
             if (!res.IsSuccessStatusCode)
                 return map;
 
-            await using var stream = await res.Content.ReadAsStreamAsync(cancellationToken);
-            var arr = await JsonSerializer.DeserializeAsync<List<CategoryRowJson>>(stream, JsonOpts, cancellationToken);
+            await using var stream = await res.Content.ReadAsStreamAsync();
+            var arr = await JsonSerializer.DeserializeAsync<List<CategoryRowJson>>(stream, JsonOpts);
             if (arr == null)
                 return map;
             foreach (var c in arr)

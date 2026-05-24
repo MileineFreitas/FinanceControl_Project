@@ -12,19 +12,19 @@ public class TransactionTypesController(ITransactionTypeCliService transactionTy
 {
     [HttpGet("")]
     [HttpGet("Index")]
-    public async Task<IActionResult> Index(string? busca, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index(string? busca)
     {
         var vm = new TransactionTypeViewModel { Busca = busca };
-        await LoadListAsync(vm, cancellationToken);
+        await LoadListAsync(vm);
         return View(vm);
     }
 
     [HttpPost("Save")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Save(TransactionTypeViewModel vm, CancellationToken cancellationToken)
+    public async Task<IActionResult> Save(TransactionTypeViewModel vm)
     {
         vm.ModalAberto = true;
-        await LoadListAsync(vm, cancellationToken);
+        await LoadListAsync(vm);
 
         if (string.IsNullOrWhiteSpace(vm.Input.Name) || vm.Input.Name.Trim().Length < 2)
         {
@@ -38,7 +38,7 @@ public class TransactionTypesController(ITransactionTypeCliService transactionTy
         HttpResponseMessage response;
         if (vm.EditingId is int id && id > 0)
         {
-            var existing = await transactionTypeCli.GetByIdAsync(id, cancellationToken);
+            var existing = await transactionTypeCli.GetByIdAsync(id);
             if (existing == null)
             {
                 vm.ErroModal = "Meio de pagamento não encontrado.";
@@ -55,19 +55,19 @@ public class TransactionTypesController(ITransactionTypeCliService transactionTy
                 Description = vm.Input.Description?.Trim(),
                 IsActive = existing.IsActive
             };
-            response = await transactionTypeCli.UpdateAsync(id, update, cancellationToken);
+            response = await transactionTypeCli.UpdateAsync(id, update);
         }
         else
         {
             vm.Input.Code = PaymentMethodCodes.FromName(vm.Input.Name);
             vm.Input.PaymentKind = null;
             vm.Input.IsActive = true;
-            response = await transactionTypeCli.CreateAsync(vm.Input, cancellationToken);
+            response = await transactionTypeCli.CreateAsync(vm.Input);
         }
 
         if (!response.IsSuccessStatusCode)
         {
-            vm.ErroModal = await ReadErrorAsync(response, cancellationToken);
+            vm.ErroModal = await ReadErrorAsync(response);
             return View("Index", vm);
         }
 
@@ -75,10 +75,10 @@ public class TransactionTypesController(ITransactionTypeCliService transactionTy
     }
 
     [HttpGet("Edit/{id:int}")]
-    public async Task<IActionResult> Edit(int id, string? busca, CancellationToken cancellationToken)
+    public async Task<IActionResult> Edit(int id, string? busca)
     {
         var vm = new TransactionTypeViewModel { EditingId = id, ModalAberto = true, Busca = busca };
-        var dto = await transactionTypeCli.GetByIdAsync(id, cancellationToken);
+        var dto = await transactionTypeCli.GetByIdAsync(id);
         if (dto != null)
         {
             vm.Input = new TransactionTypeCreateDto
@@ -89,32 +89,32 @@ public class TransactionTypesController(ITransactionTypeCliService transactionTy
             };
         }
 
-        await LoadListAsync(vm, cancellationToken);
+        await LoadListAsync(vm);
         return View("Index", vm);
     }
 
     [HttpPost("Delete/{id:int}")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Delete(int id, string? busca, CancellationToken cancellationToken)
+    public async Task<IActionResult> Delete(int id, string? busca)
     {
         var vm = new TransactionTypeViewModel { Busca = busca };
-        var res = await transactionTypeCli.DeleteAsync(id, cancellationToken);
+        var res = await transactionTypeCli.DeleteAsync(id);
         if (!res.IsSuccessStatusCode)
         {
             vm.ErroPagina = res.StatusCode == System.Net.HttpStatusCode.Conflict
                 ? "Não é possível excluir este meio de pagamento."
-                : await ReadErrorAsync(res, cancellationToken);
+                : await ReadErrorAsync(res);
         }
 
-        await LoadListAsync(vm, cancellationToken);
+        await LoadListAsync(vm);
         return View("Index", vm);
     }
 
-    private async Task LoadListAsync(TransactionTypeViewModel vm, CancellationToken cancellationToken)
+    private async Task LoadListAsync(TransactionTypeViewModel vm)
     {
         try
         {
-            var list = await transactionTypeCli.ListAsync(includeInactive: true, cancellationToken);
+            var list = await transactionTypeCli.ListAsync(includeInactive: true);
             if (list is { Count: > 0 })
             {
                 vm.UsandoDadosDemo = false;
@@ -152,9 +152,9 @@ public class TransactionTypesController(ITransactionTypeCliService transactionTy
         new(4, "📱", "PIX", "PIX", "Personalizado", "Ativo", false),
     ];
 
-    private static async Task<string> ReadErrorAsync(HttpResponseMessage response, CancellationToken cancellationToken)
+    private static async Task<string> ReadErrorAsync(HttpResponseMessage response)
     {
-        var body = await response.Content.ReadAsStringAsync(cancellationToken);
+        var body = await response.Content.ReadAsStringAsync();
         return string.IsNullOrWhiteSpace(body)
             ? $"Erro HTTP {(int)response.StatusCode}"
             : body;

@@ -8,23 +8,23 @@ namespace FinanceControl.Client.Services.Interfaces;
 /// <summary>Cliente HTTP agregado (legado). Preferir I{Entidade}CliService por feature.</summary>
 public interface IFinanceControlApiClient
 {
-    Task<HttpResponseMessage> LoginAsync(LoginRequestDto request, CancellationToken cancellationToken = default);
+    Task<HttpResponseMessage> LoginAsync(LoginRequestDto request);
 
-    Task<HttpResponseMessage> RegisterAsync(RegisterUserDto request, CancellationToken cancellationToken = default);
+    Task<HttpResponseMessage> RegisterAsync(RegisterUserDto request);
 
-    Task<HttpResponseMessage> RegisterCategoryAsync(CategoryRegisterDto request, CancellationToken cancellationToken = default);
+    Task<HttpResponseMessage> RegisterCategoryAsync(CategoryRegisterDto request);
 
-    Task<HttpResponseMessage> GetCategoriesAsync(CancellationToken cancellationToken = default);
+    Task<HttpResponseMessage> GetCategoriesAsync();
 
-    Task<HttpResponseMessage> GetTransactionsAsync(CancellationToken cancellationToken = default);
+    Task<HttpResponseMessage> GetTransactionsAsync();
 
-    Task<HttpResponseMessage> CreateTransactionAsync(TransactionCreateDto request, CancellationToken cancellationToken = default);
+    Task<HttpResponseMessage> CreateTransactionAsync(TransactionCreateDto request);
 
-    Task<HttpResponseMessage> GetTransactionTypesAsync(CancellationToken cancellationToken = default);
+    Task<HttpResponseMessage> GetTransactionTypesAsync();
 
-    Task<HttpResponseMessage> DeleteCategoryAsync(int categoryId, CancellationToken cancellationToken = default);
+    Task<HttpResponseMessage> DeleteCategoryAsync(int categoryId);
 
-    Task<HttpResponseMessage> DeleteTransactionAsync(int transactionId, CancellationToken cancellationToken = default);
+    Task<HttpResponseMessage> DeleteTransactionAsync(int transactionId);
 
-    Task<HttpResponseMessage> GetAccountByIdAsync(int accountId, CancellationToken cancellationToken = default);
+    Task<HttpResponseMessage> GetAccountByIdAsync(int accountId);
 }

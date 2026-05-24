@@ -11,33 +11,33 @@ public class AccountAppService(
     IAccountRepository repository,
     IAccountDomService domService) : IAccountAppService
 {
-    public Task<DataResultDto<AccountDto>> FilterAsync(DataFilterDto filter, CancellationToken cancellationToken = default) =>
-        repository.FilterAsync(filter, cancellationToken);
+    public Task<DataResultDto<AccountDto>> FilterAsync(DataFilterDto filter) =>
+        repository.FilterAsync(filter);
 
-    public Task<AccountDto?> GetByIdAsync(int id, CancellationToken cancellationToken = default) =>
-        repository.GetByIdAsync(id, cancellationToken);
+    public Task<AccountDto?> GetByIdAsync(int id) =>
+        repository.GetByIdAsync(id);
 
-    public async Task<AccountDto> CreateAsync(AccountCreateDto dto, CancellationToken cancellationToken = default)
+    public async Task<AccountDto> CreateAsync(AccountCreateDto dto)
     {
         var entity = domService.CreateFromCreateDto(dto);
-        await repository.AddAsync(entity, cancellationToken);
-        return (await repository.GetByIdAsync(entity.AccountId, cancellationToken))!;
+        await repository.AddAsync(entity);
+        return (await repository.GetByIdAsync(entity.AccountId))!;
     }
 
-    public async Task<AccountDto?> UpdateAsync(AccountUpdateDto dto, CancellationToken cancellationToken = default)
+    public async Task<AccountDto?> UpdateAsync(AccountUpdateDto dto)
     {
-        var entity = await repository.FindTrackedAsync(dto.AccountId, cancellationToken);
+        var entity = await repository.FindTrackedAsync(dto.AccountId);
         if (entity == null) return null;
 
         domService.ApplyUpdate(entity, dto);
-        await repository.SaveChangesAsync(cancellationToken);
-        return await repository.GetByIdAsync(entity.AccountId, cancellationToken);
+        await repository.SaveChangesAsync();
+        return await repository.GetByIdAsync(entity.AccountId);
     }
 
-    public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<bool> DeleteAsync(int id)
     {
-        var hasTx = await repository.HasTransactionsAsync(id, cancellationToken);
+        var hasTx = await repository.HasTransactionsAsync(id);
         domService.ValidateDelete(id, hasTx);
-        return await repository.DeleteAsync(id, cancellationToken);
+        return await repository.DeleteAsync(id);
     }
 }

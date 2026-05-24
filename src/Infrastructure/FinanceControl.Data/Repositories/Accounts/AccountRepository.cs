@@ -12,7 +12,7 @@ namespace FinanceControl.Infrastructure.Repositories.Accounts;
 
 public class AccountRepository(FinanceDbContext context) : IAccountRepository
 {
-    public async Task<DataResultDto<AccountDto>> FilterAsync(DataFilterDto filter, CancellationToken cancellationToken = default)
+    public async Task<DataResultDto<AccountDto>> FilterAsync(DataFilterDto filter)
     {
         var query = context.Accounts
             .AsNoTracking()
@@ -26,10 +26,10 @@ public class AccountRepository(FinanceDbContext context) : IAccountRepository
             query = query.Where(a => a.UserId == userId || a.UserId == null);
         }
 
-        var total = await query.CountAsync(cancellationToken);
+        var total = await query.CountAsync();
         var items = await query
             .Page(filter.Page, filter.PageSize)
-            .ToListAsync(cancellationToken);
+            .ToListAsync();
 
         return new DataResultDto<AccountDto>
         {
@@ -39,47 +39,47 @@ public class AccountRepository(FinanceDbContext context) : IAccountRepository
         };
     }
 
-    public async Task<AccountDto?> GetByIdAsync(int accountId, CancellationToken cancellationToken = default)
+    public async Task<AccountDto?> GetByIdAsync(int accountId)
     {
         var entity = await context.Accounts
             .AsNoTracking()
-            .FirstOrDefaultAsync(a => a.AccountId == accountId, cancellationToken);
+            .FirstOrDefaultAsync(a => a.AccountId == accountId);
 
         return entity == null ? null : AccountMapper.ToDto(entity);
     }
 
-    public async Task<Account> AddAsync(Account account, CancellationToken cancellationToken = default)
+    public async Task<Account> AddAsync(Account account)
     {
         context.Accounts.Add(account);
-        await context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync();
         return account;
     }
 
-    public Task<Account?> FindTrackedAsync(int id, CancellationToken cancellationToken = default) =>
-        context.Accounts.FirstOrDefaultAsync(a => a.AccountId == id, cancellationToken);
+    public Task<Account?> FindTrackedAsync(int id) =>
+        context.Accounts.FirstOrDefaultAsync(a => a.AccountId == id);
 
-    public Task SaveChangesAsync(CancellationToken cancellationToken = default) =>
-        context.SaveChangesAsync(cancellationToken);
+    public Task SaveChangesAsync() =>
+        context.SaveChangesAsync();
 
-    public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<bool> DeleteAsync(int id)
     {
-        var entity = await context.Accounts.FirstOrDefaultAsync(a => a.AccountId == id, cancellationToken);
+        var entity = await context.Accounts.FirstOrDefaultAsync(a => a.AccountId == id);
         if (entity == null) return false;
 
         context.Accounts.Remove(entity);
-        await context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync();
         return true;
     }
 
-    public Task<bool> HasTransactionsAsync(int accountId, CancellationToken cancellationToken = default) =>
-        context.Transactions.AnyAsync(t => t.AccountId == accountId, cancellationToken);
+    public Task<bool> HasTransactionsAsync(int accountId) =>
+        context.Transactions.AnyAsync(t => t.AccountId == accountId);
 
-    public async Task AdjustBalanceAsync(int accountId, decimal delta, CancellationToken cancellationToken = default)
+    public async Task AdjustBalanceAsync(int accountId, decimal delta)
     {
-        var account = await context.Accounts.FindAsync([accountId], cancellationToken);
+        var account = await context.Accounts.FindAsync([accountId]);
         if (account == null) return;
 
         account.CurrentBalance += delta;
-        await context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync();
     }
 }
