@@ -4,7 +4,7 @@ namespace FinanceControl.Contracts.Dtos.Accounts;
 
 public class AccountUpdateDto
 {
-    public int AccountId { get; set; }
+    public Guid AccountId { get; set; }
 
     [Required]
     [StringLength(120)]
@@ -13,4 +13,6 @@ public class AccountUpdateDto
     public decimal InitialBalance { get; set; }
 
     public decimal CurrentBalance { get; set; }
+
+    public bool IsActive { get; set; } = true;
 }

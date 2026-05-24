@@ -7,7 +7,7 @@ namespace FinanceControl.Domain.Services.Categories;
 
 public class CategoryDomService : ICategoryDomService
 {
-    public Category CreateFromRegister(CategoryRegisterDto dto, int? userId)
+    public Category CreateFromRegister(CategoryRegisterDto dto, Guid? userId)
     {
         if (string.IsNullOrWhiteSpace(dto.CategoryName) || dto.CategoryName.Trim().Length < 2)
             throw new ArgumentException("Nome da categoria deve ter pelo menos 2 caracteres.");

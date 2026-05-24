@@ -1,10 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using FinanceControl.Contracts.Enumerators.Users;
 
-namespace FinanceControl.Domain.Interfaces.AppServices.Users
+namespace FinanceControl.Contracts.Interfaces.Entities.Users;
+
+public interface IUser
 {
-    internal class Tran
-    {
-    }
+    Guid UserId { get; set; }
+
+    string? UserName { get; set; }
+
+    string? UserEmail { get; set; }
+
+    string? Password { get; set; }
+
+    string? ProfilePhoto { get; set; }
+
+    bool IsActive { get; set; }
+
+    DateTime DateCreated { get; set; }
 }

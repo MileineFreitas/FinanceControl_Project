@@ -15,17 +15,19 @@ public static class CategoryMapper
             Icon = CategoryIcons.Normalize(entity.Icon),
             DateCreated = entity.DateCreated,
             UpdatedAt = entity.UpdatedAt,
-            UserId = entity.UserId
+            UserId = entity.UserId,
+            IsActive = entity.IsActive
         };
 
-    public static Category ToEntity(CategoryRegisterDto dto, int? userId) =>
+    public static Category ToEntity(CategoryRegisterDto dto, Guid? userId) =>
         new()
         {
             CategoryName = dto.CategoryName.Trim(),
             Description = dto.CategoryDescription?.Trim(),
             Icon = CategoryIcons.Normalize(dto.Icon),
             DateCreated = DateTime.UtcNow,
-            UserId = userId
+            UserId = userId,
+            IsActive = dto.IsActive
         };
 
     public static void ApplyUpdate(Category entity, CategoryUpdateDto dto)
@@ -34,5 +36,6 @@ public static class CategoryMapper
         entity.Description = dto.Description?.Trim();
         entity.Icon = CategoryIcons.Normalize(dto.Icon);
         entity.UpdatedAt = DateTime.UtcNow;
+        entity.IsActive = dto.IsActive;
     }
 }

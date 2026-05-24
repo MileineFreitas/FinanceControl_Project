@@ -1,12 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace FinanceControl.Contracts.Dtos.TransactionTypes;
+namespace FinanceControl.Contracts.Dtos.PaymentMethods;
 
-public class TransactionTypeUpdateDto
+public class PaymentMethodUpdateDto
 {
-    public Guid TransactionTypeId { get; set; }
+    public Guid PaymentMethodId { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Nome é obrigatório")]
     [StringLength(40)]
     public string Name { get; set; } = string.Empty;
 

@@ -5,7 +5,7 @@ namespace FinanceControl.Domain.Interfaces.DomService.Categories;
 
 public interface ICategoryDomService
 {
-    Category CreateFromRegister(CategoryRegisterDto dto, int? userId);
+    Category CreateFromRegister(CategoryRegisterDto dto, Guid? userId);
 
     void ApplyUpdate(Category entity, CategoryUpdateDto dto);
 }

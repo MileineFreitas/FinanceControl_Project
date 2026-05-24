@@ -30,11 +30,13 @@ public class Category : ICategory
 
     public DateTimeOffset? UpdatedAt { get; set; }
 
-    public int? UserId { get; set; }
+    public Guid? UserId { get; set; }
+
+    public bool IsActive { get; set; } = true;
 
     [JsonIgnore]
     public User? User { get; set; }
 
     [JsonIgnore]
-    public ICollection<Transaction>? Transactions { get; set; }
+    public IEnumerable<Transaction>? Transactions { get; set; }
 }

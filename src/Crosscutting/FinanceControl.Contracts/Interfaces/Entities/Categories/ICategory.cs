@@ -14,5 +14,7 @@ public interface ICategory
 
     DateTimeOffset? UpdatedAt { get; set; }
 
-    int? UserId { get; set; }
+    Guid? UserId { get; set; }
+
+    bool IsActive { get; set; }
 }

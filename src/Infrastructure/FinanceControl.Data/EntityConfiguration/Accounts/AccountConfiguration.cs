@@ -1,4 +1,5 @@
 using FinanceControl.Domain.Entities.Accounts;
+using FinanceControl.Infrastructure.Seeding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -13,6 +14,9 @@ public class AccountConfiguration : IEntityTypeConfiguration<Account>
         builder.Property(a => a.Name).HasMaxLength(120).IsRequired();
         builder.Property(a => a.InitialBalance).HasPrecision(18, 2);
         builder.Property(a => a.CurrentBalance).HasPrecision(18, 2);
+        builder.Property(a => a.IsActive)
+            .IsRequired()
+            .HasDefaultValue(true);
 
         builder.HasOne(a => a.User)
             .WithMany(u => u.Accounts)
@@ -23,12 +27,13 @@ public class AccountConfiguration : IEntityTypeConfiguration<Account>
         builder.HasData(
             new Account
             {
-                AccountId = 1,
+                AccountId = SeedIds.DefaultAccount,
                 Name = "Principal",
                 InitialBalance = 0,
                 CurrentBalance = 0,
                 CreatedAt = seedAt,
-                UserId = null
+                UserId = null,
+                IsActive = true
             });
     }
 }

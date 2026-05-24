@@ -23,7 +23,6 @@ public static class TransactionMapper
             AccountId = entity.AccountId,
             AccountName = accountName ?? entity.Account?.Name,
             UserId = entity.UserId,
-            Status = entity.Status,
             CreatedAt = entity.CreatedAt,
             UpdatedAt = entity.UpdatedAt
         };
@@ -39,9 +38,8 @@ public static class TransactionMapper
             CategoryId = dto.CategoryId,
             AccountId = dto.AccountId,
             UserId = dto.UserId,
-            Status = dto.Status,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
+            CreatedAt = DateTimeOffset.UtcNow,
+            UpdatedAt = DateTimeOffset.UtcNow
         };
 
     public static void ApplyUpdate(Transaction entity, TransactionUpdateDto dto)
@@ -53,8 +51,7 @@ public static class TransactionMapper
         entity.PaymentKind = dto.PaymentKind;
         entity.CategoryId = dto.CategoryId;
         entity.AccountId = dto.AccountId;
-        entity.Status = dto.Status;
-        entity.UpdatedAt = DateTime.UtcNow;
+        entity.UpdatedAt = DateTimeOffset.UtcNow;
     }
 
     public static decimal GetBalanceDelta(decimal value, TransactionTypeKind typeKind) =>

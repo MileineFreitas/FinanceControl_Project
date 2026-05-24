@@ -1,6 +1,5 @@
 using FinanceControl.Contracts.Dtos.Users;
 using FinanceControl.Domain.Entities.Users;
-using FinanceControl.Domain.Enums;
 
 namespace FinanceControl.Domain.MapperProfiles.Users;
 
@@ -12,7 +11,8 @@ public static class UserMapper
             UserId = entity.UserId,
             UserName = entity.UserName,
             UserEmail = entity.UserEmail,
-            ProfilePhoto = entity.ProfilePhoto
+            ProfilePhoto = entity.ProfilePhoto,
+            IsActive = entity.IsActive
         };
 
     public static User ToEntity(UserRegisterDto dto) =>
@@ -23,7 +23,7 @@ public static class UserMapper
             Password = dto.Password,
             ProfilePhoto = dto.ProfilePhoto,
             DateCreated = DateTime.UtcNow,
-            UserType = UserType.User
+            IsActive = true
         };
 
     public static void ApplyUpdate(User entity, UserUpdateDto dto)
@@ -34,5 +34,6 @@ public static class UserMapper
             entity.Password = dto.Password;
         if (dto.ProfilePhoto != null)
             entity.ProfilePhoto = dto.ProfilePhoto;
+        entity.IsActive = dto.IsActive;
     }
 }

@@ -14,15 +14,13 @@ public interface ITransaction
 
     TransactionTypeKind TransactionTypeKind { get; set; }
 
-    PaymentKind? PaymentKind { get; set; }
+    PaymentKind PaymentKind { get; set; }
 
     Guid CategoryId { get; set; }
 
-    int AccountId { get; set; }
+    Guid AccountId { get; set; }
 
-    int UserId { get; set; }
-
-    TransactionStatus Status { get; set; }
+    Guid UserId { get; set; }
 
     DateTimeOffset CreatedAt { get; set; }
 

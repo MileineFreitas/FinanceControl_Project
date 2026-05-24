@@ -4,7 +4,7 @@ namespace FinanceControl.Contracts.Dtos.Users;
 
 public class UserUpdateDto
 {
-    public int UserId { get; set; }
+    public Guid UserId { get; set; }
 
     [Required]
     [MinLength(3)]
@@ -17,4 +17,6 @@ public class UserUpdateDto
     public string? Password { get; set; }
 
     public string? ProfilePhoto { get; set; }
+
+    public bool IsActive { get; set; } = true;
 }

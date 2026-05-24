@@ -5,7 +5,7 @@ namespace FinanceControl.Contracts.Dtos.Categories;
 
 public class CategoryUpdateDto
 {
-    public int CategoryId { get; set; }
+    public Guid CategoryId { get; set; }
 
     [Required]
     [StringLength(40)]
@@ -14,4 +14,6 @@ public class CategoryUpdateDto
     public string? Description { get; set; }
 
     public string Icon { get; set; } = CategoryIcons.Default;
+
+    public bool IsActive { get; set; } = true;
 }

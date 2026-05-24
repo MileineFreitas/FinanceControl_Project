@@ -27,14 +27,14 @@ public class TransactionRepository(FinanceDbContext context) : ITransactionRepos
 
         if (filter.Filters != null &&
             filter.Filters.TryGetValue("userId", out var userIdStr) &&
-            int.TryParse(userIdStr, out var userId))
+            Guid.TryParse(userIdStr, out var userId))
         {
             query = query.Where(t => t.UserId == userId);
         }
 
         if (filter.Filters != null &&
             filter.Filters.TryGetValue("accountId", out var accountIdStr) &&
-            int.TryParse(accountIdStr, out var accountId))
+            Guid.TryParse(accountIdStr, out var accountId))
         {
             query = query.Where(t => t.AccountId == accountId);
         }
@@ -52,7 +52,7 @@ public class TransactionRepository(FinanceDbContext context) : ITransactionRepos
         };
     }
 
-    public async Task<TransactionDto?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<TransactionDto?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var entity = await BaseQuery()
             .FirstOrDefaultAsync(t => t.TransactionId == id, cancellationToken);
@@ -67,13 +67,13 @@ public class TransactionRepository(FinanceDbContext context) : ITransactionRepos
         return transaction;
     }
 
-    public Task<Transaction?> FindTrackedAsync(int id, CancellationToken cancellationToken = default) =>
+    public Task<Transaction?> FindTrackedAsync(Guid id, CancellationToken cancellationToken = default) =>
         context.Transactions.FirstOrDefaultAsync(t => t.TransactionId == id, cancellationToken);
 
     public Task SaveChangesAsync(CancellationToken cancellationToken = default) =>
         context.SaveChangesAsync(cancellationToken);
 
-    public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var entity = await context.Transactions.FirstOrDefaultAsync(t => t.TransactionId == id, cancellationToken);
         if (entity == null) return false;
@@ -83,13 +83,12 @@ public class TransactionRepository(FinanceDbContext context) : ITransactionRepos
         return true;
     }
 
-    public Task<bool> CategoryExistsAsync(int categoryId, CancellationToken cancellationToken = default) =>
+    public Task<bool> CategoryExistsAsync(Guid categoryId, CancellationToken cancellationToken = default) =>
         context.Categories.AnyAsync(c => c.CategoryId == categoryId, cancellationToken);
 
-    public Task<bool> AccountExistsAsync(int accountId, CancellationToken cancellationToken = default) =>
+    public Task<bool> AccountExistsAsync(Guid accountId, CancellationToken cancellationToken = default) =>
         context.Accounts.AnyAsync(a => a.AccountId == accountId, cancellationToken);
 
-    public Task<bool> UserExistsAsync(int userId, CancellationToken cancellationToken = default) =>
+    public Task<bool> UserExistsAsync(Guid userId, CancellationToken cancellationToken = default) =>
         context.Users.AnyAsync(u => u.UserId == userId, cancellationToken);
-
 }

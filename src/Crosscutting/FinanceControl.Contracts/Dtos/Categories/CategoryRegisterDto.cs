@@ -12,4 +12,6 @@ public class CategoryRegisterDto
     public string CategoryDescription { get; set; } = string.Empty;
 
     public string Icon { get; set; } = CategoryIcons.Default;
+
+    public bool IsActive { get; set; } = true;
 }

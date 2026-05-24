@@ -11,36 +11,27 @@ public static class TransactionTypeMapper
         {
             TransactionTypeId = entity.TransactionTypeId,
             Name = entity.Name,
-            Code = entity.Code,
             Icon = PaymentMethodIcons.Normalize(entity.Icon),
-            PaymentKind = entity.PaymentKind,
             Description = entity.Description,
             IsSystem = entity.IsSystem,
             IsActive = entity.IsActive
         };
 
-    public static TransactionTypeDefinition ToEntity(TransactionTypeCreateDto dto, int? userId) =>
+    public static TransactionTypeDefinition ToEntity(TransactionTypeCreateDto dto) =>
         new()
         {
             Name = dto.Name.Trim(),
-            Code = dto.Code.Trim().ToUpperInvariant(),
             Icon = PaymentMethodIcons.Normalize(dto.Icon),
-            PaymentKind = dto.PaymentKind,
             Description = dto.Description?.Trim(),
             IsSystem = false,
-            IsActive = dto.IsActive,
-            UserId = userId,
-            CreatedAt = DateTime.UtcNow
+            IsActive = dto.IsActive
         };
 
     public static void ApplyUpdate(TransactionTypeDefinition entity, TransactionTypeUpdateDto dto)
     {
         entity.Name = dto.Name.Trim();
-        entity.Code = dto.Code.Trim().ToUpperInvariant();
         entity.Icon = PaymentMethodIcons.Normalize(dto.Icon);
-        entity.PaymentKind = dto.PaymentKind;
         entity.Description = dto.Description?.Trim();
         entity.IsActive = dto.IsActive;
-        entity.UpdatedAt = DateTime.UtcNow;
     }
 }

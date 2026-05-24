@@ -10,7 +10,7 @@ namespace FinanceControl.Domain.Entities.Accounts;
 public class Account
 {
     [Key]
-    public int AccountId { get; set; }
+    public Guid AccountId { get; set; } = Guid.NewGuid();
 
     [Required]
     [StringLength(120)]
@@ -24,7 +24,9 @@ public class Account
 
     public DateTime CreatedAt { get; set; }
 
-    public int? UserId { get; set; }
+    public Guid? UserId { get; set; }
+
+    public bool IsActive { get; set; } = true;
 
     [JsonIgnore]
     public User? User { get; set; }

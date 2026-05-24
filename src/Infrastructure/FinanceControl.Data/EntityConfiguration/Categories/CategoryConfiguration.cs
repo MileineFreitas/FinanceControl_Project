@@ -45,6 +45,11 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
             .IsRequired(false)
             .HasComment("Referência ao usuário proprietário da categoria");
 
+        builder.Property(c => c.IsActive)
+            .IsRequired()
+            .HasDefaultValue(true)
+            .HasComment("Indica se a categoria está ativa para novos lançamentos");
+
         builder.HasOne(c => c.User)
             .WithMany(u => u.Categories)
             .HasForeignKey(c => c.UserId)

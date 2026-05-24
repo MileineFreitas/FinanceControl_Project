@@ -12,24 +12,23 @@ public class TransactionTypeAppService(
     public Task<IReadOnlyList<TransactionTypeDto>> ListAsync(bool activeOnly = true, CancellationToken cancellationToken = default) =>
         repository.ListAsync(activeOnly, cancellationToken);
 
-    public Task<TransactionTypeDto?> GetByIdAsync(int id, CancellationToken cancellationToken = default) =>
+    public Task<TransactionTypeDto?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
         repository.GetByIdAsync(id, cancellationToken);
 
     public async Task<TransactionTypeDto> CreateAsync(TransactionTypeCreateDto dto, CancellationToken cancellationToken = default)
     {
-        if (await repository.CodeExistsAsync(dto.Code, cancellationToken: cancellationToken))
-            throw new InvalidOperationException($"Já existe um tipo com o código '{dto.Code}'.");
+        if (await repository.NameExistsAsync(dto.Name, cancellationToken: cancellationToken))
+            throw new InvalidOperationException($"Já existe um tipo com o nome '{dto.Name}'.");
 
-        var userId = await repository.GetFirstUserIdAsync(cancellationToken);
-        var entity = domService.CreateFromDto(dto, userId);
+        var entity = domService.CreateFromDto(dto);
         await repository.AddAsync(entity, cancellationToken);
         return (await repository.GetByIdAsync(entity.TransactionTypeId, cancellationToken))!;
     }
 
     public async Task<TransactionTypeDto?> UpdateAsync(TransactionTypeUpdateDto dto, CancellationToken cancellationToken = default)
     {
-        if (await repository.CodeExistsAsync(dto.Code, dto.TransactionTypeId, cancellationToken))
-            throw new InvalidOperationException($"Já existe outro tipo com o código '{dto.Code}'.");
+        if (await repository.NameExistsAsync(dto.Name, dto.TransactionTypeId, cancellationToken))
+            throw new InvalidOperationException($"Já existe outro tipo com o nome '{dto.Name}'.");
 
         var entity = await repository.FindTrackedAsync(dto.TransactionTypeId, cancellationToken);
         if (entity == null) return null;
@@ -39,7 +38,7 @@ public class TransactionTypeAppService(
         return await repository.GetByIdAsync(entity.TransactionTypeId, cancellationToken);
     }
 
-    public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var entity = await repository.FindTrackedAsync(id, cancellationToken);
         if (entity == null) return false;

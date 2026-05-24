@@ -13,7 +13,8 @@ public static class AccountMapper
             InitialBalance = entity.InitialBalance,
             CurrentBalance = entity.CurrentBalance,
             CreatedAt = entity.CreatedAt,
-            UserId = entity.UserId
+            UserId = entity.UserId,
+            IsActive = entity.IsActive
         };
 
     public static Account ToEntity(AccountCreateDto dto) =>
@@ -23,7 +24,8 @@ public static class AccountMapper
             InitialBalance = dto.InitialBalance,
             CurrentBalance = dto.InitialBalance,
             CreatedAt = DateTime.UtcNow,
-            UserId = dto.UserId
+            UserId = dto.UserId,
+            IsActive = dto.IsActive
         };
 
     public static void ApplyUpdate(Account entity, AccountUpdateDto dto)
@@ -31,5 +33,6 @@ public static class AccountMapper
         entity.Name = dto.Name.Trim();
         entity.InitialBalance = dto.InitialBalance;
         entity.CurrentBalance = dto.CurrentBalance;
+        entity.IsActive = dto.IsActive;
     }
 }

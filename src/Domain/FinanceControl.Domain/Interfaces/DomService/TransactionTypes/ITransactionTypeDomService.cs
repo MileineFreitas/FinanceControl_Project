@@ -5,7 +5,7 @@ namespace FinanceControl.Domain.Interfaces.DomService.TransactionTypes;
 
 public interface ITransactionTypeDomService
 {
-    TransactionTypeDefinition CreateFromDto(TransactionTypeCreateDto dto, int? userId);
+    TransactionTypeDefinition CreateFromDto(TransactionTypeCreateDto dto);
 
     void ApplyUpdate(TransactionTypeDefinition entity, TransactionTypeUpdateDto dto);
 

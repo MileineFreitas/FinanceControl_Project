@@ -32,7 +32,8 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
             .IsRequired();
 
         builder.Property(t => t.PaymentKind)
-            .HasConversion<int?>();
+            .HasConversion<int>()
+            .IsRequired();
 
         builder.Property(t => t.CategoryId)
             .IsRequired();
@@ -41,10 +42,6 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
             .IsRequired();
 
         builder.Property(t => t.UserId)
-            .IsRequired();
-
-        builder.Property(t => t.Status)
-            .HasConversion<int>()
             .IsRequired();
 
         builder.Property(t => t.CreatedAt)
