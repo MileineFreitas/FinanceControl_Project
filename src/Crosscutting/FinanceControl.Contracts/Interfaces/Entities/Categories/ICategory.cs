@@ -2,17 +2,17 @@ namespace FinanceControl.Contracts.Interfaces.Entities.Categories;
 
 public interface ICategory
 {
-    int CategoryId { get; set; }
+    Guid CategoryId { get; set; }
 
-    string? CategoryName { get; set; }
+    string CategoryName { get; set; }
 
     string? Description { get; set; }
 
     string Icon { get; set; }
 
-    DateTime DateCreated { get; set; }
+    DateTimeOffset DateCreated { get; set; }
 
-    DateTime? UpdatedAt { get; set; }
+    DateTimeOffset? UpdatedAt { get; set; }
 
     int? UserId { get; set; }
 }

@@ -4,19 +4,19 @@ namespace FinanceControl.Contracts.Dtos.Transactions;
 
 public class TransactionDto
 {
-    public int TransactionId { get; set; }
+    public Guid TransactionId { get; set; }
 
     public string TransactionDescription { get; set; } = string.Empty;
 
     public decimal TransactionValue { get; set; }
 
-    public DateTime Date { get; set; }
+    public DateTimeOffset Date { get; set; }
 
     public TransactionTypeKind TransactionTypeKind { get; set; }
 
     public PaymentKind? PaymentKind { get; set; }
 
-    public int CategoryId { get; set; }
+    public Guid CategoryId { get; set; }
 
     public string? CategoryName { get; set; }
 
@@ -28,7 +28,7 @@ public class TransactionDto
 
     public TransactionStatus Status { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
 
-    public DateTime UpdatedAt { get; set; }
+    public DateTimeOffset? UpdatedAt { get; set; }
 }

@@ -1,3 +1,4 @@
+
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
@@ -12,21 +13,22 @@ namespace FinanceControl.Domain.Entities.Categories;
 public class Category : ICategory
 {
     [Key]
-    public int CategoryId { get; set; }
+    public Guid CategoryId { get; set; } = Guid.NewGuid();
 
-    [Required(ErrorMessage = "Nome da categoria é obrigatorio...")]
+    [Required]
     [StringLength(40)]
-    public string? CategoryName { get; set; }
+    public string CategoryName { get; set; } = string.Empty;
 
+    [StringLength(255)]
     public string? Description { get; set; }
 
-    /// <summary>Emoji ilustrativo da categoria.</summary>
+    [Required]
     [StringLength(16)]
     public string Icon { get; set; } = CategoryIcons.Default;
 
-    public DateTime DateCreated { get; set; }
+    public DateTimeOffset DateCreated { get; set; } = DateTimeOffset.UtcNow;
 
-    public DateTime? UpdatedAt { get; set; }
+    public DateTimeOffset? UpdatedAt { get; set; }
 
     public int? UserId { get; set; }
 
