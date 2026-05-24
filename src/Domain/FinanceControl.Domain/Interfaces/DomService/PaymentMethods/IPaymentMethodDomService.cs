@@ -8,6 +8,4 @@ public interface IPaymentMethodDomService
     PaymentMethod CreateFromDto(PaymentMethodCreateDto dto);
 
     void ApplyUpdate(PaymentMethod entity, PaymentMethodUpdateDto dto);
-
-    void EnsureCanDelete(PaymentMethod entity);
 }

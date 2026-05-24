@@ -213,9 +213,9 @@
                 </div>
                 <div class="wt-form-row2">
                     <div>
-                        <label class="wt-label" asp-for="Input.PaymentMethodId">Meio de pagamento (opcional)</label>
+                        <label class="wt-label" asp-for="Input.PaymentMethodId">Meio de pagamento</label>
                         <select class="wt-select" style="width:100%" asp-for="Input.PaymentMethodId">
-                            <option value="0">Não informado</option>
+                            <option value="">Selecione…</option>
                             @foreach (var m in Model.MeiosPagamentoOpcoes)
                             {
                                 <option value="@m.Id">@m.Icone @m.Nome</option>

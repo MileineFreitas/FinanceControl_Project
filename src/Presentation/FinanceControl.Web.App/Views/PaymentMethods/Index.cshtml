@@ -13,10 +13,6 @@
         {
             <div class="wt-alert wt-alert--error">@Model.ErroPagina</div>
         }
-        @if (Model.UsandoDadosDemo)
-        {
-            <div class="wt-alert">Sem dados da API — exibindo exemplos locais.</div>
-        }
 
         <header class="wt-page-head">
             <div>
@@ -50,19 +46,15 @@
                         }
                         <p class="wt-hint" style="margin-top:.35rem">
                             <span class="wt-badge @(t.Status == "Ativo" ? "wt-badge--income" : "wt-badge--expense")">@t.Status</span>
-                            @if (t.IsSystem) { <span style="margin-left:.35rem">sistema</span> }
                         </p>
                         @if (t.Id != Guid.Empty)
                         {
                             <div style="display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap">
                                 <a asp-action="Edit" asp-route-id="@t.Id" asp-route-busca="@Model.Busca" class="wt-btn wt-btn--ghost" title="Editar">✎</a>
-                                @if (!t.IsSystem)
-                                {
-                                    <form method="post" asp-action="Delete" asp-route-id="@t.Id" asp-route-busca="@Model.Busca" class="js-pay-delete" style="display:inline">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="wt-btn wt-btn--outline">Excluir</button>
-                                    </form>
-                                }
+                                <form method="post" asp-action="Delete" asp-route-id="@t.Id" asp-route-busca="@Model.Busca" class="js-pay-delete" style="display:inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="wt-btn wt-btn--outline">Excluir</button>
+                                </form>
                             </div>
                         }
                     </div>

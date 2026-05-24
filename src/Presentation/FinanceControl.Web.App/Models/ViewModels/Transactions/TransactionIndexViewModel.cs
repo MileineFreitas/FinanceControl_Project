@@ -120,4 +120,4 @@ public sealed record TransacaoListaVm(
 
 public sealed record CategoriaOpcaoVm(Guid Id, string Nome, string Icone = "📁");
 
-public sealed record MeioPagamentoOpcaoVm(Guid Id, string Nome, string Icone, PaymentKind? PaymentKind);
+public sealed record MeioPagamentoOpcaoVm(Guid Id, string Nome, string Icone);

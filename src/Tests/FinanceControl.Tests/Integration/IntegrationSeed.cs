@@ -1,6 +1,7 @@
 using FinanceControl.Contracts.Constants;
 using FinanceControl.Domain.Entities.Accounts;
 using FinanceControl.Domain.Entities.Categories;
+using FinanceControl.Domain.Entities.PaymentMethods;
 using FinanceControl.Domain.Entities.Users;
 using FinanceControl.Infrastructure.Contexts;
 using FinanceControl.Infrastructure.Seeding;
@@ -19,7 +20,7 @@ internal static class IntegrationSeed
         FinanceDbContextSeed.EnsureDemoUserAccountAndCategories(db);
     }
 
-    public static async Task<(Guid UserId, Guid CategoryId, Guid AccountId)> EnsureUserAndCategoryAsync(IServiceProvider services)
+    public static async Task<(Guid UserId, Guid CategoryId, Guid AccountId, Guid PaymentMethodId)> EnsureUserAndCategoryAsync(IServiceProvider services)
     {
         await using var scope = services.CreateAsyncScope();
         var db = scope.ServiceProvider.GetRequiredService<FinanceDbContext>();
@@ -46,6 +47,15 @@ internal static class IntegrationSeed
             IsActive = true
         };
         db.Categories.Add(category);
+
+        var paymentMethod = new PaymentMethod
+        {
+            Name = $"Meio_{suffix}",
+            Icon = "💳",
+            IsActive = true,
+            DateCreated = DateTimeOffset.UtcNow
+        };
+        db.PaymentMethods.Add(paymentMethod);
         await db.SaveChangesAsync();
 
         var accountId = SeedIds.DefaultAccount;
@@ -64,6 +74,6 @@ internal static class IntegrationSeed
             await db.SaveChangesAsync();
         }
 
-        return (user.UserId, category.CategoryId, accountId);
+        return (user.UserId, category.CategoryId, accountId, paymentMethod.PaymentMethodId);
     }
 }

@@ -33,7 +33,6 @@ public static class FinanceDbContextSeed
         db.PaymentMethods.AddRange(
             new PaymentMethod
             {
-                PaymentMethodId = PaymentMethodSeedIds.Debito,
                 Name = "Débito",
                 Icon = "💳",
                 IsActive = true,
@@ -41,7 +40,6 @@ public static class FinanceDbContextSeed
             },
             new PaymentMethod
             {
-                PaymentMethodId = PaymentMethodSeedIds.Credito,
                 Name = "Crédito",
                 Icon = "💳",
                 IsActive = true,
@@ -49,7 +47,6 @@ public static class FinanceDbContextSeed
             },
             new PaymentMethod
             {
-                PaymentMethodId = PaymentMethodSeedIds.Dinheiro,
                 Name = "Dinheiro",
                 Icon = "💵",
                 IsActive = true,
@@ -138,7 +135,8 @@ public static class FinanceDbContextSeed
         if (db.Transactions.Any()) return;
 
         var cats = db.Categories.AsNoTracking().ToList();
-        if (cats.Count == 0) return;
+        var methods = db.PaymentMethods.AsNoTracking().ToList();
+        if (cats.Count == 0 || methods.Count == 0) return;
 
         var utc = DateTimeOffset.UtcNow;
         var today = utc.Date;
@@ -149,7 +147,13 @@ public static class FinanceDbContextSeed
             return c?.CategoryId ?? cats[0].CategoryId;
         }
 
-        void Add(string desc, decimal val, TransactionTypeKind tipo, string categoryName, DateTime when, PaymentKind meio)
+        Guid Method(string name)
+        {
+            var m = methods.FirstOrDefault(x => string.Equals(x.Name, name, StringComparison.OrdinalIgnoreCase));
+            return m?.PaymentMethodId ?? methods[0].PaymentMethodId;
+        }
+
+        void Add(string desc, decimal val, TransactionTypeKind tipo, string categoryName, DateTime when, string methodName)
         {
             db.Transactions.Add(new Transaction
             {
@@ -157,7 +161,7 @@ public static class FinanceDbContextSeed
                 TransactionValue = val,
                 Date = when,
                 TransactionTypeKind = tipo,
-                PaymentKind = meio,
+                PaymentMethodId = Method(methodName),
                 CategoryId = Cat(categoryName),
                 AccountId = accountId,
                 UserId = userId,
@@ -166,17 +170,17 @@ public static class FinanceDbContextSeed
             });
         }
 
-        Add("Salário CLT", 9200m, TransactionTypeKind.Receita, "Salário", today.AddDays(-3), PaymentKind.Cash);
-        Add("Freelance design", 4500m, TransactionTypeKind.Receita, "Freelance", today.AddDays(-11), PaymentKind.Debit);
-        Add("Dividendos ITUB4", 340m, TransactionTypeKind.Receita, "Investimentos", today.AddDays(-2), PaymentKind.Credit);
-        Add("PIX recebido", 800m, TransactionTypeKind.Receita, "Freelance", today.AddDays(-7), PaymentKind.Debit);
-        Add("Aluguel", 2400m, TransactionTypeKind.Despesa, "Moradia", today.AddDays(-5), PaymentKind.Credit);
-        Add("Supermercado", 412.55m, TransactionTypeKind.Despesa, "Alimentação", today.AddDays(-1), PaymentKind.Cash);
-        Add("Netflix", 55.90m, TransactionTypeKind.Despesa, "Lazer", today.AddDays(-10), PaymentKind.Credit);
-        Add("Combustível", 280m, TransactionTypeKind.Despesa, "Transporte", today.AddDays(-4), PaymentKind.Debit);
-        Add("Farmácia", 89.50m, TransactionTypeKind.Despesa, "Saúde", today.AddDays(-6), PaymentKind.Cash);
-        Add("Curso online", 199m, TransactionTypeKind.Despesa, "Educação", today.AddDays(-14), PaymentKind.Credit);
-        Add("Restaurante", 165m, TransactionTypeKind.Despesa, "Lazer", today.AddDays(-2), PaymentKind.Debit);
+        Add("Salário CLT", 9200m, TransactionTypeKind.Receita, "Salário", today.AddDays(-3), "Dinheiro");
+        Add("Freelance design", 4500m, TransactionTypeKind.Receita, "Freelance", today.AddDays(-11), "Débito");
+        Add("Dividendos ITUB4", 340m, TransactionTypeKind.Receita, "Investimentos", today.AddDays(-2), "Crédito");
+        Add("PIX recebido", 800m, TransactionTypeKind.Receita, "Freelance", today.AddDays(-7), "PIX");
+        Add("Aluguel", 2400m, TransactionTypeKind.Despesa, "Moradia", today.AddDays(-5), "Crédito");
+        Add("Supermercado", 412.55m, TransactionTypeKind.Despesa, "Alimentação", today.AddDays(-1), "Dinheiro");
+        Add("Netflix", 55.90m, TransactionTypeKind.Despesa, "Lazer", today.AddDays(-10), "Crédito");
+        Add("Combustível", 280m, TransactionTypeKind.Despesa, "Transporte", today.AddDays(-4), "Débito");
+        Add("Farmácia", 89.50m, TransactionTypeKind.Despesa, "Saúde", today.AddDays(-6), "Dinheiro");
+        Add("Curso online", 199m, TransactionTypeKind.Despesa, "Educação", today.AddDays(-14), "Crédito");
+        Add("Restaurante", 165m, TransactionTypeKind.Despesa, "Lazer", today.AddDays(-2), "Débito");
 
         db.SaveChanges();
 

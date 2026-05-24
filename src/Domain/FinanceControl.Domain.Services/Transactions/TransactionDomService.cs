@@ -16,14 +16,19 @@ public class TransactionDomService : ITransactionDomService
             throw new ArgumentException("Valor da transação deve ser maior que zero.");
         if (!dto.TransactionTypeKind.IsDefinedKind())
             throw new ArgumentException("Tipo de transação inválido (receita ou despesa).");
-        if (dto.PaymentKind is { } pk && !Enum.IsDefined(typeof(PaymentKind), pk))
-            throw new ArgumentException("Meio de pagamento inválido.");
+        if (dto.PaymentMethodId == Guid.Empty)
+            throw new ArgumentException("Selecione um meio de pagamento.");
 
         return TransactionMapper.ToEntity(dto);
     }
 
-    public void ApplyUpdate(Transaction entity, TransactionUpdateDto dto) =>
+    public void ApplyUpdate(Transaction entity, TransactionUpdateDto dto)
+    {
+        if (dto.PaymentMethodId == Guid.Empty)
+            throw new ArgumentException("Selecione um meio de pagamento.");
+
         TransactionMapper.ApplyUpdate(entity, dto);
+    }
 
     public decimal GetBalanceDelta(decimal value, TransactionTypeKind typeKind) =>
         TransactionMapper.GetBalanceDelta(value, typeKind);

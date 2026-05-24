@@ -31,8 +31,7 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
             .HasColumnName("FlowDirection")
             .IsRequired();
 
-        builder.Property(t => t.PaymentKind)
-            .HasConversion<int>()
+        builder.Property(t => t.PaymentMethodId)
             .IsRequired();
 
         builder.Property(t => t.CategoryId)
@@ -49,6 +48,11 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
 
         builder.Property(t => t.UpdatedAt)
             .IsRequired(false);
+
+        builder.HasOne(t => t.PaymentMethod)
+            .WithMany()
+            .HasForeignKey(t => t.PaymentMethodId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(t => t.Account)
             .WithMany(a => a.Transactions)

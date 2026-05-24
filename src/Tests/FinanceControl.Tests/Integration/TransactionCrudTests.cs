@@ -22,7 +22,7 @@ public class TransactionCrudTests : IClassFixture<FinanceApiFactory>
     public async Task Post_Then_GetById_Then_Put_Then_Delete_Flow()
     {
         using var client = _factory.CreateApiClient();
-        var (userId, categoryId, accountId) = await IntegrationSeed.EnsureUserAndCategoryAsync(_factory.Services);
+        var (userId, categoryId, accountId, paymentMethodId) = await IntegrationSeed.EnsureUserAndCategoryAsync(_factory.Services);
 
         var createBody = new
         {
@@ -30,7 +30,7 @@ public class TransactionCrudTests : IClassFixture<FinanceApiFactory>
             transactionValue = 10.5m,
             date = DateTime.UtcNow,
             transactionTypeKind = 2,
-            paymentKind = 1,
+            paymentMethodId,
             categoryId,
             accountId,
             userId,
@@ -51,7 +51,7 @@ public class TransactionCrudTests : IClassFixture<FinanceApiFactory>
             transactionValue = 11m,
             date = DateTime.UtcNow,
             transactionTypeKind = 2,
-            paymentKind = 2,
+            paymentMethodId,
             categoryId,
             accountId,
             status = 2
@@ -70,7 +70,7 @@ public class TransactionCrudTests : IClassFixture<FinanceApiFactory>
     public async Task Get_FilterByUserId_ReturnsOk()
     {
         using var client = _factory.CreateApiClient();
-        var (userId, _, _) = await IntegrationSeed.EnsureUserAndCategoryAsync(_factory.Services);
+        var (userId, _, _, _) = await IntegrationSeed.EnsureUserAndCategoryAsync(_factory.Services);
         var res = await client.GetAsync($"/api/Transaction?userId={userId}");
         Assert.Equal(HttpStatusCode.OK, res.StatusCode);
     }

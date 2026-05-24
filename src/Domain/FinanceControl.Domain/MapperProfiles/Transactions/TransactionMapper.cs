@@ -9,7 +9,8 @@ public static class TransactionMapper
     public static TransactionDto ToDto(
         Transaction entity,
         string? categoryName = null,
-        string? accountName = null) =>
+        string? accountName = null,
+        string? paymentMethodName = null) =>
         new()
         {
             TransactionId = entity.TransactionId,
@@ -17,7 +18,8 @@ public static class TransactionMapper
             TransactionValue = entity.TransactionValue,
             Date = entity.Date,
             TransactionTypeKind = entity.TransactionTypeKind,
-            PaymentKind = entity.PaymentKind,
+            PaymentMethodId = entity.PaymentMethodId,
+            PaymentMethodName = paymentMethodName ?? entity.PaymentMethod?.Name,
             CategoryId = entity.CategoryId,
             CategoryName = categoryName ?? entity.Category?.CategoryName,
             AccountId = entity.AccountId,
@@ -34,7 +36,7 @@ public static class TransactionMapper
             TransactionValue = dto.TransactionValue,
             Date = dto.Date,
             TransactionTypeKind = dto.TransactionTypeKind,
-            PaymentKind = dto.PaymentKind,
+            PaymentMethodId = dto.PaymentMethodId,
             CategoryId = dto.CategoryId,
             AccountId = dto.AccountId,
             UserId = dto.UserId,
@@ -48,7 +50,7 @@ public static class TransactionMapper
         entity.TransactionValue = dto.TransactionValue;
         entity.Date = dto.Date;
         entity.TransactionTypeKind = dto.TransactionTypeKind;
-        entity.PaymentKind = dto.PaymentKind;
+        entity.PaymentMethodId = dto.PaymentMethodId;
         entity.CategoryId = dto.CategoryId;
         entity.AccountId = dto.AccountId;
         entity.UpdatedAt = DateTimeOffset.UtcNow;

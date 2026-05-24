@@ -56,4 +56,7 @@ public class PaymentMethodRepository(FinanceDbContext context) : IPaymentMethodR
         await context.SaveChangesAsync();
         return true;
     }
+
+    public Task<bool> IsInUseAsync(Guid id) =>
+        context.Transactions.AnyAsync(t => t.PaymentMethodId == id);
 }

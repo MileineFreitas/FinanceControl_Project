@@ -1,4 +1,4 @@
-using FinanceControl.Contracts.Dtos.Common;
+﻿using FinanceControl.Contracts.Dtos.Common;
 using FinanceControl.Contracts.Dtos.Transactions;
 using FinanceControl.Contracts.Filters;
 using FinanceControl.Domain.Interfaces.AppServices.Transactions;
@@ -22,7 +22,7 @@ public class TransactionAppService(
 
     public async Task<TransactionDto> CreateAsync(TransactionCreateDto dto)
     {
-        await ValidateReferencesAsync(dto.CategoryId, dto.AccountId, dto.UserId);
+        await ValidateReferencesAsync(dto.CategoryId, dto.AccountId, dto.UserId, dto.PaymentMethodId);
 
         var entity = domService.CreateFromCreateDto(dto);
         await repository.AddAsync(entity);
@@ -45,6 +45,8 @@ public class TransactionAppService(
             throw new InvalidOperationException($"Não existe categoria com CategoryId={dto.CategoryId}.");
         if (!await repository.AccountExistsAsync(dto.AccountId))
             throw new InvalidOperationException($"Conta AccountId={dto.AccountId} não encontrada.");
+        if (!await repository.PaymentMethodExistsAsync(dto.PaymentMethodId))
+            throw new InvalidOperationException($"Meio de pagamento PaymentMethodId={dto.PaymentMethodId} não encontrado ou inativo.");
 
         var oldAccountId = entity.AccountId;
         var oldValue = entity.TransactionValue;
@@ -73,7 +75,7 @@ public class TransactionAppService(
         return await repository.DeleteAsync(id);
     }
 
-    private async Task ValidateReferencesAsync(Guid categoryId, Guid accountId, Guid userId)
+    private async Task ValidateReferencesAsync(Guid categoryId, Guid accountId, Guid userId, Guid paymentMethodId)
     {
         if (!await repository.CategoryExistsAsync(categoryId))
             throw new InvalidOperationException($"Não existe categoria com CategoryId={categoryId}. Cadastre categorias antes de lançar transações.");
@@ -81,5 +83,7 @@ public class TransactionAppService(
             throw new InvalidOperationException($"Conta AccountId={accountId} não encontrada.");
         if (!await repository.UserExistsAsync(userId))
             throw new InvalidOperationException($"Utilizador UserId={userId} não encontrado.");
+        if (!await repository.PaymentMethodExistsAsync(paymentMethodId))
+            throw new InvalidOperationException($"Meio de pagamento PaymentMethodId={paymentMethodId} não encontrado ou inativo.");
     }
 }

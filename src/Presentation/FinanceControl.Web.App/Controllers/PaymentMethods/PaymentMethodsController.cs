@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceControl.Web.Controllers.PaymentMethods;
 
-/// <summary>Meios de pagamento (débito, crédito, dinheiro, PIX, etc.). Receita/despesa fica na transação.</summary>
 [Route("meios-pagamento")]
 public class PaymentMethodsController(IPaymentMethodCliService paymentMethodCli) : Controller
 {
@@ -116,22 +115,14 @@ public class PaymentMethodsController(IPaymentMethodCliService paymentMethodCli)
         try
         {
             var list = await paymentMethodCli.ListAsync(includeInactive: true);
-            if (list is { Count: > 0 })
-            {
-                vm.UsandoDadosDemo = false;
-                vm.Meios = list.Select(PaymentMethodViewModelMapper.ToItem).ToList();
-                ApplyBusca(vm);
-                return;
-            }
+            vm.Meios = (list ?? []).Select(PaymentMethodViewModelMapper.ToItem).ToList();
+            ApplyBusca(vm);
         }
-        catch
+        catch (Exception ex)
         {
-            /* demo fallback */
+            vm.ErroPagina = $"Não foi possível carregar meios de pagamento: {ex.Message}";
+            vm.Meios = [];
         }
-
-        vm.UsandoDadosDemo = true;
-        vm.Meios = GetDemoFallback();
-        ApplyBusca(vm);
     }
 
     private static void ApplyBusca(PaymentMethodViewModel vm)
@@ -142,14 +133,6 @@ public class PaymentMethodsController(IPaymentMethodCliService paymentMethodCli)
             .Where(t => t.Nome.Contains(term, StringComparison.OrdinalIgnoreCase))
             .ToList();
     }
-
-    private static List<PaymentMethodItemVm> GetDemoFallback() =>
-    [
-        new(PaymentMethodSeedIds.Debito, "💳", "Débito", "Ativo", true),
-        new(PaymentMethodSeedIds.Credito, "💳", "Crédito", "Ativo", true),
-        new(PaymentMethodSeedIds.Dinheiro, "💵", "Dinheiro", "Ativo", true),
-        new(Guid.Parse("c1000001-0001-4001-8001-000000000004"), "📱", "PIX", "Ativo", false),
-    ];
 
     private static async Task<string> ReadErrorAsync(HttpResponseMessage response)
     {

@@ -24,4 +24,6 @@ public interface ITransactionRepository
     Task<bool> AccountExistsAsync(Guid accountId);
 
     Task<bool> UserExistsAsync(Guid userId);
+
+    Task<bool> PaymentMethodExistsAsync(Guid paymentMethodId);
 }

@@ -17,8 +17,6 @@ public class PaymentMethodViewModel
 
     public string? ErroPagina { get; set; }
 
-    public bool UsandoDadosDemo { get; set; }
-
     public List<PaymentMethodItemVm> Meios { get; set; } = [];
 
     public IReadOnlyList<string> IconesDisponiveis { get; } = PaymentMethodIcons.Available;
@@ -29,7 +27,6 @@ public sealed record PaymentMethodItemVm(
     string Icone,
     string Nome,
     string Status,
-    bool IsSystem,
     string? Descricao = null);
 
 public static class PaymentMethodViewModelMapper
@@ -40,6 +37,5 @@ public static class PaymentMethodViewModelMapper
             PaymentMethodIcons.Normalize(dto.Icon),
             dto.Name,
             dto.IsActive ? "Ativo" : "Inativo",
-            PaymentMethodSeedIds.IsSystem(dto.PaymentMethodId),
             dto.Description);
 }

@@ -14,7 +14,7 @@ public interface ITransaction
 
     TransactionTypeKind TransactionTypeKind { get; set; }
 
-    PaymentKind PaymentKind { get; set; }
+    Guid PaymentMethodId { get; set; }
 
     Guid CategoryId { get; set; }
 

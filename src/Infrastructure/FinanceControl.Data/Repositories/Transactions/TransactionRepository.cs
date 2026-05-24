@@ -16,7 +16,8 @@ public class TransactionRepository(FinanceDbContext context) : ITransactionRepos
         context.Transactions
             .AsNoTracking()
             .Include(t => t.Category)
-            .Include(t => t.Account);
+            .Include(t => t.Account)
+            .Include(t => t.PaymentMethod);
 
     public async Task<DataResultDto<TransactionDto>> FilterAsync(DataFilterDto filter)
     {
@@ -91,4 +92,7 @@ public class TransactionRepository(FinanceDbContext context) : ITransactionRepos
 
     public Task<bool> UserExistsAsync(Guid userId) =>
         context.Users.AnyAsync(u => u.UserId == userId);
+
+    public Task<bool> PaymentMethodExistsAsync(Guid paymentMethodId) =>
+        context.PaymentMethods.AnyAsync(p => p.PaymentMethodId == paymentMethodId && p.IsActive);
 }

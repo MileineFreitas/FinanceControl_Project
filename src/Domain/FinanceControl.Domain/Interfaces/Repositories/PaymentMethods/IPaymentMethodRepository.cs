@@ -18,4 +18,6 @@ public interface IPaymentMethodRepository
     Task SaveChangesAsync();
 
     Task<bool> DeleteAsync(Guid id);
+
+    Task<bool> IsInUseAsync(Guid id);
 }

@@ -43,7 +43,9 @@ public class PaymentMethodAppService(
         var entity = await repository.FindTrackedAsync(id);
         if (entity == null) return false;
 
-        domService.EnsureCanDelete(entity);
+        if (await repository.IsInUseAsync(id))
+            throw new InvalidOperationException("Não é possível excluir: existem transações vinculadas a este meio de pagamento.");
+
         return await repository.DeleteAsync(id);
     }
 }

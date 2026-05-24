@@ -1,4 +1,3 @@
-using FinanceControl.Contracts.Constants;
 using FinanceControl.Contracts.Dtos.PaymentMethods;
 using FinanceControl.Domain.Entities.PaymentMethods;
 using FinanceControl.Domain.Interfaces.DomService.PaymentMethods;
@@ -18,10 +17,4 @@ public class PaymentMethodDomService : IPaymentMethodDomService
 
     public void ApplyUpdate(PaymentMethod entity, PaymentMethodUpdateDto dto) =>
         PaymentMethodMapper.ApplyUpdate(entity, dto);
-
-    public void EnsureCanDelete(PaymentMethod entity)
-    {
-        if (PaymentMethodSeedIds.IsSystem(entity.PaymentMethodId))
-            throw new InvalidOperationException("Meios de pagamento padrão do sistema não podem ser excluídos.");
-    }
 }

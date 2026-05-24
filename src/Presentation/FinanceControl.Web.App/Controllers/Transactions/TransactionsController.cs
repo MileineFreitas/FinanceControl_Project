@@ -103,7 +103,7 @@ public class TransactionsController : Controller
         await CarregarMeiosPagamentoAsync(vm);
         await CarregarTransacoesAsync(vm);
 
-        if (!ValidarFormulario(vm, out var tipo, out var meio))
+        if (!ValidarFormulario(vm, out var tipo))
         {
             AplicarFiltrosEPaginar(vm);
             return View("Index", vm);
@@ -131,7 +131,7 @@ public class TransactionsController : Controller
                     TransactionValue = vm.Input.Valor,
                     Date = dataUtc,
                     TransactionTypeKind = tipo,
-                    PaymentKind = meio ?? PaymentKind.Debit,
+                    PaymentMethodId = vm.Input.PaymentMethodId,
                     CategoryId = vm.Input.CategoryId,
                     AccountId = accountId
                 };
@@ -152,7 +152,7 @@ public class TransactionsController : Controller
                     TransactionValue = vm.Input.Valor,
                     Date = dataUtc,
                     TransactionTypeKind = tipo,
-                    PaymentKind = meio ?? PaymentKind.Debit,
+                    PaymentMethodId = vm.Input.PaymentMethodId,
                     CategoryId = vm.Input.CategoryId,
                     AccountId = accountId,
                     UserId = userId
@@ -290,8 +290,7 @@ public class TransactionsController : Controller
                     vm.MeiosPagamentoOpcoes.Add(new MeioPagamentoOpcaoVm(
                         m.PaymentMethodId,
                         m.Name,
-                        PaymentMethodIcons.Normalize(m.Icon),
-                        PaymentMethodKindResolver.FromName(m.Name)));
+                        PaymentMethodIcons.Normalize(m.Icon)));
                 }
             }
         }
@@ -348,21 +347,8 @@ public class TransactionsController : Controller
             categoria,
             t.CategoryId,
             t.TransactionTypeKind,
-            ResolverNomeMeioPagamento(vm, t.PaymentKind),
+            t.PaymentMethodName ?? vm.MeiosPagamentoOpcoes.FirstOrDefault(m => m.Id == t.PaymentMethodId)?.Nome,
             t.TransactionValue);
-    }
-
-    private string? ResolverNomeMeioPagamento(TransactionIndexViewModel vm, PaymentKind? paymentKind)
-    {
-        if (paymentKind is null) return null;
-        var match = vm.MeiosPagamentoOpcoes.FirstOrDefault(m => m.PaymentKind == paymentKind);
-        return match?.Nome ?? paymentKind switch
-        {
-            PaymentKind.Debit => "Débito",
-            PaymentKind.Credit => "Crédito",
-            PaymentKind.Cash => "Dinheiro",
-            _ => paymentKind.ToString()
-        };
     }
 
     private void AtualizarResumos(TransactionIndexViewModel vm, IReadOnlyList<TransacaoListaVm> filtradas)
@@ -408,21 +394,14 @@ public class TransactionsController : Controller
             Descricao = dto.TransactionDescription ?? "",
             Valor = dto.TransactionValue,
             CategoryId = dto.CategoryId,
-            PaymentMethodId = ResolverPaymentMethodId(vm, dto.PaymentKind)
+            PaymentMethodId = dto.PaymentMethodId
         };
         vm.AccountIdEdicao = dto.AccountId;
     }
 
-    private Guid ResolverPaymentMethodId(TransactionIndexViewModel vm, PaymentKind? paymentKind)
-    {
-        if (paymentKind is null) return Guid.Empty;
-        return vm.MeiosPagamentoOpcoes.FirstOrDefault(m => m.PaymentKind == paymentKind)?.Id ?? Guid.Empty;
-    }
-
-    private bool ValidarFormulario(TransactionIndexViewModel vm, out TransactionTypeKind tipo, out PaymentKind? meio)
+    private bool ValidarFormulario(TransactionIndexViewModel vm, out TransactionTypeKind tipo)
     {
         tipo = TransactionTypeKind.Receita;
-        meio = null;
 
         if (string.IsNullOrWhiteSpace(vm.Input.Descricao) || vm.Input.Descricao.Length < 2)
         {
@@ -446,16 +425,16 @@ public class TransactionsController : Controller
             ? (TransactionTypeKind)vm.Input.TipoTransacao
             : TransactionTypeKind.Receita;
 
-        if (vm.Input.PaymentMethodId != Guid.Empty)
+        if (vm.Input.PaymentMethodId == Guid.Empty)
         {
-            var metodo = vm.MeiosPagamentoOpcoes.FirstOrDefault(m => m.Id == vm.Input.PaymentMethodId);
-            if (metodo == null)
-            {
-                vm.ErroModal = "Meio de pagamento inválido.";
-                return false;
-            }
+            vm.ErroModal = "Selecione um meio de pagamento.";
+            return false;
+        }
 
-            meio = metodo.PaymentKind;
+        if (vm.MeiosPagamentoOpcoes.All(m => m.Id != vm.Input.PaymentMethodId))
+        {
+            vm.ErroModal = "Meio de pagamento inválido.";
+            return false;
         }
 
         return true;
