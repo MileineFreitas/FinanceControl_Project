@@ -88,6 +88,11 @@
   display: none;
 }
 
+.page--wealth.sidebar-collapsed .sidebar__submenu,
+.page--wealth.sidebar-collapsed .sidebar__group-caret {
+  display: none;
+}
+
 .sidebar__header {
   padding: 0 1.5rem 2rem;
   border-bottom: 1px solid rgba(65, 139, 224, 0.15);
@@ -160,6 +165,72 @@
   width: 20px;
   height: 20px;
   flex-shrink: 0;
+}
+
+.sidebar__group {
+  margin: 0 0.75rem;
+}
+
+.sidebar__group[open] {
+  background: rgba(15, 30, 61, 0.2);
+  border-radius: 0.75rem;
+}
+
+.sidebar__group summary {
+  list-style: none;
+}
+
+.sidebar__group summary::-webkit-details-marker {
+  display: none;
+}
+
+.sidebar__group-toggle {
+  margin: 0;
+  cursor: pointer;
+  justify-content: space-between;
+}
+
+.sidebar__group-main {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.sidebar__group-caret {
+  width: 16px !important;
+  height: 16px !important;
+  transition: transform 0.2s ease;
+}
+
+.sidebar__group[open] .sidebar__group-caret {
+  transform: rotate(90deg);
+}
+
+.sidebar__submenu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.25rem 0 0.75rem;
+}
+
+.sidebar__subitem {
+  margin: 0 0.75rem 0 1.25rem;
+  padding: 0.65rem 1rem 0.65rem 2.75rem;
+  border-radius: 0.5rem;
+  color: rgba(255, 255, 255, 0.68);
+  text-decoration: none;
+  font-size: 0.8rem;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.sidebar__subitem:hover {
+  background: rgba(65, 139, 224, 0.1);
+  color: #7dd3fc;
+}
+
+.sidebar__subitem--active {
+  background: rgba(65, 139, 224, 0.14);
+  color: #7dd3fc;
 }
 
 .fc-wt-sidebar.sidebar::-webkit-scrollbar {

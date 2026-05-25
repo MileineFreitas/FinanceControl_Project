@@ -176,7 +176,10 @@
         { t: 'Categorias', u: '/categorias', k: 'categorias classificação etiquetas' },
         { t: 'Meios de pagamento', u: '/meios-pagamento', k: 'pagamento pix débito crédito dinheiro meios' },
         { t: 'Investimentos', u: '/dashboards/geral', k: 'investimentos gráficos portfolio ações' },
-        { t: 'Relatórios', u: '/relatorios', k: 'relatórios exportar resumo' }
+        { t: 'Relatórios', u: '/relatorios', k: 'relatórios exportar resumo' },
+        { t: 'Relatório por meio de pagamento', u: '/relatorios/por-meio-pagamento', k: 'relatórios meio de pagamento pix débito crédito dinheiro' },
+        { t: 'Relatório por categoria', u: '/relatorios/por-categoria', k: 'relatórios categoria gastos receitas classificação' },
+        { t: 'Relatório de transação', u: '/relatorios/por-transacoes', k: 'relatórios transações movimentações extrato lançamentos' }
     ];
 
     var searchInput = document.getElementById('fc-global-search-input');
