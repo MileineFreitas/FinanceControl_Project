@@ -27,7 +27,10 @@ public class RegisterController : Controller
         {
             await using var ms = new MemoryStream();
             await vm.ProfilePhotoFile.CopyToAsync(ms);
-            vm.Register.ProfilePhoto = Convert.ToBase64String(ms.ToArray());
+            var contentType = string.IsNullOrWhiteSpace(vm.ProfilePhotoFile.ContentType)
+                ? "image/jpeg"
+                : vm.ProfilePhotoFile.ContentType;
+            vm.Register.ProfilePhoto = $"data:{contentType};base64,{Convert.ToBase64String(ms.ToArray())}";
         }
 
         try

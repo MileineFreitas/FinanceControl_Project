@@ -17,7 +17,7 @@
 </head>
 <body>
     <div class="page page--wealth" id="fc-page-root">
-        <partial name="_MainHeader" />
+        @await Component.InvokeAsync("MainHeader")
         <button type="button" class="fc-sidebar-backdrop" data-fc-sidebar-backdrop tabindex="-1" aria-label="Fechar menu"></button>
         <div class="page-shell">
             <aside class="sidebar fc-wt-sidebar" id="fc-sidebar">

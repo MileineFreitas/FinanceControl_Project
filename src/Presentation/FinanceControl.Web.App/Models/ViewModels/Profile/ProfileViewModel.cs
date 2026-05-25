@@ -1,4 +1,5 @@
 using FinanceControl.Contracts.Dtos.Users;
+using FinanceControl.Web.Helpers;
 
 namespace FinanceControl.Web.Models.ViewModels.Profile;
 
@@ -14,10 +15,5 @@ public sealed class ProfileViewModel
 
     public string? SucessoMensagem { get; set; }
 
-    public string AvatarSrc =>
-        !string.IsNullOrWhiteSpace(Input.ProfilePhoto)
-            ? (Input.ProfilePhoto.StartsWith("data:", StringComparison.OrdinalIgnoreCase)
-                ? Input.ProfilePhoto
-                : $"data:image/jpeg;base64,{Input.ProfilePhoto}")
-            : $"https://api.dicebear.com/7.x/avataaars/svg?seed={Uri.EscapeDataString(Input.UserName ?? "finance")}";
+    public string AvatarSrc => UserAvatarHelper.BuildAvatarSrc(Input.ProfilePhoto, Input.UserName);
 }

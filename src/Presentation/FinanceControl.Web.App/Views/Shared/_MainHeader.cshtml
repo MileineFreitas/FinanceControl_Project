@@ -1,3 +1,5 @@
+@model FinanceControl.Web.Models.ViewModels.Shared.MainHeaderViewModel
+
 <header class="header">
     <div class="header__container">
         <button type="button" class="header__menu-toggle" data-fc-mobile-nav-toggle aria-label="Abrir ou fechar menu">
@@ -92,15 +94,14 @@
                         aria-haspopup="true"
                         title="Menu do perfil"
                         aria-label="Menu do perfil">
-                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=finance" alt="" class="header__profile-img" width="40" height="40" />
+                    <img src="@Model.AvatarSrc" alt="" class="header__profile-img" width="40" height="40" />
                 </button>
 
                 <button type="button" class="header-dropdown-backdrop" tabindex="-1" aria-label="Fechar menu" data-fc-profile-close></button>
                 <div class="header-dropdown header-profile-dropdown" role="menu">
                     <div class="header-dropdown-header">
-                        <p class="header-dropdown-username">Meu Perfil</p>
+                        <p class="header-dropdown-username">@Model.DisplayName</p>
                     </div>
-                    <div class="header-dropdown-divider"></div>
                     <a class="header-dropdown-item" href="~/perfil" role="menuitem">
                         <svg class="dropdown-item-icon" viewBox="0 0 24 24" aria-hidden="true">
                             <path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />

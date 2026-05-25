@@ -42,7 +42,10 @@ public class ProfileController(IUserCliService userCli) : Controller
         {
             await using var ms = new MemoryStream();
             await vm.ProfilePhotoFile.CopyToAsync(ms);
-            vm.Input.ProfilePhoto = Convert.ToBase64String(ms.ToArray());
+            var contentType = string.IsNullOrWhiteSpace(vm.ProfilePhotoFile.ContentType)
+                ? "image/jpeg"
+                : vm.ProfilePhotoFile.ContentType;
+            vm.Input.ProfilePhoto = $"data:{contentType};base64,{Convert.ToBase64String(ms.ToArray())}";
         }
 
         if (string.IsNullOrWhiteSpace(vm.Input.Password))
