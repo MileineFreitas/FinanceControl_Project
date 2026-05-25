@@ -1,7 +1,15 @@
 @import "_cards.css";
 
+:root {
+    --fc-font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --bs-font-sans-serif: var(--fc-font-sans);
+    --bs-body-font-family: var(--fc-font-sans);
+}
+
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: var(--fc-font-sans);
+    height: 100%;
+    width: 100%;
 }
 
 h1:focus {
@@ -122,11 +130,6 @@ code {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-}
-
-html, body {
-    height: 100%;
-    width: 100%;
 }
 
 #app {

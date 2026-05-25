@@ -1,6 +1,7 @@
 /* Dashboard Home — WEALTHTERMINAL (cards + resumo transações) */
 
 .dash-wt {
+    font-family: inherit;
     width: 100%;
 }
 
@@ -233,6 +234,14 @@
 
 .dash-table tbody tr:hover {
     background: rgba(65, 139, 224, 0.05);
+}
+
+.dash-table tbody td.dash-empty-state {
+    text-align: center;
+    padding: 2rem;
+    color: #cbd5e1;
+    font-size: 0.875rem;
+    line-height: 1.55;
 }
 
 .dash-table__desc {

@@ -35,6 +35,12 @@
 
         <section class="wt-card-panel">
             <div class="wt-cards-grid" id="categories-grid">
+                @if (Model.Categorias.Count == 0)
+                {
+                    <p class="wt-empty-state">
+                        Nenhuma categoria encontrada. Cadastre a primeira com o botão acima ou ajuste os filtros.
+                    </p>
+                }
                 @foreach (var cat in Model.Categorias)
                 {
                     <div class="wt-cat-card">

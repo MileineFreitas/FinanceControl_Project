@@ -21,7 +21,7 @@
 }
 
 .title-page {
-    font-family: 'DM Serif Display', serif;
+    font-family: var(--fc-font-sans, "Inter", system-ui, sans-serif);
     font-size: 2.6rem;
     color: #1a1a2e;
     line-height: 1.15;
@@ -29,7 +29,7 @@
 
 .sub-title {
     margin: 0;
-    font-family: 'DM Sans', sans-serif;
+    font-family: var(--fc-font-sans, "Inter", system-ui, sans-serif);
     font-size: 1rem;
     color: #6b7280;
     line-height: 1.6;
@@ -132,7 +132,7 @@
 }
 
 .card-amount {
-    font-family: 'DM Serif Display', serif;
+    font-family: var(--fc-font-sans, "Inter", system-ui, sans-serif);
     font-size: 1.4rem;
     color: #1a1a2e;
 }
@@ -160,7 +160,7 @@
 }
 
 .summary-title {
-    font-family: 'DM Serif Display', serif;
+    font-family: var(--fc-font-sans, "Inter", system-ui, sans-serif);
     font-size: 1.5rem;
     line-height: 1.25;
     margin-bottom: .6rem;
@@ -189,7 +189,7 @@
 }
 
 .projected-amount {
-    font-family: 'DM Serif Display', serif;
+    font-family: var(--fc-font-sans, "Inter", system-ui, sans-serif);
     font-size: 1.4rem;
     color: #fff;
 }

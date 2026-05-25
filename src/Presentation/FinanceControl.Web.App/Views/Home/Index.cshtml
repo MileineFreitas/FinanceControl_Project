@@ -69,25 +69,36 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var row in Model.TransacoesResumo)
+                    @if (Model.TransacoesResumo.Count == 0)
                     {
-                        var filterBlob = $"{row.Titulo} {row.LinhaSecundaria} {row.CategoriaBadge}".ToLowerInvariant();
-                        <tr data-dash-filter="@filterBlob">
-                            <td>@row.DataHora</td>
-                            <td>
-                                <div class="dash-table__desc">
-                                    <div class="dash-table__icon">
-                                        <span class="material-symbols-outlined" aria-hidden="true">@row.IconMaterial</span>
-                                    </div>
-                                    <div>
-                                        <p class="dash-table__title">@row.Titulo</p>
-                                        <p class="dash-table__meta">@row.LinhaSecundaria</p>
-                                    </div>
-                                </div>
+                        <tr>
+                            <td colspan="4" class="dash-empty-state">
+                                Nenhuma transação encontrada. Cadastre a primeira na tela de Transações ou ajuste os filtros.
                             </td>
-                            <td><span class="dash-badge">@row.CategoriaBadge</span></td>
-                            <td style="text-align:right" class="dash-table__valor @(row.IsReceita ? "dash-table__valor--in" : "dash-table__valor--out")">@row.Valor</td>
                         </tr>
+                    }
+                    else
+                    {
+                        @foreach (var row in Model.TransacoesResumo)
+                        {
+                            var filterBlob = $"{row.Titulo} {row.LinhaSecundaria} {row.CategoriaBadge}".ToLowerInvariant();
+                            <tr data-dash-filter="@filterBlob">
+                                <td>@row.DataHora</td>
+                                <td>
+                                    <div class="dash-table__desc">
+                                        <div class="dash-table__icon">
+                                            <span class="material-symbols-outlined" aria-hidden="true">@row.IconMaterial</span>
+                                        </div>
+                                        <div>
+                                            <p class="dash-table__title">@row.Titulo</p>
+                                            <p class="dash-table__meta">@row.LinhaSecundaria</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="dash-badge">@row.CategoriaBadge</span></td>
+                                <td style="text-align:right" class="dash-table__valor @(row.IsReceita ? "dash-table__valor--in" : "dash-table__valor--out")">@row.Valor</td>
+                            </tr>
+                        }
                     }
                 </tbody>
             </table>

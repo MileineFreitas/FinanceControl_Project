@@ -18,7 +18,7 @@
 }
 
 .app-header-title {
-    font-family: "DM Sans", system-ui, sans-serif;
+    font-family: var(--fc-font-sans, "Inter", system-ui, sans-serif);
     font-size: 1.125rem;
     font-weight: 600;
     letter-spacing: 0.02em;

@@ -126,7 +126,6 @@ public class HomeController : Controller
 
     private async Task PreencherEstadoVazioAsync(HomeIndexViewModel vm)
     {
-        vm.ApiMensagem ??= "Nenhuma transação ainda. Cadastre conta, categorias, meios de pagamento e lançamentos para ver o dashboard.";
         var saldoConta = await ObterSaldoTotalContasAsync();
 
         vm.Metrics =

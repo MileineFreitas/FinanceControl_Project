@@ -35,6 +35,12 @@
 
         <section class="wt-card-panel">
             <div class="wt-cards-grid" id="payment-types-grid">
+                @if (Model.Meios.Count == 0)
+                {
+                    <p class="wt-empty-state">
+                        Nenhum meio de pagamento encontrado. Cadastre o primeiro com o botão acima ou ajuste os filtros.
+                    </p>
+                }
                 @foreach (var t in Model.Meios)
                 {
                     <div class="wt-cat-card">

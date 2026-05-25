@@ -1,7 +1,6 @@
 ﻿.login-wrapper {
     display: flex;
     min-height: 100vh;
-    font-family: 'DM Sans', sans-serif;
 }
 
 .login-left {
@@ -37,8 +36,8 @@
 }
 
 .left-title {
-    font-family: 'DM Serif Display', serif;
     font-size: 2.8rem;
+    font-weight: 700;
     color: white;
     line-height: 1.2;
 }
@@ -71,8 +70,8 @@
 }
 
 .form-title {
-    font-family: 'DM Serif Display', serif;
     font-size: 2rem;
+    font-weight: 700;
     margin-bottom: 2rem;
 }
 
@@ -96,6 +95,7 @@
     border-radius: 10px;
     background: #f8fafc;
     font-size: 14px;
+    font-family: inherit;
     box-sizing: border-box;
 }
 

@@ -5,6 +5,7 @@
     display: flex;
     flex-direction: column;
     background: #0f1e3d;
+    font-family: var(--fc-font-sans, "Inter", system-ui, sans-serif);
 }
 
 .page--wealth .page-shell {

@@ -9,11 +9,6 @@
 
 <div class="wt-cadastro">
     <div class="wt-cadastro__inner">
-        @if (!string.IsNullOrEmpty(Model.ApiMensagem))
-        {
-            <div class="wt-alert">@Model.ApiMensagem</div>
-        }
-
         <header class="wt-page-head">
             <div>
                 <p class="wt-page-kicker">FinanceControl</p>
@@ -85,7 +80,7 @@
                         @if (Model.Transacoes.Count == 0)
                         {
                             <tr>
-                                <td colspan="5" class="wt-hint" style="text-align:center;padding:2rem">
+                                <td colspan="5" class="wt-empty-state">
                                     Nenhuma transação encontrada. Cadastre a primeira com o botão acima ou ajuste os filtros.
                                 </td>
                             </tr>

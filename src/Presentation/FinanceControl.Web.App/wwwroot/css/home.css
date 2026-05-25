@@ -9,7 +9,7 @@
     --hs-surface-container-low: #1a2023;
     --hs-surface-container-highest: #313639;
     --hs-outline-soft: rgba(255, 255, 255, 0.05);
-    font-family: Inter, system-ui, sans-serif;
+    font-family: var(--fc-font-sans, "Inter", system-ui, sans-serif);
     color: var(--hs-on-surface);
     background: var(--hs-surface);
     margin: 0;
@@ -40,7 +40,7 @@
 }
 
 ::deep .hs-title {
-    font-family: Manrope, Inter, sans-serif;
+    font-family: var(--fc-font-sans, "Inter", system-ui, sans-serif);
     font-size: clamp(1.75rem, 4vw, 2.25rem);
     font-weight: 800;
     letter-spacing: -0.03em;
@@ -112,7 +112,7 @@
 }
 
 ::deep .hs-bento-value {
-    font-family: Manrope, Inter, sans-serif;
+    font-family: var(--fc-font-sans, "Inter", system-ui, sans-serif);
     font-size: clamp(1.75rem, 3vw, 2.25rem);
     font-weight: 800;
     letter-spacing: -0.02em;
@@ -225,7 +225,7 @@
 }
 
 ::deep .hs-section-title {
-    font-family: Manrope, Inter, sans-serif;
+    font-family: var(--fc-font-sans, "Inter", system-ui, sans-serif);
     font-size: 1.25rem;
     font-weight: 700;
     color: var(--hs-primary);
@@ -316,7 +316,7 @@
 }
 
 ::deep .hs-donut-pct {
-    font-family: Manrope, Inter, sans-serif;
+    font-family: var(--fc-font-sans, "Inter", system-ui, sans-serif);
     font-size: 2.25rem;
     font-weight: 800;
     color: var(--hs-on-surface);
@@ -503,7 +503,7 @@
 }
 
 ::deep .hs-trans-amt {
-    font-family: Manrope, Inter, sans-serif;
+    font-family: var(--fc-font-sans, "Inter", system-ui, sans-serif);
     font-size: 1.25rem;
     font-weight: 700;
     margin: 0;

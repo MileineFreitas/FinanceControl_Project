@@ -1,3 +1,11 @@
+.wt-cadastro,
+.wt-cadastro input,
+.wt-cadastro select,
+.wt-cadastro textarea,
+.wt-cadastro button {
+    font-family: inherit;
+}
+
 /* Telas de cadastro — tema WEALTHTERMINAL (navy + acento #4189e0 / lavanda) */
 
 .wt-cadastro {
@@ -124,9 +132,50 @@
     padding: 0.5rem 0.85rem;
     border-radius: 10px;
     border: 1px solid rgba(65, 139, 224, 0.28);
-    background: rgba(11, 17, 30, 0.85);
+    background-color: rgba(11, 17, 30, 0.85);
     color: #f1f5f9;
     font-size: 0.875rem;
+}
+
+/* Select — campo fechado + lista do dropdown alinhados ao tema */
+.wt-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding-right: 2.35rem;
+    cursor: pointer;
+    color-scheme: dark;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%237dd3fc' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.75' d='M4 6l4 4 4-4'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 0.875rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.wt-select:hover:not(:disabled) {
+    border-color: rgba(65, 139, 224, 0.45);
+    background-color: rgba(15, 25, 48, 0.95);
+}
+
+.wt-select:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.wt-select option {
+    background-color: #152238;
+    color: #e2e8f0;
+}
+
+.wt-select option:checked {
+    background-color: #1e3a5f;
+    color: #f8fafc;
+    font-weight: 600;
+}
+
+.wt-select option:hover {
+    background-color: rgba(65, 139, 224, 0.35);
+    color: #f8fafc;
 }
 
 .wt-input--block,
@@ -148,6 +197,10 @@
     outline: none;
     border-color: #4189e0;
     box-shadow: 0 0 0 3px rgba(65, 139, 224, 0.2);
+}
+
+.wt-select:focus {
+    background-color: rgba(15, 25, 48, 0.98);
 }
 
 .wt-input::placeholder {
@@ -259,6 +312,21 @@
     border-color: rgba(52, 211, 153, 0.45);
     background: rgba(6, 95, 70, 0.2);
     color: #a7f3d0;
+}
+
+/* Estado vazio — mensagem centralizada legível no tema escuro */
+.wt-empty-state {
+    width: 100%;
+    text-align: center;
+    padding: 2rem;
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: #cbd5e1;
+}
+
+.wt-table tbody td.wt-empty-state {
+    color: #cbd5e1;
 }
 
 /* Paginação */
