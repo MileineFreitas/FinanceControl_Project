@@ -155,6 +155,20 @@
     margin-top: 0.35rem;
 }
 
+.wt-profile__password-modal {
+    max-width: 460px;
+}
+
+.wt-profile__modal-error {
+    margin: 0.5rem 0 0;
+    color: #fecaca;
+    font-size: 0.78rem;
+}
+
+.wt-profile__modal-error.is-hidden {
+    display: none;
+}
+
 .wt-alert--success {
     border-color: rgba(52, 211, 153, 0.45);
     background: rgba(6, 95, 70, 0.25);

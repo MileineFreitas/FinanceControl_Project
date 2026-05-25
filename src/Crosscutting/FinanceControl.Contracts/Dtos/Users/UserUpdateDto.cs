@@ -16,6 +16,8 @@ public class UserUpdateDto
 
     public string? Password { get; set; }
 
+    public string? CurrentPassword { get; set; }
+
     public string? ProfilePhoto { get; set; }
 
     public bool IsActive { get; set; } = true;

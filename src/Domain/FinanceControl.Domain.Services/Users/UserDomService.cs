@@ -32,6 +32,13 @@ public class UserDomService : IUserDomService
             throw new ArgumentException("Nome de usuário é obrigatório.");
         if (string.IsNullOrWhiteSpace(dto.Email))
             throw new ArgumentException("E-mail é obrigatório.");
+        if (!string.IsNullOrWhiteSpace(dto.Password))
+        {
+            if (string.IsNullOrWhiteSpace(dto.CurrentPassword))
+                throw new ArgumentException("Informe a senha atual para confirmar a alteração.");
+            if (!string.Equals(entity.Password, dto.CurrentPassword, StringComparison.Ordinal))
+                throw new ArgumentException("A senha atual informada está incorreta.");
+        }
 
         UserMapper.ApplyUpdate(entity, dto);
     }

@@ -1,3 +1,4 @@
+using System.Text.Json;
 using FinanceControl.Client.Services.Interfaces.Users;
 using FinanceControl.Contracts.Dtos.Users;
 using FinanceControl.Contracts.Filters;
@@ -35,15 +36,7 @@ public class ProfileController(IUserCliService userCli) : Controller
             return View("Index", vm);
         }
 
-        if (string.IsNullOrWhiteSpace(vm.Input.Email))
-        {
-            vm.ErroPagina = "Informe um e-mail válido.";
-            await CarregarUsuarioAsync(vm);
-            return View("Index", vm);
-        }
-
         vm.Input.UserName = vm.Input.UserName.Trim();
-        vm.Input.Email = vm.Input.Email.Trim();
 
         if (vm.ProfilePhotoFile is { Length: > 0 })
         {
@@ -53,17 +46,40 @@ public class ProfileController(IUserCliService userCli) : Controller
         }
 
         if (string.IsNullOrWhiteSpace(vm.Input.Password))
+        {
             vm.Input.Password = null;
+            vm.Input.CurrentPassword = null;
+        }
+        else
+        {
+            vm.Input.CurrentPassword = vm.Input.CurrentPassword?.Trim();
+        }
 
         try
         {
+            var usuarioAtual = await userCli.GetByIdAsync(vm.Input.UserId);
+            if (usuarioAtual == null)
+            {
+                vm.ErroPagina = "Usuário não encontrado para atualização.";
+                await CarregarUsuarioAsync(vm);
+                return View("Index", vm);
+            }
+
+            vm.Input.Email = usuarioAtual.UserEmail?.Trim() ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(vm.Input.Email))
+            {
+                vm.ErroPagina = "Informe um e-mail válido.";
+                await CarregarUsuarioAsync(vm);
+                return View("Index", vm);
+            }
+
             var res = await userCli.UpdateAsync(vm.Input.UserId, vm.Input);
             if (!res.IsSuccessStatusCode)
             {
                 var body = await res.Content.ReadAsStringAsync();
                 vm.ErroPagina = string.IsNullOrWhiteSpace(body)
                     ? $"Não foi possível salvar ({(int)res.StatusCode})."
-                    : body;
+                    : ExtrairMensagemErro(body);
                 await CarregarUsuarioAsync(vm);
                 return View("Index", vm);
             }
@@ -103,5 +119,24 @@ public class ProfileController(IUserCliService userCli) : Controller
         {
             vm.ErroPagina ??= $"Não foi possível carregar o perfil: {ex.Message}";
         }
+    }
+
+    private static string ExtrairMensagemErro(string body)
+    {
+        try
+        {
+            using var json = JsonDocument.Parse(body);
+            if (json.RootElement.ValueKind == JsonValueKind.Object &&
+                json.RootElement.TryGetProperty("message", out var message) &&
+                message.ValueKind == JsonValueKind.String)
+            {
+                return message.GetString() ?? body;
+            }
+        }
+        catch (JsonException)
+        {
+        }
+
+        return body;
     }
 }

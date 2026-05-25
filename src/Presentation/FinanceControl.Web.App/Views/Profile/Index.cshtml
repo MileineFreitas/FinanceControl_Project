@@ -37,7 +37,7 @@
         }
         else
         {
-            <form method="post" asp-action="Salvar" enctype="multipart/form-data" class="wt-profile__layout">
+            <form method="post" asp-action="Salvar" enctype="multipart/form-data" class="wt-profile__layout" id="profile-form">
                 @Html.AntiForgeryToken()
                 <input type="hidden" asp-for="Input.UserId" />
                 <input type="hidden" asp-for="Input.IsActive" />
@@ -47,7 +47,6 @@
                     <section class="wt-card-panel wt-profile__avatar-card">
                         <div class="wt-profile__avatar-wrap">
                             <img src="@Model.AvatarSrc" alt="Foto de perfil" class="wt-profile__avatar" id="profile-avatar-preview" width="120" height="120" />
-                            <span class="wt-profile__avatar-badge" aria-hidden="true">✎</span>
                         </div>
                         <p class="wt-profile__display-name" id="profile-display-name">@(string.IsNullOrWhiteSpace(Model.Input.UserName) ? "Usuário" : Model.Input.UserName)</p>
                         <p class="wt-profile__display-email" id="profile-display-email">@Model.Input.Email</p>
@@ -81,7 +80,8 @@
                             </div>
                             <div class="wt-field">
                                 <label asp-for="Input.Email">E-mail</label>
-                                <input class="wt-input wt-input--block" asp-for="Input.Email" type="email" placeholder="voce@email.com" autocomplete="email" />
+                                <input class="wt-input wt-input--block" asp-for="Input.Email" type="email" autocomplete="email" readonly />
+                                <p class="wt-profile__hint">O e-mail de acesso não pode ser alterado.</p>
                             </div>
                         </div>
                     </section>
@@ -93,7 +93,7 @@
                             <div class="wt-field wt-field--full">
                                 <label asp-for="Input.Password">Nova senha</label>
                                 <input class="wt-input wt-input--block" asp-for="Input.Password" type="password" placeholder="••••••••" autocomplete="new-password" />
-                                <p class="wt-profile__hint">Mínimo recomendado: 6 caracteres.</p>
+                                <p class="wt-profile__hint">Ao salvar uma nova senha, vamos pedir sua senha atual para confirmar a alteração.</p>
                             </div>
                         </div>
                         <div class="wt-profile__actions">
@@ -101,6 +101,34 @@
                             <button type="submit" class="wt-btn wt-btn--primary wt-btn--glow">Salvar alterações</button>
                         </div>
                     </section>
+                </div>
+
+                <div class="wt-modal-overlay is-hidden" id="profile-password-modal" aria-hidden="true">
+                    <div class="wt-modal wt-profile__password-modal" data-wt-stop-propagation>
+                        <div class="wt-modal__head">
+                            <div>
+                                <h2 class="wt-modal__title">Confirmar troca de senha</h2>
+                                <p class="wt-modal__sub">Segurança da conta</p>
+                            </div>
+                            <button type="button" class="wt-modal__close" id="profile-password-modal-close" aria-label="Fechar confirmação">✕</button>
+                        </div>
+
+                        <div class="wt-form-grid wt-form-grid--full">
+                            <div class="wt-field">
+                                <label asp-for="Input.CurrentPassword">Senha atual</label>
+                                <input class="wt-input wt-input--block" asp-for="Input.CurrentPassword" type="password" autocomplete="current-password" />
+                                <p class="wt-profile__hint">Informe sua senha atual para concluir a alteração.</p>
+                                <p class="wt-profile__modal-error is-hidden" id="profile-password-modal-error" role="alert">
+                                    Informe sua senha atual para continuar.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="wt-modal__footer">
+                            <button type="button" class="wt-btn wt-btn--outline" id="profile-password-modal-cancel">Cancelar</button>
+                            <button type="button" class="wt-btn wt-btn--primary wt-btn--glow" id="profile-password-modal-confirm">Confirmar alteração</button>
+                        </div>
+                    </div>
                 </div>
             </form>
         }
