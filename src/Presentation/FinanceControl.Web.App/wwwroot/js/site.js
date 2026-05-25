@@ -27,33 +27,102 @@
 
     /** Dropdown do perfil no header */
     var profile = document.getElementById('fc-header-profile');
-    if (profile) {
-        var toggleBtn = qs('[data-fc-profile-toggle]', profile);
-        var backdrop = qs('[data-fc-profile-close]', profile);
+    var notifications = document.getElementById('fc-header-notifications');
+
+    function initHeaderDropdown(container, toggleSel, closeSel, onOpen) {
+        if (!container) return;
+        var toggleBtn = qs(toggleSel, container);
+        var backdrop = qs(closeSel, container);
 
         function setOpen(open) {
-            profile.classList.toggle('is-open', open);
+            container.classList.toggle('is-open', open);
             if (toggleBtn) toggleBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            if (open && typeof onOpen === 'function') onOpen();
         }
 
         toggleBtn?.addEventListener('click', function (e) {
             e.stopPropagation();
-            setOpen(!profile.classList.contains('is-open'));
+            setOpen(!container.classList.contains('is-open'));
         });
 
         backdrop?.addEventListener('click', function () {
             setOpen(false);
         });
 
-        profile.querySelectorAll('.header-dropdown-item').forEach(function (link) {
-            link.addEventListener('click', function () {
+        container.querySelectorAll('a[href], button:not([data-fc-notifications-toggle]):not([data-fc-profile-toggle])').forEach(function (el) {
+            if (el.matches('[data-fc-notifications-close], [data-fc-profile-close], [data-fc-notifications-mark-read]')) return;
+            el.addEventListener('click', function () {
                 setOpen(false);
             });
         });
 
+        return setOpen;
+    }
+
+    var setProfileOpen = initHeaderDropdown(
+        profile,
+        '[data-fc-profile-toggle]',
+        '[data-fc-profile-close]',
+        function () {
+            notifications?.classList.remove('is-open');
+            var nToggle = qs('[data-fc-notifications-toggle]', notifications);
+            if (nToggle) nToggle.setAttribute('aria-expanded', 'false');
+        }
+    );
+
+    var setNotificationsOpen = initHeaderDropdown(
+        notifications,
+        '[data-fc-notifications-toggle]',
+        '[data-fc-notifications-close]',
+        function () {
+            profile?.classList.remove('is-open');
+            var pToggle = qs('[data-fc-profile-toggle]', profile);
+            if (pToggle) pToggle.setAttribute('aria-expanded', 'false');
+        }
+    );
+
+    if (notifications) {
+        var badge = qs('[data-fc-notifications-badge]', notifications);
+        var markReadBtn = qs('[data-fc-notifications-mark-read]', notifications);
+
+        function updateBadge() {
+            if (!badge) return;
+            var unread = notifications.querySelectorAll('.header-notifications__item--unread').length;
+            if (unread > 0) {
+                badge.textContent = String(unread);
+                badge.classList.remove('is-hidden');
+            } else {
+                badge.classList.add('is-hidden');
+            }
+        }
+
+        markReadBtn?.addEventListener('click', function (e) {
+            e.preventDefault();
+            notifications.querySelectorAll('.header-notifications__item--unread').forEach(function (item) {
+                item.classList.remove('header-notifications__item--unread');
+                var dot = item.querySelector('.header-notifications__dot');
+                if (dot) dot.remove();
+            });
+            updateBadge();
+        });
+
+        notifications.querySelectorAll('.header-notifications__item').forEach(function (item) {
+            item.addEventListener('click', function () {
+                item.classList.remove('header-notifications__item--unread');
+                var dot = item.querySelector('.header-notifications__dot');
+                if (dot) dot.remove();
+                updateBadge();
+            });
+        });
+
+        updateBadge();
+    }
+
+    if (profile || notifications) {
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
-                setOpen(false);
+                setProfileOpen?.(false);
+                setNotificationsOpen?.(false);
                 setMobileSidebar(false);
                 closeGlobalSearch();
             }

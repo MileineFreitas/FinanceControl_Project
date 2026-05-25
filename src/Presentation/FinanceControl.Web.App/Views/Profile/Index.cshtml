@@ -1,6 +1,112 @@
+@model FinanceControl.Web.Models.ViewModels.Profile.ProfileViewModel
 @{
     ViewData["Title"] = "Meu perfil";
+    var sucesso = TempData["ProfileSucesso"] as string ?? Model.SucessoMensagem;
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/cadastros-wt.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/profile.css" asp-append-version="true" />
 }
 
-<h1 class="h4 mb-3">Meu perfil</h1>
-<p class="text-muted">Área do perfil do usuário. Você pode conectar aqui foto, nome e dados da conta quando a API estiver pronta.</p>
+<div class="wt-cadastro" id="profile-page">
+    <div class="wt-cadastro__inner">
+        @if (!string.IsNullOrEmpty(sucesso))
+        {
+            <div class="wt-alert wt-alert--success" role="status">@sucesso</div>
+        }
+        @if (!string.IsNullOrEmpty(Model.ErroPagina))
+        {
+            <div class="wt-alert wt-alert--error">@Model.ErroPagina</div>
+        }
+
+        <header class="wt-page-head">
+            <div>
+                <p class="wt-page-kicker">FinanceControl</p>
+                <h1 class="wt-page-title">Meu perfil</h1>
+                <p class="wt-page-sub">Visualize e atualize seus dados pessoais, foto e preferências de acesso.</p>
+            </div>
+        </header>
+
+        @if (!Model.TemUsuario)
+        {
+            <section class="wt-card-panel">
+                <p class="wt-empty-state">
+                    Nenhum usuário encontrado. Cadastre-se ou verifique se a API está em execução.
+                </p>
+            </section>
+        }
+        else
+        {
+            <form method="post" asp-action="Salvar" enctype="multipart/form-data" class="wt-profile__layout">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Input.UserId" />
+                <input type="hidden" asp-for="Input.IsActive" />
+                <input type="hidden" asp-for="Input.ProfilePhoto" id="profile-photo-base64" />
+
+                <aside class="wt-profile__aside">
+                    <section class="wt-card-panel wt-profile__avatar-card">
+                        <div class="wt-profile__avatar-wrap">
+                            <img src="@Model.AvatarSrc" alt="Foto de perfil" class="wt-profile__avatar" id="profile-avatar-preview" width="120" height="120" />
+                            <span class="wt-profile__avatar-badge" aria-hidden="true">✎</span>
+                        </div>
+                        <p class="wt-profile__display-name" id="profile-display-name">@(string.IsNullOrWhiteSpace(Model.Input.UserName) ? "Usuário" : Model.Input.UserName)</p>
+                        <p class="wt-profile__display-email" id="profile-display-email">@Model.Input.Email</p>
+                        <span class="wt-profile__status @(Model.Input.IsActive ? "wt-profile__status--active" : "wt-profile__status--inactive")">
+                            @(Model.Input.IsActive ? "Conta ativa" : "Conta inativa")
+                        </span>
+                        <div style="margin-top:1rem">
+                            <label for="profile-photo-file" class="wt-btn wt-btn--outline" style="width:100%;cursor:pointer">
+                                Alterar foto
+                            </label>
+                            <input type="file" asp-for="ProfilePhotoFile" accept="image/*" class="wt-profile__photo-input" id="profile-photo-file" />
+                            <p class="wt-profile__hint">PNG ou JPG, até 2 MB.</p>
+                        </div>
+                    </section>
+
+                    <section class="wt-card-panel" style="padding:1rem 1.15rem">
+                        <p class="wt-profile__section-sub" style="margin:0">
+                            <a href="~/conta/configuracao" class="wt-btn wt-btn--ghost" style="width:100%;justify-content:center">Configurações da conta</a>
+                        </p>
+                    </section>
+                </aside>
+
+                <div class="wt-profile__main">
+                    <section class="wt-card-panel wt-profile__section">
+                        <h2 class="wt-profile__section-title">Dados pessoais</h2>
+                        <p class="wt-profile__section-sub">Informações exibidas no sistema e usadas no login.</p>
+                        <div class="wt-profile__form-grid">
+                            <div class="wt-field">
+                                <label asp-for="Input.UserName">Nome de usuário</label>
+                                <input class="wt-input wt-input--block" asp-for="Input.UserName" placeholder="Seu nome" autocomplete="username" />
+                            </div>
+                            <div class="wt-field">
+                                <label asp-for="Input.Email">E-mail</label>
+                                <input class="wt-input wt-input--block" asp-for="Input.Email" type="email" placeholder="voce@email.com" autocomplete="email" />
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="wt-card-panel wt-profile__section">
+                        <h2 class="wt-profile__section-title">Segurança</h2>
+                        <p class="wt-profile__section-sub">Deixe a senha em branco para manter a atual.</p>
+                        <div class="wt-profile__form-grid">
+                            <div class="wt-field wt-field--full">
+                                <label asp-for="Input.Password">Nova senha</label>
+                                <input class="wt-input wt-input--block" asp-for="Input.Password" type="password" placeholder="••••••••" autocomplete="new-password" />
+                                <p class="wt-profile__hint">Mínimo recomendado: 6 caracteres.</p>
+                            </div>
+                        </div>
+                        <div class="wt-profile__actions">
+                            <a asp-controller="Home" asp-action="Index" class="wt-btn wt-btn--outline">Cancelar</a>
+                            <button type="submit" class="wt-btn wt-btn--primary wt-btn--glow">Salvar alterações</button>
+                        </div>
+                    </section>
+                </div>
+            </form>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/profile.js" asp-append-version="true"></script>
+}
