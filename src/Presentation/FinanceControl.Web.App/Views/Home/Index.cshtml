@@ -1,3 +1,4 @@
+@using System.Globalization
 @model FinanceControl.Web.Models.ViewModels.Home.HomeIndexViewModel
 @{
     ViewData["Title"] = "Dashboard";
@@ -26,7 +27,9 @@
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/></svg>
                             break;
                         default:
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M4.5 16.5c1.5 2 4 3 7 3s5.5-1 7-3"/><path d="M12 3v14"/><path d="m9 17 3 4 3-4"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.35-3.39-3.83V5H10v2.16c-1.97.41-3.6 1.36-3.6 3.15 0 2.19 1.77 3.23 4.6 3.9 2.48.59 3 1.35 3 2.33 0 .92-.71 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
+                            </svg>
                             break;
                     }
                 </div>
@@ -62,10 +65,26 @@
             <table class="dash-table" id="dash-tx-table">
                 <thead>
                     <tr>
-                        <th scope="col">Data</th>
-                        <th scope="col">Descrição</th>
-                        <th scope="col">Categoria</th>
-                        <th scope="col" style="text-align:right">Valor</th>
+                        <th scope="col" aria-sort="descending">
+                            <button type="button" class="dash-th-sort is-active" data-sort-key="date" data-sort-default="desc" aria-label="Ordenar por data">
+                                Data <span class="dash-th-sort__icon is-desc" aria-hidden="true"></span>
+                            </button>
+                        </th>
+                        <th scope="col" aria-sort="none">
+                            <button type="button" class="dash-th-sort" data-sort-key="title" data-sort-default="asc" aria-label="Ordenar por descricao">
+                                Descri&ccedil;&atilde;o <span class="dash-th-sort__icon is-none" aria-hidden="true"></span>
+                            </button>
+                        </th>
+                        <th scope="col" aria-sort="none">
+                            <button type="button" class="dash-th-sort" data-sort-key="category" data-sort-default="asc" aria-label="Ordenar por categoria">
+                                Categoria <span class="dash-th-sort__icon is-none" aria-hidden="true"></span>
+                            </button>
+                        </th>
+                        <th scope="col" style="text-align:right" aria-sort="none">
+                            <button type="button" class="dash-th-sort dash-th-sort--right" data-sort-key="value" data-sort-default="desc" aria-label="Ordenar por valor">
+                                Valor <span class="dash-th-sort__icon is-none" aria-hidden="true"></span>
+                            </button>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -82,7 +101,11 @@
                         @foreach (var row in Model.TransacoesResumo)
                         {
                             var filterBlob = $"{row.Titulo} {row.LinhaSecundaria} {row.CategoriaBadge}".ToLowerInvariant();
-                            <tr data-dash-filter="@filterBlob">
+                            <tr data-dash-filter="@filterBlob"
+                                data-sort-date="@row.DataOrdenacao"
+                                data-sort-title="@row.Titulo.ToLowerInvariant()"
+                                data-sort-category="@row.CategoriaBadge.ToLowerInvariant()"
+                                data-sort-value="@row.ValorOrdenacao.ToString(CultureInfo.InvariantCulture)">
                                 <td>@row.DataHora</td>
                                 <td>
                                     <div class="dash-table__desc">

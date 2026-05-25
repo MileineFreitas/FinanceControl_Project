@@ -108,15 +108,18 @@ public class HomeController : Controller
             var catNome = nomeCat.ToUpperInvariant();
             var isRec = t.TransactionTypeKind == TransactionTypeKind.Receita;
             var abs = Math.Abs(t.TransactionValue);
+            var valorOrdenacao = isRec ? abs : -abs;
             var valorFmt = (isRec ? "+ " : "- ") + abs.ToString("C", PtBr);
             var sub = $"Conta {t.AccountId}";
             var dataFmt = t.Date.ToString("dd MMM, yyyy HH:mm", PtBr);
             return new DashboardTxRowVm(
                 dataFmt,
+                t.Date.Ticks,
                 t.TransactionDescription ?? "—",
                 sub,
                 catNome,
                 valorFmt,
+                valorOrdenacao,
                 isRec,
                 IconForCategory(nomeCat));
         }).ToList();

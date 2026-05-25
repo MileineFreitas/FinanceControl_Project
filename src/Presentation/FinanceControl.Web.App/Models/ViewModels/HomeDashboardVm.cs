@@ -13,7 +13,6 @@ public sealed record TransactionRow(
     string IconClass,
     string AmountClass);
 
-/// <summary>Métricas do dashboard (cards superiores).</summary>
 public sealed record DashboardMetricVm(
     string Title,
     string Value,
@@ -21,12 +20,13 @@ public sealed record DashboardMetricVm(
     bool TrendNegative,
     string IconSvgClass);
 
-/// <summary>Linha da tabela “Resumo de transações” na home.</summary>
 public sealed record DashboardTxRowVm(
     string DataHora,
+    long DataOrdenacao,
     string Titulo,
     string LinhaSecundaria,
     string CategoriaBadge,
     string Valor,
+    decimal ValorOrdenacao,
     bool IsReceita,
     string IconMaterial);
