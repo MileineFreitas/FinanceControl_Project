@@ -5,7 +5,6 @@ using FinanceControl.Domain.Interfaces.Repositories.Categories;
 using FinanceControl.Domain.Interfaces.Repositories.Transactions;
 using FinanceControl.Domain.Interfaces.Repositories.Users;
 using FinanceControl.Infrastructure.Contexts;
-using FinanceControl.Infrastructure.Seeding;
 using FinanceControl.Infrastructure.Repositories.Categories;
 using FinanceControl.Infrastructure.Repositories.Transactions;
 using FinanceControl.Infrastructure.Repositories.Users;
