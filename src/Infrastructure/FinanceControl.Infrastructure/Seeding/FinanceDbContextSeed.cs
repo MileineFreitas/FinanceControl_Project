@@ -12,6 +12,8 @@ namespace FinanceControl.Infrastructure.Seeding;
 /// Garante utilizador demo, conta principal, categorias e — quando vazio —
 /// lançamentos fictícios para telas e dashboard parecerem populados.
 /// </summary>
+
+/*
 public static class FinanceDbContextSeed
 {
     public static void EnsureDemoUserAccountAndCategories(FinanceDbContext db)
@@ -22,7 +24,10 @@ public static class FinanceDbContextSeed
         EnsureDemoTransactions(db);
     }
 
+
     /// <summary>Meios de pagamento de exemplo (apenas se a tabela estiver vazia).</summary>
+    /// 
+    
     private static void EnsureDefaultPaymentMethods(FinanceDbContext db)
     {
         if (db.PaymentMethods.Any())
@@ -187,3 +192,5 @@ public static class FinanceDbContextSeed
         db.SaveChanges();
     }
 }
+*/
+    
