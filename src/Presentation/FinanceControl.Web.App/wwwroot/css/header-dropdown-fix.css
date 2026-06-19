@@ -1,0 +1,29 @@
+/* Dropdown do header: oculto até .is-open no container */
+.header-profile .header-dropdown,
+.header-profile .header-dropdown-backdrop,
+.header-notifications .header-dropdown,
+.header-notifications .header-dropdown-backdrop {
+    display: none;
+}
+
+.header-profile.is-open .header-dropdown,
+.header-profile.is-open .header-dropdown-backdrop,
+.header-notifications.is-open .header-dropdown,
+.header-notifications.is-open .header-dropdown-backdrop {
+    display: block;
+}
+
+.header-dropdown-backdrop {
+    border: none;
+    background: transparent;
+}
+
+/* details/summary no menu lateral */
+.nav-group.fc-nav-details > summary {
+    list-style: none;
+    cursor: pointer;
+}
+
+.nav-group.fc-nav-details > summary::-webkit-details-marker {
+    display: none;
+}

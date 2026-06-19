@@ -1,21 +1,23 @@
 <Solution>
   <Folder Name="/src/" />
   <Folder Name="/src/Application/">
-    <Project Path="src/Application/FinanceControl.API/FinanceControl.Web.Api.csproj" />
-    <Project Path="src/Application/FinanceControl.Application/FinanceControl.Services.csproj" />
+    <Project Path="src/Application/FinanceControl.Web.Api/FinanceControl.Web.Api.csproj" />
+    <Project Path="src/Application/FinanceControl.Services/FinanceControl.Services.csproj" />
   </Folder>
   <Folder Name="/src/Crosscutting/">
-    <Project Path="src/Crosscutting/FinanceControl.Crosscutting/FinanceControl.Contracts.csproj" />
+    <Project Path="src/Crosscutting/FinanceControl.Contracts/FinanceControl.Contracts.csproj" />
+    <Project Path="src/Crosscutting/FinanceControl.Culture/FinanceControl.Culture.csproj" />
   </Folder>
   <Folder Name="/src/Domain/">
     <Project Path="src/Domain/FinanceControl.Domain.Services/FinanceControl.Domain.Services.csproj" />
     <Project Path="src/Domain/FinanceControl.Domain/FinanceControl.Domain.csproj" />
   </Folder>
   <Folder Name="/src/Infrastructure/">
-    <Project Path="src/Infrastructure/FinanceControl.Infrastructure/FinanceControl.Data.csproj" />
+    <Project Path="src/Infrastructure/FinanceControl.Data/FinanceControl.Data.csproj" />
   </Folder>
   <Folder Name="/src/Presentation/">
-    <Project Path="src/Presentation/FinanceControl.Web/FinanceControl.Web.csproj" />
+    <Project Path="src/Presentation/FinanceControl.Web.App/FinanceControl.Web.csproj" />
+    <Project Path="src/Presentation/FinanceControl.Client.Services/FinanceControl.Client.Services.csproj" />
   </Folder>
   <Folder Name="/src/Tests/">
     <Project Path="src/Tests/FinanceControl.Tests/FinanceControl.Tests.csproj" />

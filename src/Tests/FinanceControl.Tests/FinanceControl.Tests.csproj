@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Application\FinanceControl.API\FinanceControl.Web.Api.csproj" />
+    <ProjectReference Include="..\..\Application\FinanceControl.Web.Api\FinanceControl.Web.Api.csproj" />
   </ItemGroup>
 
   <ItemGroup>

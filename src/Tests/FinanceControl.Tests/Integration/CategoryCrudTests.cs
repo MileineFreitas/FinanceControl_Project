@@ -28,44 +28,42 @@ public class CategoryCrudTests : IClassFixture<FinanceApiFactory>
         {
             categoryName = $"Cat_{Guid.NewGuid():N}",
             categoryDescription = "teste",
-            type = 2
+            icon = "🚀"
         };
         var res = await client.PostAsJsonAsync("/api/Category/registerCategory", body);
         Assert.Equal(HttpStatusCode.Created, res.StatusCode);
     }
 
     [Fact]
-    public async Task Put_Update_ReturnsNoContent()
+    public async Task Put_Update_ReturnsOk()
     {
         using var client = _factory.CreateApiClient();
         var reg = await client.PostAsJsonAsync("/api/Category/registerCategory", new
         {
             categoryName = $"PutCat_{Guid.NewGuid():N}",
-            categoryDescription = "x",
-            type = 1
+            categoryDescription = "x"
         });
         var json = await reg.Content.ReadFromJsonAsync<JsonElement>(JsonOpts);
-        var id = JsonResponse.GetInt32(json, "categoryId", "CategoryId");
+        var id = JsonResponse.GetGuid(json, "categoryId", "CategoryId");
 
-        var put = new { categoryId = id, categoryName = "Editada", description = "d", transactionTypeId = 1 };
+        var put = new { categoryId = id, categoryName = "Editada", description = "d", icon = "🛒" };
         var res = await client.PutAsJsonAsync($"/api/Category/{id}", put);
-        Assert.Equal(HttpStatusCode.NoContent, res.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, res.StatusCode);
     }
 
     [Fact]
-    public async Task Delete_ReturnsOk()
+    public async Task Delete_ReturnsNoContent()
     {
         using var client = _factory.CreateApiClient();
         var reg = await client.PostAsJsonAsync("/api/Category/registerCategory", new
         {
             categoryName = $"DelCat_{Guid.NewGuid():N}",
-            categoryDescription = "y",
-            type = 2
+            categoryDescription = "y"
         });
         var json = await reg.Content.ReadFromJsonAsync<JsonElement>(JsonOpts);
-        var id = JsonResponse.GetInt32(json, "categoryId", "CategoryId");
+        var id = JsonResponse.GetGuid(json, "categoryId", "CategoryId");
 
         var res = await client.DeleteAsync($"/api/Category/{id}");
-        Assert.Equal(HttpStatusCode.OK, res.StatusCode);
+        Assert.Equal(HttpStatusCode.NoContent, res.StatusCode);
     }
 }

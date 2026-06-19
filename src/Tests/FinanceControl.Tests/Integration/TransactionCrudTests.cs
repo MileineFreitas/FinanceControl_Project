@@ -1,6 +1,5 @@
 using System.Net;
 using System.Net.Http.Json;
-using System.Text.Json;
 
 namespace FinanceControl.Tests.Integration;
 
@@ -8,7 +7,6 @@ namespace FinanceControl.Tests.Integration;
 public class TransactionCrudTests : IClassFixture<FinanceApiFactory>
 {
     private readonly FinanceApiFactory _factory;
-    private static readonly JsonSerializerOptions JsonOpts = new() { PropertyNameCaseInsensitive = true };
 
     public TransactionCrudTests(FinanceApiFactory factory) => _factory = factory;
 
@@ -24,16 +22,17 @@ public class TransactionCrudTests : IClassFixture<FinanceApiFactory>
     public async Task Post_Then_GetById_Then_Put_Then_Delete_Flow()
     {
         using var client = _factory.CreateApiClient();
-        var (userId, categoryId) = await IntegrationSeed.EnsureUserAndCategoryAsync(_factory.Services);
+        var (userId, categoryId, accountId, paymentMethodId) = await IntegrationSeed.EnsureUserAndCategoryAsync(_factory.Services);
 
         var createBody = new
         {
             transactionDescription = "Teste integração",
             transactionValue = 10.5m,
             date = DateTime.UtcNow,
-            transactionTypeId = 2,
+            transactionTypeKind = 2,
+            paymentMethodId,
             categoryId,
-            accountId = 1,
+            accountId,
             userId,
             status = 2
         };
@@ -51,9 +50,10 @@ public class TransactionCrudTests : IClassFixture<FinanceApiFactory>
             transactionDescription = "Teste integração (editado)",
             transactionValue = 11m,
             date = DateTime.UtcNow,
-            transactionTypeId = 2,
+            transactionTypeKind = 2,
+            paymentMethodId,
             categoryId,
-            accountId = 1,
+            accountId,
             status = 2
         };
         var put = await client.PutAsJsonAsync($"/api/Transaction/{txId}", putBody);
@@ -70,7 +70,7 @@ public class TransactionCrudTests : IClassFixture<FinanceApiFactory>
     public async Task Get_FilterByUserId_ReturnsOk()
     {
         using var client = _factory.CreateApiClient();
-        var (userId, _) = await IntegrationSeed.EnsureUserAndCategoryAsync(_factory.Services);
+        var (userId, _, _, _) = await IntegrationSeed.EnsureUserAndCategoryAsync(_factory.Services);
         var res = await client.GetAsync($"/api/Transaction?userId={userId}");
         Assert.Equal(HttpStatusCode.OK, res.StatusCode);
     }

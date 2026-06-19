@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Crosscutting\FinanceControl.Crosscutting\FinanceControl.Contracts.csproj" />
+    <ProjectReference Include="..\..\Crosscutting\FinanceControl.Contracts\FinanceControl.Contracts.csproj" />
     <ProjectReference Include="..\FinanceControl.Domain\FinanceControl.Domain.csproj" />
   </ItemGroup>
 
