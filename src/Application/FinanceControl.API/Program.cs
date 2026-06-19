@@ -1,17 +1,17 @@
 using FinanceControl.Domain.Interfaces.AppServices.Users;
-using FinanceControl.Domain.Services.Users;
 using FinanceControl.Domain.Interfaces.DomService.Users;
 using FinanceControl.Domain.Interfaces.Repositories.Categories;
 using FinanceControl.Domain.Interfaces.Repositories.Transactions;
 using FinanceControl.Domain.Interfaces.Repositories.Users;
+using FinanceControl.Domain.Services.Users;
 using FinanceControl.Infrastructure.Contexts;
 using FinanceControl.Infrastructure.Repositories.Categories;
 using FinanceControl.Infrastructure.Repositories.Transactions;
 using FinanceControl.Infrastructure.Repositories.Users;
-using Microsoft.EntityFrameworkCore;
-using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
-
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,7 +30,6 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 
 builder.Services.AddDbContext<FinanceDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -60,7 +59,6 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-
 app.UseDefaultFiles();
 app.UseStaticFiles();
 app.UseCors();
@@ -71,6 +69,5 @@ if (!app.Environment.IsEnvironment("Testing"))
 
 app.UseAuthorization();
 app.MapControllers();
-
 
 app.Run();
