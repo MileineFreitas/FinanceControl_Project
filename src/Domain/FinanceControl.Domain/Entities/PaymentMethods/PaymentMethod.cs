@@ -7,8 +7,8 @@ using FinanceControl.Domain.Entities.Users;
 
 namespace FinanceControl.Domain.Entities.PaymentMethods;
 
+/// <summary>Meio de pagamento ou canal (cart�o, PIX, dinheiro, etc.). Distinto do tipo de fluxo RECEITA/DESPESA usado em lan�amentos.</summary>
 [Table("PaymentMethods")]
-
 public class PaymentMethod : IPaymentMethod
 
 {
