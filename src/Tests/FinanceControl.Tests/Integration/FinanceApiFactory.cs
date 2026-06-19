@@ -16,18 +16,6 @@ public class FinanceApiFactory : WebApplicationFactory<Program>, IDisposable
     /// <summary>Um único nome de BD por instância da factory, alinhado ao IServiceProvider usado em requests e em CreateScope().</summary>
     private readonly string _inMemoryDatabaseName = $"FinanceTests_{Guid.NewGuid():N}";
 
-    /// <summary>
-    /// O provider In-Memory não aplica <see cref="ModelBuilder.HasData(object[])"/> até existir base criada.
-    /// Sem <see cref="DatabaseFacade.EnsureCreated"/>, a conta padrão (AccountId=1) do modelo não existe e o seed da API falha em <c>Accounts.First(...)</c>.
-    /// </summary>
-    private sealed class EnsuringFinanceDbContext : FinanceDbContext
-    {
-        public EnsuringFinanceDbContext(DbContextOptions<FinanceDbContext> options) : base(options)
-        {
-            Database.EnsureCreated();
-        }
-    }
-
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Testing");
@@ -38,15 +26,8 @@ public class FinanceApiFactory : WebApplicationFactory<Program>, IDisposable
             services.RemoveAll<DbContextOptions<FinanceDbContext>>();
             services.RemoveAll<FinanceDbContext>();
 
-            services.AddSingleton<DbContextOptions<FinanceDbContext>>(_ =>
-            {
-                var b = new DbContextOptionsBuilder<FinanceDbContext>();
-                b.UseInMemoryDatabase(_inMemoryDatabaseName);
-                return b.Options;
-            });
-
-            services.AddScoped<FinanceDbContext>(sp =>
-                new EnsuringFinanceDbContext(sp.GetRequiredService<DbContextOptions<FinanceDbContext>>()));
+            services.AddDbContext<FinanceDbContext>(options =>
+                options.UseInMemoryDatabase(_inMemoryDatabaseName));
         });
     }
 

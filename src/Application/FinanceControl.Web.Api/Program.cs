@@ -3,21 +3,34 @@ using FinanceControl.Domain.Interfaces.AppServices.Categories;
 using FinanceControl.Domain.Interfaces.AppServices.PaymentMethods;
 using FinanceControl.Domain.Interfaces.AppServices.Transactions;
 using FinanceControl.Domain.Interfaces.AppServices.Users;
+using FinanceControl.Domain.Interfaces.DomService.Accounts;
+using FinanceControl.Domain.Interfaces.DomService.Categories;
+using FinanceControl.Domain.Interfaces.DomService.PaymentMethods;
+using FinanceControl.Domain.Interfaces.DomService.Transactions;
 using FinanceControl.Domain.Interfaces.DomService.Users;
 using FinanceControl.Domain.Interfaces.Repositories.Accounts;
 using FinanceControl.Domain.Interfaces.Repositories.Categories;
 using FinanceControl.Domain.Interfaces.Repositories.PaymentMethods;
 using FinanceControl.Domain.Interfaces.Repositories.Transactions;
 using FinanceControl.Domain.Interfaces.Repositories.Users;
+using FinanceControl.Domain.Services.Accounts;
+using FinanceControl.Domain.Services.Categories;
+using FinanceControl.Domain.Services.PaymentMethods;
+using FinanceControl.Domain.Services.Transactions;
 using FinanceControl.Domain.Services.Users;
 using FinanceControl.Infrastructure.Contexts;
+using FinanceControl.Infrastructure.Repositories.Accounts;
 using FinanceControl.Infrastructure.Repositories.Categories;
 using FinanceControl.Infrastructure.Repositories.PaymentMethods;
 using FinanceControl.Infrastructure.Repositories.Transactions;
 using FinanceControl.Infrastructure.Repositories.Users;
-using Microsoft.AspNetCore.Identity;
+using FinanceControl.Infrastructure.Seeding;
+using FinanceControl.Services.Accounts;
+using FinanceControl.Services.Categories;
+using FinanceControl.Services.PaymentMethods;
+using FinanceControl.Services.Transactions;
+using FinanceControl.Services.Users;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -38,8 +51,12 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+string mySqlConnection = builder.Configuration.GetConnectionString("DefaultConnection")!;
+
+Console.WriteLine(builder.Configuration.GetConnectionString("DefaultConnection"));
+
 builder.Services.AddDbContext<FinanceDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseMySql(mySqlConnection, ServerVersion.AutoDetect(mySqlConnection)));
 
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryDomService, CategoryDomService>();
@@ -63,13 +80,8 @@ builder.Services.AddScoped<IPaymentMethodAppService, PaymentMethodAppService>();
 
 var app = builder.Build();
 
-/*
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<FinanceDbContext>();
-    FinanceDbContextSeed.EnsureDemoUserAccountAndCategories(db);
-}
-*/
+if (!app.Environment.IsEnvironment("Testing"))
+    app.Services.ApplyMigrations(app.Logger);
 
 if (app.Environment.IsDevelopment())
 {
