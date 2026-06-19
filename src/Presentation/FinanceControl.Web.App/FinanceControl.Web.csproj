@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>FinanceControl.Web</RootNamespace>
+    <AssemblyName>FinanceControl.Web</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Crosscutting\FinanceControl.Contracts\FinanceControl.Contracts.csproj" />
+    <ProjectReference Include="..\FinanceControl.Client.Services\FinanceControl.Client.Services.csproj" />
+  </ItemGroup>
+
+</Project>

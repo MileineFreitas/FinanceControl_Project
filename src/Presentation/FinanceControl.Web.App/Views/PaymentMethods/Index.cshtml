@@ -1,0 +1,125 @@
+@model PaymentMethodViewModel
+@{
+    ViewData["Title"] = "Meios de pagamento";
+    var showModal = Model.ModalAberto || !string.IsNullOrEmpty(Model.ErroModal);
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/cadastros-wt.css" asp-append-version="true" />
+}
+
+<div class="wt-cadastro" id="payment-types-page">
+    <div class="wt-cadastro__inner">
+        @if (!string.IsNullOrEmpty(Model.ErroPagina))
+        {
+            <div class="wt-alert wt-alert--error">@Model.ErroPagina</div>
+        }
+
+        <header class="wt-page-head">
+            <div>
+                <p class="wt-page-kicker">FinanceControl</p>
+                <h1 class="wt-page-title">Meios de pagamento</h1>
+                <p class="wt-page-sub">Cadastre PIX, dinheiro, crédito, débito e outros meios usados nos lançamentos. Receita ou despesa é definida na transação.</p>
+            </div>
+            <button type="button" class="wt-btn wt-btn--primary wt-btn--glow" data-wt-modal-open="wt-pay-modal">
+                + Novo meio
+            </button>
+        </header>
+
+        <form method="get" class="wt-filters" style="margin-bottom:1rem">
+            <div class="wt-field" style="flex:1">
+                <label for="busca">Buscar</label>
+                <input class="wt-input" id="busca" name="busca" value="@Model.Busca" placeholder="Nome ou código..." />
+            </div>
+            <button type="submit" class="wt-btn wt-btn--outline">Filtrar</button>
+        </form>
+
+        <section class="wt-card-panel">
+            <div class="wt-cards-grid" id="payment-types-grid">
+                @if (Model.Meios.Count == 0)
+                {
+                    <p class="wt-empty-state">
+                        Nenhum meio de pagamento encontrado. Cadastre o primeiro com o botão acima ou ajuste os filtros.
+                    </p>
+                }
+                @foreach (var t in Model.Meios)
+                {
+                    <div class="wt-cat-card">
+                        <div class="wt-card-icon">@t.Icone</div>
+                        <div class="wt-card-name">@t.Nome</div>
+                        @if (!string.IsNullOrWhiteSpace(t.Descricao))
+                        {
+                            <p class="wt-hint" style="margin-top:.35rem">@t.Descricao</p>
+                        }
+                        <p class="wt-hint" style="margin-top:.35rem">
+                            <span class="wt-badge @(t.Status == "Ativo" ? "wt-badge--income" : "wt-badge--expense")">@t.Status</span>
+                        </p>
+                        @if (t.Id != Guid.Empty)
+                        {
+                            <div style="display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap">
+                                <a asp-action="Edit" asp-route-id="@t.Id" asp-route-busca="@Model.Busca" class="wt-btn wt-btn--ghost" title="Editar">✎</a>
+                                <form method="post" asp-action="Delete" asp-route-id="@t.Id" asp-route-busca="@Model.Busca" class="js-pay-delete" style="display:inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="wt-btn wt-btn--outline">Excluir</button>
+                                </form>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+            <div class="wt-pagination" style="margin-top:1rem">
+                <span>@Model.Meios.Count meio(s) de pagamento</span>
+            </div>
+        </section>
+    </div>
+</div>
+
+<div class="wt-modal-overlay @(showModal ? null : "is-hidden")" id="wt-pay-modal">
+    <div class="wt-modal" data-wt-stop-propagation>
+        <form method="post" asp-action="Save" id="payment-type-form" class="wt-cat-form">
+            @Html.AntiForgeryToken()
+            @if (Model.EditingId is Guid editId && editId != Guid.Empty)
+            {
+                <input type="hidden" name="EditingId" value="@editId" />
+            }
+            <input type="hidden" name="Busca" value="@Model.Busca" />
+            <div class="wt-modal__head">
+                <h2 class="wt-modal__title">@(Model.EditingId.HasValue ? "Editar meio de pagamento" : "Novo meio de pagamento")</h2>
+                <button type="button" class="wt-modal__close" data-wt-close-modal>✕</button>
+            </div>
+            <div class="wt-cat-form__fields">
+                <div class="wt-cat-form__field">
+                    <label class="wt-label" asp-for="Input.Name">Nome do meio de pagamento</label>
+                    <input class="wt-input" asp-for="Input.Name" placeholder="Ex.: PIX" />
+                </div>
+                <div class="wt-cat-form__field">
+                    <label class="wt-label" asp-for="Input.Description">Descrição</label>
+                    <textarea class="wt-input wt-textarea" asp-for="Input.Description" rows="3" placeholder="Opcional"></textarea>
+                </div>
+                <div class="wt-cat-form__field">
+                    <span class="wt-label">Selecionar ícone</span>
+                    <input type="hidden" asp-for="Input.Icon" id="payment-icon-value" />
+                    <div class="wt-icone-grid" id="payment-icon-grid" role="listbox" aria-label="Ícones do meio de pagamento">
+                        @foreach (var icone in Model.IconesDisponiveis)
+                        {
+                            var selected = icone == Model.Input.Icon ? " wt-icone-opt--selected" : "";
+                            <span class="wt-icone-opt@selected" role="option" tabindex="0" data-payment-icon="@icone" aria-label="Ícone @icone" aria-selected="@(icone == Model.Input.Icon ? "true" : "false")">@icone</span>
+                        }
+                    </div>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.ErroModal))
+                {
+                    <p class="wt-alert wt-alert--error">@Model.ErroModal</p>
+                }
+            </div>
+            <div class="wt-modal__footer">
+                <a asp-action="Index" asp-route-busca="@Model.Busca" class="wt-btn wt-btn--outline">Cancelar</a>
+                <button type="submit" class="wt-btn wt-btn--primary wt-btn--glow">@(Model.EditingId.HasValue ? "Salvar" : "Criar meio")</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/cadastros-wt.js" asp-append-version="true"></script>
+    <script src="~/js/paymentTypes.js" asp-append-version="true"></script>
+}

@@ -1,17 +1,29 @@
-using System.Collections.Generic;
+using FinanceControl.Contracts.Dtos.Common;
+using FinanceControl.Contracts.Dtos.Transactions;
+using FinanceControl.Contracts.Filters;
 using FinanceControl.Domain.Entities.Transactions;
 
 namespace FinanceControl.Domain.Interfaces.Repositories.Transactions;
 
 public interface ITransactionRepository
 {
-    IEnumerable<Transaction> GetAllTransactions();
+    Task<DataResultDto<TransactionDto>> FilterAsync(DataFilterDto filter);
 
-    Transaction GetTransactionById(int id);
+    Task<TransactionDto?> GetByIdAsync(Guid id);
 
-    Transaction CreateTransaction(Transaction transaction);
+    Task<Transaction> AddAsync(Transaction transaction);
 
-    Transaction UpdateTransaction(Transaction transaction);
+    Task<Transaction?> FindTrackedAsync(Guid id);
 
-    Transaction DeleteTransaction(int id);
+    Task SaveChangesAsync();
+
+    Task<bool> DeleteAsync(Guid id);
+
+    Task<bool> CategoryExistsAsync(Guid categoryId);
+
+    Task<bool> AccountExistsAsync(Guid accountId);
+
+    Task<bool> UserExistsAsync(Guid userId);
+
+    Task<bool> PaymentMethodExistsAsync(Guid paymentMethodId);
 }

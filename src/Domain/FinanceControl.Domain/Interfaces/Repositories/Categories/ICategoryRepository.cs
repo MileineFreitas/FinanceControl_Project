@@ -1,17 +1,24 @@
-using System.Collections.Generic;
+using FinanceControl.Contracts.Dtos.Categories;
+using FinanceControl.Contracts.Dtos.Common;
+using FinanceControl.Contracts.Filters;
 using FinanceControl.Domain.Entities.Categories;
+using FinanceControl.Domain.Interfaces.Repositories.Categories;
 
 namespace FinanceControl.Domain.Interfaces.Repositories.Categories;
 
 public interface ICategoryRepository
 {
-    IEnumerable<Category> GetCategories();
+    Task<DataResultDto<CategoryDto>> FilterAsync(DataFilterDto filter);
 
-    Category GetCategoryById(int id);
+    Task<CategoryDto?> GetByIdAsync(Guid id);
 
-    Category CreateCategory(Category category);
+    Task<Category> AddAsync(Category category);
 
-    Category UpdateCategory(Category category);
+    Task<Category?> FindTrackedAsync(Guid id);
 
-    Category DeleteCategory(int id);
+    Task SaveChangesAsync();
+
+    Task<bool> DeleteAsync(Guid id);
+
+    Task<Guid?> GetFirstUserIdAsync();
 }
