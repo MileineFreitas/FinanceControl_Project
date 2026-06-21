@@ -37,6 +37,7 @@
         }
 
         <form method="post" novalidate>
+            @Html.AntiForgeryToken()
             <div class="field-group">
                 <label class="field-label" asp-for="LoginRequest.Email">Email</label>
                 <input asp-for="LoginRequest.Email" class="form-control col-12 mt-2" placeholder="seu@email.com" autocomplete="username" />
