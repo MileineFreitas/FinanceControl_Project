@@ -1,30 +1,12 @@
 using FinanceControl.Contracts.Dtos.Auth;
-using FinanceControl.Contracts.Dtos.Categories;
-using FinanceControl.Contracts.Dtos.Transactions;
 using FinanceControl.Contracts.Dtos.Users;
 
 namespace FinanceControl.Client.Services.Interfaces;
 
-/// <summary>Cliente HTTP agregado (legado). Preferir I{Entidade}CliService por feature.</summary>
+/// <summary>Cliente HTTP para fluxos de autenticação (login e registo).</summary>
 public interface IFinanceControlApiClient
 {
     Task<HttpResponseMessage> LoginAsync(LoginRequestDto request);
 
     Task<HttpResponseMessage> RegisterAsync(RegisterUserDto request);
-
-    Task<HttpResponseMessage> RegisterCategoryAsync(CategoryRegisterDto request);
-
-    Task<HttpResponseMessage> GetCategoriesAsync();
-
-    Task<HttpResponseMessage> GetTransactionsAsync();
-
-    Task<HttpResponseMessage> CreateTransactionAsync(TransactionCreateDto request);
-
-    Task<HttpResponseMessage> GetPaymentMethodsAsync();
-
-    Task<HttpResponseMessage> DeleteCategoryAsync(Guid categoryId);
-
-    Task<HttpResponseMessage> DeleteTransactionAsync(Guid transactionId);
-
-    Task<HttpResponseMessage> GetAccountByIdAsync(Guid accountId);
 }

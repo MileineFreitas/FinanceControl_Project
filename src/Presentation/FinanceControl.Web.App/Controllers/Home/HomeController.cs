@@ -1,49 +1,36 @@
-using FinanceControl.Client.Services.Interfaces;
 using FinanceControl.Client.Services.Interfaces.Accounts;
-using FinanceControl.Contracts.Dtos.Common;
+using FinanceControl.Client.Services.Interfaces.Categories;
+using FinanceControl.Client.Services.Interfaces.Transactions;
+using FinanceControl.Contracts.Dtos.Transactions;
 using FinanceControl.Contracts.Enumerators.Transactions;
+using FinanceControl.Contracts.Filters;
 using FinanceControl.Web.Models.ViewModels;
 using FinanceControl.Web.Models.ViewModels.Home;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
-using System.Text.Json;
 
 namespace FinanceControl.Web.Controllers.Home;
 
 [Route("home")]
-public class HomeController : Controller
+public class HomeController(
+    ITransactionCliService transactionCli,
+    ICategoryCliService categoryCli,
+    IAccountCliService accountCli) : Controller
 {
-    private static readonly JsonSerializerOptions JsonOpts = new() { PropertyNameCaseInsensitive = true };
     private static readonly CultureInfo PtBr = CultureInfo.GetCultureInfo("pt-BR");
-
-    private readonly IFinanceControlApiClient _api;
-    private readonly IAccountCliService _accountCli;
-
-    public HomeController(IFinanceControlApiClient api, IAccountCliService accountCli)
-    {
-        _api = api;
-        _accountCli = accountCli;
-    }
 
     [HttpGet("")]
     [HttpGet("Index")]
     public async Task<IActionResult> Index()
     {
         var vm = new HomeIndexViewModel();
-        List<TxJson>? txs = null;
+        IReadOnlyList<TransactionDto>? txs = null;
         try
         {
-            var resTx = await _api.GetTransactionsAsync();
-            if (resTx.IsSuccessStatusCode)
-            {
-                await using var stream = await resTx.Content.ReadAsStreamAsync();
-                var data = await JsonSerializer.DeserializeAsync<DataResultDto<TxJson>>(stream, JsonOpts);
-                txs = data?.Result;
-            }
-            else
-            {
+            var data = await transactionCli.ListAsync(new DataFilterDto { Page = 1, PageSize = 200 });
+            txs = data?.Result;
+            if (txs == null)
                 vm.ApiMensagem = "Não foi possível carregar transações da API.";
-            }
         }
         catch
         {
@@ -65,7 +52,8 @@ public class HomeController : Controller
         decimal gastosMes = 0, receitasMes = 0;
         foreach (var t in txs)
         {
-            if (t.Date < inicioMes || t.Date >= fimMes)
+            var date = t.Date.UtcDateTime;
+            if (date < inicioMes || date >= fimMes)
                 continue;
             if (t.TransactionTypeKind == TransactionTypeKind.Despesa)
                 gastosMes += t.TransactionValue;
@@ -110,11 +98,12 @@ public class HomeController : Controller
             var abs = Math.Abs(t.TransactionValue);
             var valorOrdenacao = isRec ? abs : -abs;
             var valorFmt = (isRec ? "+ " : "- ") + abs.ToString("C", PtBr);
-            var sub = $"Conta {t.AccountId}";
-            var dataFmt = t.Date.ToString("dd MMM, yyyy HH:mm", PtBr);
+            var sub = string.IsNullOrWhiteSpace(t.AccountName) ? $"Conta {t.AccountId}" : t.AccountName;
+            var dataUtc = t.Date.UtcDateTime;
+            var dataFmt = dataUtc.ToString("dd MMM, yyyy HH:mm", PtBr);
             return new DashboardTxRowVm(
                 dataFmt,
-                t.Date.Ticks,
+                dataUtc.Ticks,
                 t.TransactionDescription ?? "—",
                 sub,
                 catNome,
@@ -148,7 +137,7 @@ public class HomeController : Controller
     {
         try
         {
-            var contas = await _accountCli.ListAsync();
+            var contas = await accountCli.ListAsync();
             return contas?.Sum(c => c.CurrentBalance) ?? 0m;
         }
         catch
@@ -157,10 +146,10 @@ public class HomeController : Controller
         }
     }
 
-    private static string ResolverNomeCategoria(TxJson t, IReadOnlyDictionary<Guid, string> nomePorCategoriaId)
+    private static string ResolverNomeCategoria(TransactionDto t, IReadOnlyDictionary<Guid, string> nomePorCategoriaId)
     {
-        if (!string.IsNullOrWhiteSpace(t.Category?.CategoryName))
-            return t.Category.CategoryName.Trim();
+        if (!string.IsNullOrWhiteSpace(t.CategoryName))
+            return t.CategoryName.Trim();
         if (nomePorCategoriaId.TryGetValue(t.CategoryId, out var nome) && !string.IsNullOrWhiteSpace(nome))
             return nome.Trim();
         return "Categoria";
@@ -171,12 +160,7 @@ public class HomeController : Controller
         var map = new Dictionary<Guid, string>();
         try
         {
-            var res = await _api.GetCategoriesAsync();
-            if (!res.IsSuccessStatusCode)
-                return map;
-
-            await using var stream = await res.Content.ReadAsStreamAsync();
-            var data = await JsonSerializer.DeserializeAsync<DataResultDto<CategoryRowJson>>(stream, JsonOpts);
+            var data = await categoryCli.ListAsync(new DataFilterDto { Page = 1, PageSize = 200 });
             if (data?.Result == null)
                 return map;
             foreach (var c in data.Result)
@@ -200,28 +184,5 @@ public class HomeController : Controller
         if (s.Equals("Alimentação", StringComparison.OrdinalIgnoreCase)) return "shopping_cart";
         if (s.Equals("Lazer", StringComparison.OrdinalIgnoreCase)) return "movie";
         return "receipt_long";
-    }
-
-    private sealed class TxJson
-    {
-        public Guid TransactionId { get; set; }
-        public string? TransactionDescription { get; set; }
-        public decimal TransactionValue { get; set; }
-        public DateTime Date { get; set; }
-        public TransactionTypeKind TransactionTypeKind { get; set; }
-        public Guid CategoryId { get; set; }
-        public Guid AccountId { get; set; }
-        public CategoryMini? Category { get; set; }
-    }
-
-    private sealed class CategoryMini
-    {
-        public string? CategoryName { get; set; }
-    }
-
-    private sealed class CategoryRowJson
-    {
-        public Guid CategoryId { get; set; }
-        public string? CategoryName { get; set; }
     }
 }
