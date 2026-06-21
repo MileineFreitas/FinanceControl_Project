@@ -6,6 +6,9 @@
     var sidebar = document.getElementById('fc-sidebar');
     var pageRoot = document.getElementById('fc-page-root');
 
+    localStorage.removeItem('fc-sidebar-collapsed');
+    pageRoot?.classList.remove('sidebar-collapsed');
+
     function setMobileSidebar(open) {
         if (!sidebar) return;
         sidebar.classList.toggle('active', open);
@@ -128,46 +131,6 @@
             }
         });
     }
-
-    /** Menu lateral recolhível (desktop): só ícones quando recolhido */
-    var collapseBtn = document.querySelector('[data-fc-sidebar-collapse]');
-    var mqDesktop = window.matchMedia('(min-width: 769px)');
-
-    function readCollapsed() {
-        return localStorage.getItem('fc-sidebar-collapsed') === '1';
-    }
-
-    function setCollapsedUi(collapsed) {
-        if (!pageRoot) return;
-        if (!mqDesktop.matches) {
-            pageRoot.classList.remove('sidebar-collapsed');
-            return;
-        }
-        pageRoot.classList.toggle('sidebar-collapsed', collapsed);
-        localStorage.setItem('fc-sidebar-collapsed', collapsed ? '1' : '0');
-        if (collapseBtn) {
-            collapseBtn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
-            collapseBtn.setAttribute('aria-label', collapsed ? 'Expandir menu lateral' : 'Recolher menu lateral');
-            collapseBtn.setAttribute('title', collapsed ? 'Expandir menu' : 'Recolher menu');
-        }
-    }
-
-    function syncSidebarCollapse() {
-        if (!pageRoot) return;
-        if (!mqDesktop.matches) {
-            pageRoot.classList.remove('sidebar-collapsed');
-            return;
-        }
-        setCollapsedUi(readCollapsed());
-    }
-
-    collapseBtn?.addEventListener('click', function () {
-        if (!mqDesktop.matches || !pageRoot) return;
-        setCollapsedUi(!pageRoot.classList.contains('sidebar-collapsed'));
-    });
-
-    syncSidebarCollapse();
-    mqDesktop.addEventListener('change', syncSidebarCollapse);
 
     /** Busca global no header: encontra páginas do menu */
     var FC_GLOBAL_PAGES = [

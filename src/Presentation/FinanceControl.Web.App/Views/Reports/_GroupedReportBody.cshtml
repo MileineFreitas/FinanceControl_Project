@@ -1,6 +1,6 @@
-@model FinanceControl.Web.Models.ViewModels.Reports.TransactionReportViewModel
+@model FinanceControl.Web.Models.ViewModels.Reports.GroupedReportViewModel
 @{
-    ViewData["Title"] = "Relatório de transações";
+    ViewData["Title"] = Model.PageTitle;
     var cultura = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
     var periodoCapitalizado = char.ToUpper(Model.PeriodoLabel[0], cultura) + Model.PeriodoLabel[1..];
 }
@@ -12,8 +12,8 @@
     <header class="rep-cat__head">
         <div>
             <p class="rep-cat__eyebrow">Relatórios</p>
-            <h1 class="rep-cat__title">Relatório de transações</h1>
-            <p class="rep-cat__sub">Visão consolidada dos lançamentos do período com gráficos e histórico detalhado.</p>
+            <h1 class="rep-cat__title">@Model.PageTitle</h1>
+            <p class="rep-cat__sub">@Model.PageSubtitle</p>
         </div>
         <form method="get" class="rep-cat__filter" aria-label="Filtrar por mês">
             <label for="mes" class="rep-cat__filter-label">Período</label>
@@ -38,9 +38,9 @@
         <p class="rep-cat__banner" role="status">@Model.ApiMensagem</p>
     }
 
-    <p class="rep-cat__period">Período: <strong>@periodoCapitalizado</strong> · <strong>@Model.TotalTransacoes</strong> transação(ões)</p>
+    <p class="rep-cat__period">Período: <strong>@periodoCapitalizado</strong></p>
 
-    <div class="rep-cat__metrics rep-cat__metrics--four" aria-label="Totais do período">
+    <div class="rep-cat__metrics" aria-label="Totais do período">
         <article class="rep-metric rep-metric--income">
             <p class="rep-metric__label">Receitas</p>
             <p class="rep-metric__value">@Model.TotalReceitasFmt</p>
@@ -52,10 +52,6 @@
         <article class="rep-metric @(Model.SaldoNegativo ? "rep-metric--negative" : "rep-metric--balance")">
             <p class="rep-metric__label">Saldo do período</p>
             <p class="rep-metric__value">@Model.SaldoFmt</p>
-        </article>
-        <article class="rep-metric">
-            <p class="rep-metric__label">Lançamentos</p>
-            <p class="rep-metric__value">@Model.TotalTransacoes</p>
         </article>
     </div>
 
@@ -69,56 +65,66 @@
     else
     {
         <div class="rep-cat__charts">
-            <section class="rep-panel" aria-labelledby="rep-tipo-heading">
+            <section class="rep-panel" aria-labelledby="rep-doughnut-heading">
                 <div class="rep-panel__head">
-                    <h2 id="rep-tipo-heading">Receitas vs despesas</h2>
-                    <p>Proporção entre entradas e saídas no mês.</p>
+                    <h2 id="rep-doughnut-heading">@Model.DoughnutTitle</h2>
+                    <p>@Model.DoughnutSubtitle</p>
                 </div>
                 <div class="rep-panel__chart rep-panel__chart--doughnut">
-                    <canvas id="rep-chart-tipo" aria-label="Gráfico receitas e despesas"></canvas>
+                    <canvas id="rep-chart-despesas" aria-label="@Model.DoughnutTitle"></canvas>
                 </div>
             </section>
 
-            <section class="rep-panel" aria-labelledby="rep-daily-heading">
+            <section class="rep-panel" aria-labelledby="rep-bar-heading">
                 <div class="rep-panel__head">
-                    <h2 id="rep-daily-heading">Movimento diário</h2>
-                    <p>Receitas e despesas por dia do mês selecionado.</p>
+                    <h2 id="rep-bar-heading">@Model.BarTitle</h2>
+                    <p>@Model.BarSubtitle</p>
                 </div>
-                <div class="rep-panel__chart rep-panel__chart--daily">
-                    <canvas id="rep-chart-diario" aria-label="Gráfico de movimento diário"></canvas>
+                <div class="rep-panel__chart rep-panel__chart--bar">
+                    <canvas id="rep-chart-comparativo" aria-label="@Model.BarTitle"></canvas>
                 </div>
             </section>
         </div>
 
-        <section class="rep-panel rep-panel--table" aria-labelledby="rep-tx-table-heading">
+        <section class="rep-panel rep-panel--table" aria-labelledby="rep-table-heading">
             <div class="rep-panel__head">
-                <h2 id="rep-tx-table-heading">Histórico de transações</h2>
-                <p>Todos os lançamentos registrados no período.</p>
+                <h2 id="rep-table-heading">@Model.TableTitle</h2>
+                <p>@Model.TableSubtitle</p>
             </div>
             <div class="rep-table-wrap">
                 <table class="rep-table">
                     <thead>
                         <tr>
-                            <th scope="col">Data</th>
-                            <th scope="col">Descrição</th>
-                            <th scope="col">Categoria</th>
-                            <th scope="col">Meio pagamento</th>
-                            <th scope="col">Tipo</th>
-                            <th scope="col">Valor</th>
+                            <th scope="col">@Model.GroupColumnHeader</th>
+                            <th scope="col">Receitas</th>
+                            <th scope="col">Despesas</th>
+                            <th scope="col">Saldo</th>
+                            <th scope="col">Transações</th>
+                            <th scope="col">% despesas</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var row in Model.Rows)
+                        @foreach (var row in Model.Rows.Where(r => r.Receita > 0 || r.Despesa > 0))
                         {
                             <tr>
-                                <td>@row.DateFmt</td>
-                                <td>@row.Description</td>
-                                <td>@row.CategoryName</td>
-                                <td>@row.PaymentMethodName</td>
                                 <td>
-                                    <span class="rep-tag @(row.IsReceita ? "rep-tag--income" : "rep-tag--expense")">@row.TypeLabel</span>
+                                    <span class="rep-table__cat">
+                                        <span class="rep-table__icon" aria-hidden="true">@row.Icon</span>
+                                        <span>@row.GroupName</span>
+                                    </span>
                                 </td>
-                                <td class="@(row.IsReceita ? "rep-table__income" : "rep-table__expense")">@row.ValueFmt</td>
+                                <td class="rep-table__income">@row.ReceitaFmt</td>
+                                <td class="rep-table__expense">@row.DespesaFmt</td>
+                                <td class="@(row.Saldo < 0 ? "rep-table__expense" : "rep-table__income")">@row.SaldoFmt</td>
+                                <td>@row.TransactionCount</td>
+                                <td>
+                                    <div class="rep-bar-cell">
+                                        <div class="rep-bar-cell__track" role="presentation">
+                                            <span class="rep-bar-cell__fill" style="width: @(Math.Min(row.DespesaPercent, 100).ToString("0.##", cultura))%"></span>
+                                        </div>
+                                        <span class="rep-bar-cell__pct">@row.DespesaPercent.ToString("0.#", cultura)%</span>
+                                    </div>
+                                </td>
                             </tr>
                         }
                     </tbody>
@@ -127,18 +133,3 @@
         </section>
     }
 </div>
-
-@section Scripts {
-    @if (Model.TemDados)
-    {
-        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" crossorigin="anonymous"></script>
-        <script>
-            window.repCharts = {
-                mode: 'transactions',
-                tipo: @Html.Raw(Model.ChartTipoJson),
-                diario: @Html.Raw(Model.ChartDiarioJson)
-            };
-        </script>
-        <script src="~/js/reports-charts.js" asp-append-version="true"></script>
-    }
-}
