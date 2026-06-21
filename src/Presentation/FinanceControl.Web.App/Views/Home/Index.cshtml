@@ -34,7 +34,7 @@
                     }
                 </div>
                 <p class="dash-metric__label">@m.Title</p>
-                <p class="dash-metric__value">@m.Value</p>
+                <p class="dash-metric__value @(m.IsSaldo ? (m.TrendNegative ? "fc-balance--negative" : "fc-balance--positive") : null)">@m.Value</p>
                 <p class="dash-metric__trend @(m.TrendNegative ? "dash-metric__trend--bad" : "dash-metric__trend--good")">@m.TrendText</p>
             </article>
         }

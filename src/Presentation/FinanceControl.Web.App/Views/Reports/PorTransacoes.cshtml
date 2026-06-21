@@ -49,7 +49,7 @@
             <p class="rep-metric__label">Despesas</p>
             <p class="rep-metric__value">@Model.TotalDespesasFmt</p>
         </article>
-        <article class="rep-metric @(Model.SaldoNegativo ? "rep-metric--negative" : "rep-metric--balance")">
+        <article class="rep-metric @(Model.SaldoNegativo ? "rep-metric--expense" : "rep-metric--income")">
             <p class="rep-metric__label">Saldo do período</p>
             <p class="rep-metric__value">@Model.SaldoFmt</p>
         </article>

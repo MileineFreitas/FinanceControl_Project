@@ -154,7 +154,7 @@
         <section class="wt-summary-grid">
             <div class="wt-summary-card wt-summary-card--accent">
                 <h3>Saldo mensal</h3>
-                <p class="wt-big">@Model.ResumoSaldoMensal</p>
+                <p class="wt-big @(Model.ResumoSaldoMensalNegativo ? "fc-balance--negative" : "fc-balance--positive")">@Model.ResumoSaldoMensal</p>
                 <p class="wt-hint"><span class="wt-trend-up">↑ 12,5%</span> vs mês anterior</p>
             </div>
             <div class="wt-summary-card">

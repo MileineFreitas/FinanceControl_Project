@@ -408,6 +408,14 @@
     margin: 0 0 0.35rem;
 }
 
+.wt-summary-card .wt-big.fc-balance--positive {
+    color: #4ade80;
+}
+
+.wt-summary-card .wt-big.fc-balance--negative {
+    color: #f87171;
+}
+
 .wt-summary-card .wt-hint {
     font-size: 0.78rem;
     color: rgba(148, 163, 184, 0.85);

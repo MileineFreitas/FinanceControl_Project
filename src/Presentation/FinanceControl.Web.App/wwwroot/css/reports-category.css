@@ -300,6 +300,16 @@
     font-weight: 500;
 }
 
+.rep-table td.fc-balance--positive {
+    color: #4ade80;
+    font-weight: 500;
+}
+
+.rep-table td.fc-balance--negative {
+    color: #f87171;
+    font-weight: 500;
+}
+
 .rep-bar-cell {
     display: flex;
     align-items: center;

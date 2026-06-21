@@ -82,7 +82,8 @@ public class HomeController(
                 saldoConta.ToString("C", PtBr),
                 "Soma do saldo atual das contas",
                 saldoConta < 0,
-                "rocket"),
+                "rocket",
+                IsSaldo: true),
         ];
 
         var ordered = txs.OrderByDescending(x => x.Date).ThenByDescending(x => x.TransactionId).ToList();
@@ -129,7 +130,8 @@ public class HomeController(
                 saldoConta.ToString("C", PtBr),
                 saldoConta == 0 ? "Cadastre uma conta para começar" : "Saldo atual das contas",
                 saldoConta < 0,
-                "rocket"),
+                "rocket",
+                IsSaldo: true),
         ];
     }
 

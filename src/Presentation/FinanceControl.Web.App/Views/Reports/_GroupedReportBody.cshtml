@@ -49,7 +49,7 @@
             <p class="rep-metric__label">Despesas</p>
             <p class="rep-metric__value">@Model.TotalDespesasFmt</p>
         </article>
-        <article class="rep-metric @(Model.SaldoNegativo ? "rep-metric--negative" : "rep-metric--balance")">
+        <article class="rep-metric @(Model.SaldoNegativo ? "rep-metric--expense" : "rep-metric--income")">
             <p class="rep-metric__label">Saldo do período</p>
             <p class="rep-metric__value">@Model.SaldoFmt</p>
         </article>
@@ -115,7 +115,7 @@
                                 </td>
                                 <td class="rep-table__income">@row.ReceitaFmt</td>
                                 <td class="rep-table__expense">@row.DespesaFmt</td>
-                                <td class="@(row.Saldo < 0 ? "rep-table__expense" : "rep-table__income")">@row.SaldoFmt</td>
+                                <td class="@(row.Saldo < 0 ? "fc-balance--negative" : "fc-balance--positive")">@row.SaldoFmt</td>
                                 <td>@row.TransactionCount</td>
                                 <td>
                                     <div class="rep-bar-cell">

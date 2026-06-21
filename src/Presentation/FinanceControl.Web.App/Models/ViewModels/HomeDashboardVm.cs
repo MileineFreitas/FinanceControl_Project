@@ -18,7 +18,8 @@ public sealed record DashboardMetricVm(
     string Value,
     string TrendText,
     bool TrendNegative,
-    string IconSvgClass);
+    string IconSvgClass,
+    bool IsSaldo = false);
 
 public sealed record DashboardTxRowVm(
     string DataHora,

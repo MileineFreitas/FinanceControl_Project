@@ -356,6 +356,7 @@ public class TransactionsController : Controller
         if (filtradas.Count == 0)
         {
             vm.ResumoSaldoMensal = "R$ 0,00";
+            vm.ResumoSaldoMensalNegativo = false;
             vm.ResumoMaiorGasto = "—";
             vm.AlertaOrcamento = "Nenhuma transação nos filtros atuais.";
             return;
@@ -363,6 +364,7 @@ public class TransactionsController : Controller
 
         var saldo = filtradas.Sum(t => t.IsReceita ? t.Valor : -t.Valor);
         vm.ResumoSaldoMensal = saldo.ToString("C", PtBr);
+        vm.ResumoSaldoMensalNegativo = saldo < 0;
 
         var maiorDespesa = filtradas
             .Where(t => !t.IsReceita)
