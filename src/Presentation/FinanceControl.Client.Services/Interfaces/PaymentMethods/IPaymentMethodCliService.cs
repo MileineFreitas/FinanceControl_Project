@@ -5,7 +5,7 @@ namespace FinanceControl.Client.Services.Interfaces.PaymentMethods;
 
 public interface IPaymentMethodCliService
 {
-    Task<IReadOnlyList<PaymentMethodDto>?> ListAsync(bool includeInactive = false);
+    Task<IReadOnlyList<PaymentMethodDto>?> ListAsync(bool includeInactive = false, Guid? userId = null);
 
     Task<PaymentMethodDto?> GetByIdAsync(Guid id);
 

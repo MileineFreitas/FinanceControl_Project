@@ -38,7 +38,7 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
             .IsRequired();
 
         builder.Property(t => t.AccountId)
-            .IsRequired();
+            .IsRequired(false);
 
         builder.Property(t => t.UserId)
             .IsRequired();
@@ -57,7 +57,8 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
         builder.HasOne(t => t.Account)
             .WithMany(a => a.Transactions)
             .HasForeignKey(t => t.AccountId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasOne(t => t.Category)
             .WithMany(c => c.Transactions)

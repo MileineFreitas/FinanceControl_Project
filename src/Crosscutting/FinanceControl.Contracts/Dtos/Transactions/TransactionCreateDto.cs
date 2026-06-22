@@ -21,7 +21,7 @@ public class TransactionCreateDto
 
     public Guid CategoryId { get; set; }
 
-    public Guid AccountId { get; set; }
+    public Guid? AccountId { get; set; }
 
     public Guid UserId { get; set; }
 }

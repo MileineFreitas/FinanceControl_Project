@@ -9,11 +9,13 @@ namespace FinanceControl.Infrastructure.Repositories.PaymentMethods;
 
 public class PaymentMethodRepository(FinanceDbContext context) : IPaymentMethodRepository
 {
-    public async Task<IReadOnlyList<PaymentMethodDto>> ListAsync(bool activeOnly = true)
+    public async Task<IReadOnlyList<PaymentMethodDto>> ListAsync(bool activeOnly = true, Guid? userId = null)
     {
         var query = context.PaymentMethods.AsNoTracking().OrderBy(p => p.Name).AsQueryable();
         if (activeOnly)
             query = query.Where(p => p.IsActive);
+        if (userId.HasValue)
+            query = query.Where(p => p.UserId == userId.Value || p.UserId == null);
 
         var items = await query.ToListAsync();
         return items.Select(PaymentMethodMapper.ToDto).ToList();
@@ -26,10 +28,12 @@ public class PaymentMethodRepository(FinanceDbContext context) : IPaymentMethodR
         return entity == null ? null : PaymentMethodMapper.ToDto(entity);
     }
 
-    public async Task<bool> NameExistsAsync(string name, Guid? excludeId = null)
+    public async Task<bool> NameExistsAsync(string name, Guid? excludeId = null, Guid? userId = null)
     {
         var normalized = name.Trim();
         var query = context.PaymentMethods.Where(p => p.Name == normalized);
+        if (userId.HasValue)
+            query = query.Where(p => p.UserId == userId.Value);
         if (excludeId.HasValue)
             query = query.Where(p => p.PaymentMethodId != excludeId.Value);
         return await query.AnyAsync();

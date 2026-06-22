@@ -8,9 +8,12 @@ public sealed class PaymentMethodCliService(HttpClient httpClient) : IPaymentMet
 {
     private const string BaseRoute = "api/PaymentMethods";
 
-    public Task<IReadOnlyList<PaymentMethodDto>?> ListAsync(bool includeInactive = false)
+    public Task<IReadOnlyList<PaymentMethodDto>?> ListAsync(bool includeInactive = false, Guid? userId = null)
     {
-        var query = includeInactive ? "?includeInactive=true" : "";
+        var parts = new List<string>();
+        if (includeInactive) parts.Add("includeInactive=true");
+        if (userId.HasValue) parts.Add($"userId={userId.Value}");
+        var query = parts.Count > 0 ? "?" + string.Join("&", parts) : "";
         return httpClient.GetFromJsonAsync<IReadOnlyList<PaymentMethodDto>>(BaseRoute + query)!;
     }
 

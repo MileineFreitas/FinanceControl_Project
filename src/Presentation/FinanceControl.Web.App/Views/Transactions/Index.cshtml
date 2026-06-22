@@ -224,7 +224,7 @@
                 <div>
                     <label class="wt-label" asp-for="Input.CategoryId">Categoria</label>
                     <select class="wt-select" style="width:100%" asp-for="Input.CategoryId">
-                        <option value="0">Selecione…</option>
+                        <option value="">Selecione…</option>
                         @foreach (var c in Model.CategoriasOpcoes)
                         {
                             <option value="@c.Id">@c.Icone @c.Nome</option>

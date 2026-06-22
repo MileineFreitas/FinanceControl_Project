@@ -4,6 +4,7 @@ using FinanceControl.Client.Services.Interfaces.Transactions;
 using FinanceControl.Contracts.Dtos.Transactions;
 using FinanceControl.Contracts.Enumerators.Transactions;
 using FinanceControl.Contracts.Filters;
+using FinanceControl.Web.Helpers;
 using FinanceControl.Web.Models.ViewModels;
 using FinanceControl.Web.Models.ViewModels.Home;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +20,14 @@ public class HomeController(
 {
     private static readonly CultureInfo PtBr = CultureInfo.GetCultureInfo("pt-BR");
 
+    private Dictionary<string, string>? FiltroUsuario()
+    {
+        var userId = User.GetUserId();
+        return userId is null
+            ? null
+            : new Dictionary<string, string> { ["userId"] = userId.Value.ToString() };
+    }
+
     [HttpGet("")]
     [HttpGet("Index")]
     public async Task<IActionResult> Index()
@@ -27,7 +36,7 @@ public class HomeController(
         IReadOnlyList<TransactionDto>? txs = null;
         try
         {
-            var data = await transactionCli.ListAsync(new DataFilterDto { Page = 1, PageSize = 200 });
+            var data = await transactionCli.ListAsync(new DataFilterDto { Page = 1, PageSize = 200, Filters = FiltroUsuario() });
             txs = data?.Result;
             if (txs == null)
                 vm.ApiMensagem = "Não foi possível carregar transações da API.";
@@ -139,7 +148,7 @@ public class HomeController(
     {
         try
         {
-            var contas = await accountCli.ListAsync();
+            var contas = await accountCli.ListAsync(User.GetUserId());
             return contas?.Sum(c => c.CurrentBalance) ?? 0m;
         }
         catch
@@ -162,7 +171,7 @@ public class HomeController(
         var map = new Dictionary<Guid, string>();
         try
         {
-            var data = await categoryCli.ListAsync(new DataFilterDto { Page = 1, PageSize = 200 });
+            var data = await categoryCli.ListAsync(new DataFilterDto { Page = 1, PageSize = 200, Filters = FiltroUsuario() });
             if (data?.Result == null)
                 return map;
             foreach (var c in data.Result)

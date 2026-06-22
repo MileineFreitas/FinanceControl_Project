@@ -20,6 +20,13 @@ public class CategoryRepository(FinanceDbContext context) : ICategoryRepository
             .AsQueryable();
 
         if (filter.Filters != null &&
+            filter.Filters.TryGetValue("userId", out var userIdStr) &&
+            Guid.TryParse(userIdStr, out var userId))
+        {
+            query = query.Where(c => c.UserId == userId || c.UserId == null);
+        }
+
+        if (filter.Filters != null &&
             filter.Filters.TryGetValue("search", out var search) &&
             !string.IsNullOrWhiteSpace(search))
         {

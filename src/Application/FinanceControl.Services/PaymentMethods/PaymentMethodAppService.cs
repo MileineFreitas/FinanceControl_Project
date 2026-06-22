@@ -9,15 +9,15 @@ public class PaymentMethodAppService(
     IPaymentMethodRepository repository,
     IPaymentMethodDomService domService) : IPaymentMethodAppService
 {
-    public Task<IReadOnlyList<PaymentMethodDto>> ListAsync(bool activeOnly = true) =>
-        repository.ListAsync(activeOnly);
+    public Task<IReadOnlyList<PaymentMethodDto>> ListAsync(bool activeOnly = true, Guid? userId = null) =>
+        repository.ListAsync(activeOnly, userId);
 
     public Task<PaymentMethodDto?> GetByIdAsync(Guid id) =>
         repository.GetByIdAsync(id);
 
     public async Task<PaymentMethodDto> CreateAsync(PaymentMethodCreateDto dto)
     {
-        if (await repository.NameExistsAsync(dto.Name))
+        if (await repository.NameExistsAsync(dto.Name, userId: dto.UserId))
             throw new InvalidOperationException($"Já existe um meio de pagamento com o nome '{dto.Name}'.");
 
         var entity = domService.CreateFromDto(dto);

@@ -18,6 +18,14 @@ public class ReportsController(
     ICategoryCliService categoryCli,
     IPaymentMethodCliService paymentMethodCli) : Controller
 {
+    private Dictionary<string, string>? FiltroUsuario()
+    {
+        var userId = User.GetUserId();
+        return userId is null
+            ? null
+            : new Dictionary<string, string> { ["userId"] = userId.Value.ToString() };
+    }
+
     [HttpGet("")]
     [HttpGet("Index")]
     public IActionResult Index() => RedirectToAction(nameof(PorCategoria));
@@ -82,7 +90,7 @@ public class ReportsController(
 
         try
         {
-            paymentMethods = await paymentMethodCli.ListAsync(includeInactive: true) ?? [];
+            paymentMethods = await paymentMethodCli.ListAsync(includeInactive: true, userId: User.GetUserId()) ?? [];
         }
         catch
         {
@@ -110,7 +118,7 @@ public class ReportsController(
 
         try
         {
-            var txData = await transactionCli.ListAsync(new DataFilterDto { Page = 1, PageSize = 500 });
+            var txData = await transactionCli.ListAsync(new DataFilterDto { Page = 1, PageSize = 500, Filters = FiltroUsuario() });
             if (txData?.Result == null)
                 vm.ApiMensagem = "Não foi possível carregar transações da API.";
             else
@@ -131,7 +139,7 @@ public class ReportsController(
 
         try
         {
-            var txData = await transactionCli.ListAsync(new DataFilterDto { Page = 1, PageSize = 500 });
+            var txData = await transactionCli.ListAsync(new DataFilterDto { Page = 1, PageSize = 500, Filters = FiltroUsuario() });
             transactions = txData?.Result ?? [];
             if (txData?.Result == null)
                 vm.ApiMensagem = "Não foi possível carregar transações da API.";
@@ -143,7 +151,7 @@ public class ReportsController(
 
         try
         {
-            var catData = await categoryCli.ListAsync(new DataFilterDto { Page = 1, PageSize = 200 });
+            var catData = await categoryCli.ListAsync(new DataFilterDto { Page = 1, PageSize = 200, Filters = FiltroUsuario() });
             categories = catData?.Result ?? [];
         }
         catch

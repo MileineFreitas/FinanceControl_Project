@@ -2,6 +2,7 @@ using FinanceControl.Client.Services.Interfaces.Categories;
 using FinanceControl.Contracts.Constants;
 using FinanceControl.Contracts.Dtos.Categories;
 using FinanceControl.Contracts.Filters;
+using FinanceControl.Web.Helpers;
 using FinanceControl.Web.Models.ViewModels.Categories;
 using Microsoft.AspNetCore.Mvc;
 
@@ -48,6 +49,7 @@ public class CategoriesController(ICategoryCliService categoryCli) : Controller
         }
         else
         {
+            vm.Input.UserId = User.GetUserId();
             response = await categoryCli.CreateAsync(vm.Input);
         }
 
@@ -98,9 +100,12 @@ public class CategoriesController(ICategoryCliService categoryCli) : Controller
 
     private async Task LoadListAsync(CategoryViewModel vm)
     {
-        var filter = new DataFilterDto { Page = 1, PageSize = 200 };
+        var filter = new DataFilterDto { Page = 1, PageSize = 200, Filters = new Dictionary<string, string>() };
+        var userId = User.GetUserId();
+        if (userId is not null)
+            filter.Filters["userId"] = userId.Value.ToString();
         if (!string.IsNullOrWhiteSpace(vm.Busca))
-            filter.Filters = new Dictionary<string, string> { ["search"] = vm.Busca.Trim() };
+            filter.Filters["search"] = vm.Busca.Trim();
 
         try
         {

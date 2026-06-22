@@ -22,13 +22,16 @@ public class TransactionAppService(
 
     public async Task<TransactionDto> CreateAsync(TransactionCreateDto dto)
     {
-        await ValidateReferencesAsync(dto.CategoryId, dto.AccountId, dto.UserId, dto.PaymentMethodId);
+        await ValidateReferencesAsync(dto.CategoryId, dto.UserId, dto.PaymentMethodId);
 
         var entity = domService.CreateFromCreateDto(dto);
         await repository.AddAsync(entity);
 
-        var delta = domService.GetBalanceDelta(entity.TransactionValue, entity.TransactionTypeKind);
-        await accountRepository.AdjustBalanceAsync(entity.AccountId, delta);
+        if (entity.AccountId is Guid accountId)
+        {
+            var delta = domService.GetBalanceDelta(entity.TransactionValue, entity.TransactionTypeKind);
+            await accountRepository.AdjustBalanceAsync(accountId, delta);
+        }
 
         return await repository.GetByIdAsync(entity.TransactionId)
                ?? TransactionMapper.ToDto(entity);
@@ -43,8 +46,6 @@ public class TransactionAppService(
 
         if (!await repository.CategoryExistsAsync(dto.CategoryId))
             throw new InvalidOperationException($"Não existe categoria com CategoryId={dto.CategoryId}.");
-        if (!await repository.AccountExistsAsync(dto.AccountId))
-            throw new InvalidOperationException($"Conta AccountId={dto.AccountId} não encontrada.");
         if (!await repository.PaymentMethodExistsAsync(dto.PaymentMethodId))
             throw new InvalidOperationException($"Meio de pagamento PaymentMethodId={dto.PaymentMethodId} não encontrado ou inativo.");
 
@@ -52,14 +53,20 @@ public class TransactionAppService(
         var oldValue = entity.TransactionValue;
         var oldKind = entity.TransactionTypeKind;
 
-        var revertDelta = -domService.GetBalanceDelta(oldValue, oldKind);
-        await accountRepository.AdjustBalanceAsync(oldAccountId, revertDelta);
+        if (oldAccountId is Guid oldAccount)
+        {
+            var revertDelta = -domService.GetBalanceDelta(oldValue, oldKind);
+            await accountRepository.AdjustBalanceAsync(oldAccount, revertDelta);
+        }
 
         domService.ApplyUpdate(entity, dto);
         await repository.SaveChangesAsync();
 
-        var delta = domService.GetBalanceDelta(entity.TransactionValue, entity.TransactionTypeKind);
-        await accountRepository.AdjustBalanceAsync(entity.AccountId, delta);
+        if (entity.AccountId is Guid newAccount)
+        {
+            var delta = domService.GetBalanceDelta(entity.TransactionValue, entity.TransactionTypeKind);
+            await accountRepository.AdjustBalanceAsync(newAccount, delta);
+        }
 
         return true;
     }
@@ -69,18 +76,19 @@ public class TransactionAppService(
         var entity = await repository.FindTrackedAsync(id);
         if (entity == null) return false;
 
-        var revertDelta = -domService.GetBalanceDelta(entity.TransactionValue, entity.TransactionTypeKind);
-        await accountRepository.AdjustBalanceAsync(entity.AccountId, revertDelta);
+        if (entity.AccountId is Guid accountId)
+        {
+            var revertDelta = -domService.GetBalanceDelta(entity.TransactionValue, entity.TransactionTypeKind);
+            await accountRepository.AdjustBalanceAsync(accountId, revertDelta);
+        }
 
         return await repository.DeleteAsync(id);
     }
 
-    private async Task ValidateReferencesAsync(Guid categoryId, Guid accountId, Guid userId, Guid paymentMethodId)
+    private async Task ValidateReferencesAsync(Guid categoryId, Guid userId, Guid paymentMethodId)
     {
         if (!await repository.CategoryExistsAsync(categoryId))
             throw new InvalidOperationException($"Não existe categoria com CategoryId={categoryId}. Cadastre categorias antes de lançar transações.");
-        if (!await repository.AccountExistsAsync(accountId))
-            throw new InvalidOperationException($"Conta AccountId={accountId} não encontrada.");
         if (!await repository.UserExistsAsync(userId))
             throw new InvalidOperationException($"Utilizador UserId={userId} não encontrado.");
         if (!await repository.PaymentMethodExistsAsync(paymentMethodId))

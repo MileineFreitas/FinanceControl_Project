@@ -18,7 +18,7 @@ public interface ITransaction
 
     Guid CategoryId { get; set; }
 
-    Guid AccountId { get; set; }
+    Guid? AccountId { get; set; }
 
     Guid UserId { get; set; }
 

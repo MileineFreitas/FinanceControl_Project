@@ -9,8 +9,8 @@ namespace FinanceControl.API.Controllers.PaymentMethods;
 public class PaymentMethodsController(IPaymentMethodAppService appService) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] bool includeInactive = false) =>
-        Ok(await appService.ListAsync(activeOnly: !includeInactive));
+    public async Task<IActionResult> Get([FromQuery] bool includeInactive = false, [FromQuery] Guid? userId = null) =>
+        Ok(await appService.ListAsync(activeOnly: !includeInactive, userId: userId));
 
     [HttpGet("{id:guid}", Name = "GetPaymentMethodById")]
     public async Task<IActionResult> GetById(Guid id)

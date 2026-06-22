@@ -7,6 +7,7 @@ using FinanceControl.Contracts.Constants;
 using FinanceControl.Contracts.Dtos.Transactions;
 using FinanceControl.Contracts.Enumerators.Transactions;
 using FinanceControl.Contracts.Filters;
+using FinanceControl.Web.Helpers;
 using FinanceControl.Web.Models.ViewModels.Transactions;
 using Microsoft.AspNetCore.Mvc;
 
@@ -116,13 +117,7 @@ public class TransactionsController : Controller
             HttpResponseMessage response;
             if (vm.EditingId is Guid editId && editId != Guid.Empty)
             {
-                var accountId = vm.AccountIdEdicao != Guid.Empty ? vm.AccountIdEdicao : _contaPadraoId ?? Guid.Empty;
-                if (accountId == Guid.Empty)
-                {
-                    vm.ErroModal = "Conta da transação não disponível.";
-                    AplicarFiltrosEPaginar(vm);
-                    return View("Index", vm);
-                }
+                Guid? accountId = vm.AccountIdEdicao != Guid.Empty ? vm.AccountIdEdicao : _contaPadraoId;
 
                 var update = new TransactionUpdateDto
                 {
@@ -139,9 +134,9 @@ public class TransactionsController : Controller
             }
             else
             {
-                if (_contaPadraoId is not Guid accountId || _usuarioPadraoId is not Guid userId)
+                if (_usuarioPadraoId is not Guid userId)
                 {
-                    vm.ErroModal = "Conta padrão não disponível. Verifique se a API está em execução.";
+                    vm.ErroModal = "Sessão expirada. Faça login novamente.";
                     AplicarFiltrosEPaginar(vm);
                     return View("Index", vm);
                 }
@@ -154,7 +149,7 @@ public class TransactionsController : Controller
                     TransactionTypeKind = tipo,
                     PaymentMethodId = vm.Input.PaymentMethodId,
                     CategoryId = vm.Input.CategoryId,
-                    AccountId = accountId,
+                    AccountId = _contaPadraoId,
                     UserId = userId
                 };
                 response = await _transactionCli.CreateAsync(create);
@@ -226,26 +221,33 @@ public class TransactionsController : Controller
         vm.Transacoes = list.Skip((vm.Pag - 1) * vm.TamanhoPagina).Take(vm.TamanhoPagina).ToList();
     }
 
+    private Dictionary<string, string>? FiltroUsuario()
+    {
+        var userId = User.GetUserId();
+        return userId is null
+            ? null
+            : new Dictionary<string, string> { ["userId"] = userId.Value.ToString() };
+    }
+
     private async Task CarregarContaPadraoAsync(TransactionIndexViewModel vm)
     {
         _contaPadraoId = null;
-        _usuarioPadraoId = null;
+        _usuarioPadraoId = User.GetUserId();
+
+        if (_usuarioPadraoId is null)
+        {
+            vm.ApiMensagem ??= "Sessão expirada. Faça login novamente.";
+            return;
+        }
+
         try
         {
-            var contas = await _accountCli.ListAsync();
-            var conta = contas?.OrderBy(c => c.AccountId).FirstOrDefault();
-            if (conta == null)
-            {
-                vm.ApiMensagem ??= "Nenhuma conta encontrada. Verifique se a API e o seed foram executados.";
-                return;
-            }
-
-            _contaPadraoId = conta.AccountId;
-            _usuarioPadraoId = conta.UserId;
+            var contas = await _accountCli.ListAsync(_usuarioPadraoId);
+            _contaPadraoId = contas?.OrderBy(c => c.AccountId).FirstOrDefault()?.AccountId;
         }
         catch (Exception ex)
         {
-            vm.ApiMensagem ??= $"Não foi possível carregar a conta padrão: {ex.Message}";
+            vm.ApiMensagem ??= $"Não foi possível carregar a conta do usuário: {ex.Message}";
         }
     }
 
@@ -255,7 +257,7 @@ public class TransactionsController : Controller
         try
         {
             var data = await _categoryCli.ListAsync(
-                new DataFilterDto { Page = 1, PageSize = 200 });
+                new DataFilterDto { Page = 1, PageSize = 200, Filters = FiltroUsuario() });
 
             if (data?.Result is { Count: > 0 })
             {
@@ -282,7 +284,7 @@ public class TransactionsController : Controller
         vm.MeiosPagamentoOpcoes.Clear();
         try
         {
-            var list = await _paymentMethodCli.ListAsync(includeInactive: false);
+            var list = await _paymentMethodCli.ListAsync(includeInactive: false, userId: User.GetUserId());
             if (list is { Count: > 0 })
             {
                 foreach (var m in list.Where(t => t.IsActive).OrderBy(t => t.Name))
@@ -306,7 +308,7 @@ public class TransactionsController : Controller
         try
         {
             var data = await _transactionCli.ListAsync(
-                new DataFilterDto { Page = 1, PageSize = 500 });
+                new DataFilterDto { Page = 1, PageSize = 500, Filters = FiltroUsuario() });
 
             if (data?.Result is not { Count: > 0 })
             {
@@ -398,7 +400,7 @@ public class TransactionsController : Controller
             CategoryId = dto.CategoryId,
             PaymentMethodId = dto.PaymentMethodId
         };
-        vm.AccountIdEdicao = dto.AccountId;
+        vm.AccountIdEdicao = dto.AccountId ?? Guid.Empty;
     }
 
     private bool ValidarFormulario(TransactionIndexViewModel vm, out TransactionTypeKind tipo)

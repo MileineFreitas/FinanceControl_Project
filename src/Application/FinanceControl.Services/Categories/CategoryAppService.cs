@@ -21,7 +21,7 @@ public class CategoryAppService(
 
     public async Task<CategoryDto> CreateAsync(CategoryRegisterDto dto)
     {
-        var userId = await repository.GetFirstUserIdAsync();
+        var userId = dto.UserId ?? await repository.GetFirstUserIdAsync();
         var entity = domService.CreateFromRegister(dto, userId);
         await repository.AddAsync(entity);
         return (await repository.GetByIdAsync(entity.CategoryId))!;

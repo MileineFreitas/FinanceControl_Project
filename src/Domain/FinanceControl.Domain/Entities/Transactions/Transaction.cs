@@ -37,7 +37,7 @@ public class Transaction : ITransaction
 
     public Category? Category { get; set; }
 
-    public Guid AccountId { get; set; }
+    public Guid? AccountId { get; set; }
 
     [JsonIgnore]
     public Account? Account { get; set; }

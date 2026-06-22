@@ -1,6 +1,7 @@
 using FinanceControl.Client.Services.Interfaces.PaymentMethods;
 using FinanceControl.Contracts.Constants;
 using FinanceControl.Contracts.Dtos.PaymentMethods;
+using FinanceControl.Web.Helpers;
 using FinanceControl.Web.Models.ViewModels.PaymentMethods;
 using Microsoft.AspNetCore.Mvc;
 
@@ -62,6 +63,7 @@ public class PaymentMethodsController(IPaymentMethodCliService paymentMethodCli)
         else
         {
             vm.Input.IsActive = true;
+            vm.Input.UserId = User.GetUserId();
             response = await paymentMethodCli.CreateAsync(vm.Input);
         }
 
@@ -114,7 +116,7 @@ public class PaymentMethodsController(IPaymentMethodCliService paymentMethodCli)
     {
         try
         {
-            var list = await paymentMethodCli.ListAsync(includeInactive: true);
+            var list = await paymentMethodCli.ListAsync(includeInactive: true, userId: User.GetUserId());
             vm.Meios = (list ?? []).Select(PaymentMethodViewModelMapper.ToItem).ToList();
             ApplyBusca(vm);
         }

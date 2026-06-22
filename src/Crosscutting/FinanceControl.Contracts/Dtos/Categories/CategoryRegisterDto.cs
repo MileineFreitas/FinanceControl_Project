@@ -14,4 +14,6 @@ public class CategoryRegisterDto
     public string Icon { get; set; } = CategoryIcons.Default;
 
     public bool IsActive { get; set; } = true;
+
+    public Guid? UserId { get; set; }
 }
