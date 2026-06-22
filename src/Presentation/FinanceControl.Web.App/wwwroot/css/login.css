@@ -1,142 +1,391 @@
+:root {
+    --fin-dark-1: #0a1b33;
+    --fin-dark-2: #0f2f57;
+    --fin-dark-3: #1b6ec2;
+    --fin-green: #1b6ec2;
+    --fin-green-dark: #0071c1;
+    --fin-green-soft: rgba(27, 110, 194, 0.15);
+    --fin-ink: #0f172a;
+    --fin-muted: #64748b;
+    --fin-border: #e2e8f0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
 .login-wrapper {
     display: flex;
     min-height: 100vh;
+    background: #f1f5f9;
 }
 
+/* ----------------- LADO ESQUERDO (BRANDING) ----------------- */
 .login-left {
-    flex: 1;
-    background: linear-gradient(135deg,#1a1a2e 0%,#16213e 40%,#0f3460 100%);
+    flex: 1.1;
+    background: radial-gradient(1200px 600px at 0% 0%, rgba(37,140,251,0.22), transparent 55%),
+                linear-gradient(150deg, var(--fin-dark-1) 0%, var(--fin-dark-2) 55%, #134a86 100%);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 2.5rem;
+    padding: 3rem 3.25rem;
     position: relative;
+    overflow: hidden;
+}
+
+.login-left::after {
+    content: "";
+    position: absolute;
+    width: 420px;
+    height: 420px;
+    right: -140px;
+    bottom: -160px;
+    background: radial-gradient(circle, rgba(37,140,251,0.3), transparent 70%);
+    border-radius: 50%;
 }
 
 .brand {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+    position: relative;
+    z-index: 2;
 }
 
 .brand-icon {
-    width: 36px;
-    height: 36px;
-    background: rgba(255,255,255,0.15);
-    border-radius: 10px;
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, #258cfb, var(--fin-green-dark));
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 20px;
+    box-shadow: 0 8px 24px rgba(27,110,194,0.45);
 }
 
 .brand-name {
-    color: white;
-    font-size: 16px;
-    font-weight: 500;
+    color: #fff;
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+}
+
+.left-content {
+    position: relative;
+    z-index: 2;
 }
 
 .left-title {
-    font-size: 2.8rem;
-    font-weight: 700;
-    color: white;
-    line-height: 1.2;
+    font-size: clamp(1.15rem, 2.1vw, 2rem);
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.15;
+    letter-spacing: -0.8px;
+    margin-bottom: 1rem;
+    white-space: nowrap;
+}
+
+.left-title .accent {
+    background: linear-gradient(120deg, #4aa3ff, #93c5fd);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .left-subtitle {
     font-size: 1rem;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.65;
+    max-width: 360px;
+    margin-bottom: 2rem;
+}
+
+/* Card de "saldo" ilustrativo */
+.balance-card {
+    position: relative;
+    z-index: 2;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    backdrop-filter: blur(8px);
+    border-radius: 18px;
+    padding: 1.25rem 1.4rem;
+    max-width: 380px;
+    margin-bottom: 1.75rem;
+}
+
+.balance-label {
     color: rgba(255,255,255,0.6);
-    line-height: 1.6;
-    max-width: 320px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.balance-value {
+    color: #fff;
+    font-size: 1.9rem;
+    font-weight: 800;
+    margin: 6px 0 14px;
+    letter-spacing: -0.5px;
+}
+
+.balance-value .up {
+    font-size: 0.8rem;
+    color: #6ee7b7;
+    font-weight: 600;
+    margin-left: 8px;
+}
+
+/* Imagem do gráfico financeiro */
+.chart-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 12px;
+    filter: drop-shadow(0 12px 24px rgba(0,0,0,0.25));
+}
+
+.balance-card .chart-image {
+    margin-top: 4px;
+    filter: none;
+    border-radius: 8px;
+}
+
+/* Lista de recursos */
+.feature-list {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 380px;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: rgba(255,255,255,0.85);
+    font-size: 14px;
+}
+
+.feature-check {
+    width: 26px;
+    height: 26px;
+    flex: 0 0 26px;
+    border-radius: 50%;
+    background: rgba(37,140,251,0.2);
+    color: #93c5fd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
 }
 
 .left-footer {
+    position: relative;
+    z-index: 2;
     font-size: 13px;
-    color: rgba(255,255,255,0.35);
+    color: rgba(255,255,255,0.4);
 }
 
+/* ----------------- LADO DIREITO (FORMULÁRIO) ----------------- */
 .login-right {
     width: 100%;
-    max-width: 600px;
-    background: white;
+    max-width: 560px;
+    background: #fff;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 3rem 3.5rem;
+    padding: 3rem 4rem;
 }
 
 .form-eyebrow {
     font-size: 13px;
-    color: #94a3b8;
+    font-weight: 600;
+    color: var(--fin-green-dark);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
 }
 
 .form-title {
     font-size: 2rem;
-    font-weight: 700;
+    font-weight: 800;
+    color: var(--fin-ink);
+    letter-spacing: -0.5px;
+    margin-bottom: 0.4rem;
+}
+
+.form-desc {
+    color: var(--fin-muted);
+    font-size: 0.95rem;
     margin-bottom: 2rem;
+}
+
+.alert-box {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+    border-radius: 12px;
+    padding: 0.85rem 1rem;
+    font-size: 14px;
+    margin-bottom: 1.25rem;
+    text-align: center;
 }
 
 .field-group {
     margin-bottom: 1.25rem;
-    border-radius:10px;
 }
 
 .field-label {
     font-size: 13px;
-    font-weight: 500;
-    color: #475569;
+    font-weight: 600;
+    color: #334155;
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 7px;
 }
 
-.field-input {
+.input-icon {
+    position: relative;
+}
+
+.input-icon .icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    font-size: 16px;
+    pointer-events: none;
+}
+
+/* Inputs (Bootstrap form-control) */
+.login-right .form-control {
     width: 100%;
-    padding: 0.9rem;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 10px;
+    height: 50px;
+    padding: 0.75rem 0.95rem 0.75rem 2.7rem;
+    border: 1.5px solid var(--fin-border);
+    border-radius: 12px;
     background: #f8fafc;
-    font-size: 14px;
-    font-family: inherit;
-    box-sizing: border-box;
+    font-size: 14.5px;
+    transition: border-color .15s, box-shadow .15s, background .15s;
 }
 
-.field-input:focus {
-        border-color: #3b82f6;
-        background: white;
-        outline: none;
+.login-right .form-control:focus {
+    border-color: var(--fin-green);
+    background: #fff;
+    outline: none;
+    box-shadow: 0 0 0 4px var(--fin-green-soft);
 }
 
-.validation-msg {
-    font-size: 12px;
+.field-extra {
+    display: flex;
+    justify-content: flex-end;
+    margin: -0.4rem 0 1.25rem;
+}
+
+.field-extra a {
+    font-size: 13px;
+    color: var(--fin-green-dark);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.field-extra a:hover {
+    text-decoration: underline;
+}
+
+.text-danger {
+    font-size: 12.5px;
     color: #ef4444;
+    margin-top: 5px;
+    display: block;
 }
 
 .btn-login {
     width: 100%;
-    padding: 0.9rem;
-    background: #1e40af;
-    color: white;
+    height: 52px;
+    background: linear-gradient(135deg, #258cfb, var(--fin-green-dark));
+    color: #fff;
     border: none;
-    border-radius: 10px;
-    font-size: 15px;
+    border-radius: 12px;
+    font-size: 15.5px;
+    font-weight: 600;
     cursor: pointer;
+    transition: transform .12s, box-shadow .2s, filter .2s;
+    box-shadow: 0 10px 25px rgba(27,110,194,0.4);
 }
 
-    .btn-login:hover {
-        background: #1d4ed8;
-    }
+.btn-login:hover {
+    filter: brightness(1.05);
+    transform: translateY(-1px);
+    box-shadow: 0 14px 30px rgba(27,110,194,0.48);
+}
 
-    .btn-login:disabled {
-        opacity: .6;
-    }
+.btn-login:active {
+    transform: translateY(0);
+}
 
-@media(max-width:768px) {
+.btn-login:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
 
+.divider {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 1.6rem 0;
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+.divider::before,
+.divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--fin-border);
+}
+
+.register-account {
+    text-align: center;
+}
+
+.register-account .btn-register {
+    display: inline-block;
+    width: 100%;
+    height: 50px;
+    line-height: 48px;
+    border: 1.5px solid var(--fin-border);
+    border-radius: 12px;
+    color: var(--fin-ink);
+    font-weight: 600;
+    font-size: 14.5px;
+    text-decoration: none;
+    transition: border-color .15s, background .15s, color .15s;
+}
+
+.register-account .btn-register:hover {
+    border-color: var(--fin-green);
+    color: var(--fin-green-dark);
+    background: var(--fin-green-soft);
+}
+
+/* ----------------- RESPONSIVO ----------------- */
+@media (max-width: 900px) {
     .login-left {
         display: none;
     }
 
     .login-right {
-        width: 100%;
-        padding: 2rem;
+        max-width: 100%;
+        padding: 2.5rem 1.5rem;
     }
 }

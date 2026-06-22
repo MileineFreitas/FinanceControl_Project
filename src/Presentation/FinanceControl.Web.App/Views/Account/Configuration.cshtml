@@ -1,6 +1,277 @@
 @{
     ViewData["Title"] = "Configurar conta";
+    var sucesso = TempData["ConfigSucesso"] as string;
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/cadastros-wt.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/settings.css" asp-append-version="true" />
 }
 
-<h1 class="h4 mb-3">Configurar conta</h1>
-<p class="text-muted">Defina preferências da conta (e-mail, senha, notificações, etc.). Esta página pode ser preenchida conforme as regras do seu backend.</p>
+<div class="wt-cadastro" id="settings-page">
+    <div class="wt-cadastro__inner">
+        @if (!string.IsNullOrEmpty(sucesso))
+        {
+            <div class="wt-alert wt-alert--success" role="status">@sucesso</div>
+        }
+
+        <header class="wt-page-head">
+            <div>
+                <h1 class="wt-page-title">Configurações da conta</h1>
+                <p class="wt-page-sub">
+                    Personalize sua experiência: preferências financeiras, notificações, aparência e segurança da conta.
+                </p>
+            </div>
+        </header>
+
+        <div class="wt-settings__layout">
+            <!-- Navegação lateral -->
+            <aside class="wt-card-panel wt-settings__nav">
+                <ul class="wt-settings__nav-list">
+                    <li><a href="#preferencias"><span class="ico">⚙️</span> Preferências</a></li>
+                    <li><a href="#notificacoes"><span class="ico">🔔</span> Notificações</a></li>
+                    <li><a href="#aparencia"><span class="ico">🎨</span> Aparência</a></li>
+                    <li><a href="#seguranca"><span class="ico">🔒</span> Segurança</a></li>
+                    <li><a href="#privacidade"><span class="ico">🛡️</span> Privacidade e dados</a></li>
+                    <li><a href="#zona-perigo"><span class="ico">⚠️</span> Zona de perigo</a></li>
+                </ul>
+            </aside>
+
+            <!-- Conteúdo -->
+            <form method="post" asp-action="Configuracao" class="wt-settings__content">
+                @Html.AntiForgeryToken()
+
+                <!-- Preferências -->
+                <section id="preferencias" class="wt-card-panel wt-settings__section">
+                    <div class="wt-settings__section-head">
+                        <span class="wt-settings__section-icon">⚙️</span>
+                        <div>
+                            <h2 class="wt-settings__section-title">Preferências financeiras</h2>
+                            <p class="wt-settings__section-sub">Como os valores e datas aparecem em todo o sistema.</p>
+                        </div>
+                    </div>
+                    <div class="wt-settings__grid">
+                        <div class="wt-field">
+                            <label for="cfg-moeda">Moeda</label>
+                            <select id="cfg-moeda" name="Moeda" class="wt-select wt-input--block">
+                                <option value="BRL" selected>Real brasileiro (R$)</option>
+                                <option value="USD">Dólar americano (US$)</option>
+                                <option value="EUR">Euro (€)</option>
+                            </select>
+                        </div>
+                        <div class="wt-field">
+                            <label for="cfg-idioma">Idioma</label>
+                            <select id="cfg-idioma" name="Idioma" class="wt-select wt-input--block">
+                                <option value="pt-BR" selected>Português (Brasil)</option>
+                                <option value="en-US">English (US)</option>
+                                <option value="es-ES">Español</option>
+                            </select>
+                        </div>
+                        <div class="wt-field">
+                            <label for="cfg-formato-data">Formato de data</label>
+                            <select id="cfg-formato-data" name="FormatoData" class="wt-select wt-input--block">
+                                <option value="dd/MM/yyyy" selected>DD/MM/AAAA</option>
+                                <option value="MM/dd/yyyy">MM/DD/AAAA</option>
+                                <option value="yyyy-MM-dd">AAAA-MM-DD</option>
+                            </select>
+                        </div>
+                        <div class="wt-field">
+                            <label for="cfg-inicio-mes">Início do mês financeiro</label>
+                            <select id="cfg-inicio-mes" name="InicioMes" class="wt-select wt-input--block">
+                                <option value="1" selected>Dia 1</option>
+                                <option value="5">Dia 5</option>
+                                <option value="10">Dia 10</option>
+                                <option value="15">Dia 15</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Notificações -->
+                <section id="notificacoes" class="wt-card-panel wt-settings__section">
+                    <div class="wt-settings__section-head">
+                        <span class="wt-settings__section-icon">🔔</span>
+                        <div>
+                            <h2 class="wt-settings__section-title">Notificações</h2>
+                            <p class="wt-settings__section-sub">Escolha o que deseja receber e quando.</p>
+                        </div>
+                    </div>
+
+                    <div class="wt-settings__row">
+                        <div class="wt-settings__row-text">
+                            <p class="wt-settings__row-title">Resumo mensal por e-mail</p>
+                            <p class="wt-settings__row-desc">Receba um panorama das suas receitas e despesas no fim de cada mês.</p>
+                        </div>
+                        <div class="wt-settings__row-control">
+                            <label class="wt-switch">
+                                <input type="checkbox" name="NotifResumoMensal" value="true" checked />
+                                <span class="wt-switch__slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="wt-settings__row">
+                        <div class="wt-settings__row-text">
+                            <p class="wt-settings__row-title">Alertas de gastos altos</p>
+                            <p class="wt-settings__row-desc">Avisamos quando uma despesa ultrapassar o valor médio das suas categorias.</p>
+                        </div>
+                        <div class="wt-settings__row-control">
+                            <label class="wt-switch">
+                                <input type="checkbox" name="NotifAlertaGastos" value="true" checked />
+                                <span class="wt-switch__slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="wt-settings__row">
+                        <div class="wt-settings__row-text">
+                            <p class="wt-settings__row-title">Lembretes de contas a pagar</p>
+                            <p class="wt-settings__row-desc">Notificações sobre vencimentos próximos para você não esquecer.</p>
+                        </div>
+                        <div class="wt-settings__row-control">
+                            <label class="wt-switch">
+                                <input type="checkbox" name="NotifLembretes" value="true" />
+                                <span class="wt-switch__slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="wt-settings__row">
+                        <div class="wt-settings__row-text">
+                            <p class="wt-settings__row-title">Novidades e dicas</p>
+                            <p class="wt-settings__row-desc">Conteúdos e atualizações sobre novos recursos do Cashly.</p>
+                        </div>
+                        <div class="wt-settings__row-control">
+                            <label class="wt-switch">
+                                <input type="checkbox" name="NotifNovidades" value="true" />
+                                <span class="wt-switch__slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Aparência -->
+                <section id="aparencia" class="wt-card-panel wt-settings__section">
+                    <div class="wt-settings__section-head">
+                        <span class="wt-settings__section-icon">🎨</span>
+                        <div>
+                            <h2 class="wt-settings__section-title">Aparência</h2>
+                            <p class="wt-settings__section-sub">Defina o tema visual da aplicação.</p>
+                        </div>
+                    </div>
+                    <div class="wt-field">
+                        <label>Tema</label>
+                        <div class="wt-segment" role="radiogroup" aria-label="Tema">
+                            <input type="radio" id="tema-escuro" name="Tema" value="escuro" checked />
+                            <label for="tema-escuro">🌙 Escuro</label>
+                            <input type="radio" id="tema-claro" name="Tema" value="claro" />
+                            <label for="tema-claro">☀️ Claro</label>
+                            <input type="radio" id="tema-auto" name="Tema" value="auto" />
+                            <label for="tema-auto">🖥️ Automático</label>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Segurança -->
+                <section id="seguranca" class="wt-card-panel wt-settings__section">
+                    <div class="wt-settings__section-head">
+                        <span class="wt-settings__section-icon">🔒</span>
+                        <div>
+                            <h2 class="wt-settings__section-title">Segurança</h2>
+                            <p class="wt-settings__section-sub">Proteja o acesso à sua conta.</p>
+                        </div>
+                    </div>
+
+                    <div class="wt-settings__row">
+                        <div class="wt-settings__row-text">
+                            <p class="wt-settings__row-title">Senha de acesso</p>
+                            <p class="wt-settings__row-desc">Altere sua senha periodicamente para manter a conta segura.</p>
+                        </div>
+                        <div class="wt-settings__row-control">
+                            <a href="~/perfil" class="wt-btn wt-btn--outline">Alterar senha</a>
+                        </div>
+                    </div>
+
+                    <div class="wt-settings__row">
+                        <div class="wt-settings__row-text">
+                            <p class="wt-settings__row-title">Autenticação em duas etapas (2FA)</p>
+                            <p class="wt-settings__row-desc">Adicione uma camada extra de proteção ao fazer login.</p>
+                        </div>
+                        <div class="wt-settings__row-control">
+                            <label class="wt-switch">
+                                <input type="checkbox" name="DoisFatores" value="true" />
+                                <span class="wt-switch__slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="wt-settings__row">
+                        <div class="wt-settings__row-text">
+                            <p class="wt-settings__row-title">Encerrar outras sessões</p>
+                            <p class="wt-settings__row-desc">Desconecte sua conta de todos os outros dispositivos.</p>
+                        </div>
+                        <div class="wt-settings__row-control">
+                            <button type="button" class="wt-btn wt-btn--outline">Encerrar sessões</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Privacidade e dados -->
+                <section id="privacidade" class="wt-card-panel wt-settings__section">
+                    <div class="wt-settings__section-head">
+                        <span class="wt-settings__section-icon">🛡️</span>
+                        <div>
+                            <h2 class="wt-settings__section-title">Privacidade e dados</h2>
+                            <p class="wt-settings__section-sub">Controle como seus dados são tratados.</p>
+                        </div>
+                    </div>
+
+                    <div class="wt-settings__row">
+                        <div class="wt-settings__row-text">
+                            <p class="wt-settings__row-title">Política de Privacidade</p>
+                            <p class="wt-settings__row-desc">Saiba como coletamos, usamos e protegemos seus dados.</p>
+                        </div>
+                        <div class="wt-settings__row-control">
+                            <a href="~/conta/privacidade" class="wt-btn wt-btn--ghost">Ver política</a>
+                        </div>
+                    </div>
+
+                    <div class="wt-settings__row">
+                        <div class="wt-settings__row-text">
+                            <p class="wt-settings__row-title">Exportar meus dados</p>
+                            <p class="wt-settings__row-desc">Baixe uma cópia das suas transações e cadastros (CSV).</p>
+                        </div>
+                        <div class="wt-settings__row-control">
+                            <button type="button" class="wt-btn wt-btn--outline">Exportar dados</button>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="wt-settings__actions">
+                    <a href="~/home" class="wt-btn wt-btn--outline">Cancelar</a>
+                    <button type="submit" class="wt-btn wt-btn--primary wt-btn--glow">Salvar alterações</button>
+                </div>
+
+                <!-- Zona de perigo -->
+                <section id="zona-perigo" class="wt-card-panel wt-settings__section wt-settings__section--danger">
+                    <div class="wt-settings__section-head">
+                        <span class="wt-settings__section-icon">⚠️</span>
+                        <div>
+                            <h2 class="wt-settings__section-title">Zona de perigo</h2>
+                            <p class="wt-settings__section-sub">Ações permanentes que não podem ser desfeitas.</p>
+                        </div>
+                    </div>
+
+                    <div class="wt-settings__row">
+                        <div class="wt-settings__row-text">
+                            <p class="wt-settings__row-title">Excluir conta</p>
+                            <p class="wt-settings__row-desc">Remove permanentemente sua conta e todos os dados financeiros associados.</p>
+                        </div>
+                        <div class="wt-settings__row-control">
+                            <button type="button" class="wt-btn wt-btn--danger">Excluir conta</button>
+                        </div>
+                    </div>
+                </section>
+            </form>
+        </div>
+    </div>
+</div>

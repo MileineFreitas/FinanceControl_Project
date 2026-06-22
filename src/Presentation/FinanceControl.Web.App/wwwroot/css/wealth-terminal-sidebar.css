@@ -129,11 +129,12 @@
 .sidebar__group-caret {
   width: 16px !important;
   height: 16px !important;
-  transition: transform 0.2s ease;
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
 }
 
 .sidebar__group[open] .sidebar__group-caret {
-  transform: rotate(90deg);
+  transform: rotate(180deg);
 }
 
 .sidebar__submenu {
