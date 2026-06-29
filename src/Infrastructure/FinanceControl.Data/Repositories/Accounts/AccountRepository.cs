@@ -89,4 +89,9 @@ public class AccountRepository(FinanceDbContext context) : IAccountRepository
             .Where(a => a.UserId == userId && a.IsActive)
             .OrderBy(a => a.CreatedAt)
             .FirstOrDefaultAsync();
+
+    public async Task<IReadOnlyList<Account>> GetTrackedByUserIdAsync(Guid userId) =>
+        await context.Accounts
+            .Where(a => a.UserId == userId)
+            .ToListAsync();
 }

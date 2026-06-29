@@ -60,6 +60,9 @@ public class AccountController(IUserCliService userCli) : Controller
             InicioMes = vm.InicioMes
         };
 
+        var moedaAnterior = User.GetFinancialPreferences().Moeda;
+        var moedaAlterada = !string.Equals(moedaAnterior, dto.Moeda, StringComparison.OrdinalIgnoreCase);
+
         try
         {
             var response = await userCli.UpdateFinancialPreferencesAsync(userId.Value, dto);
@@ -70,7 +73,9 @@ public class AccountController(IUserCliService userCli) : Controller
             }
 
             await HttpContext.RefreshFinancialPreferencesAsync(dto);
-            TempData["ConfigSucesso"] = "Preferências financeiras salvas com sucesso.";
+            TempData["ConfigSucesso"] = moedaAlterada
+                ? "Preferências salvas. Valores convertidos para a nova moeda selecionada."
+                : "Preferências financeiras salvas com sucesso.";
         }
         catch
         {

@@ -100,4 +100,9 @@ public class TransactionRepository(FinanceDbContext context) : ITransactionRepos
         requireActive
             ? context.PaymentMethods.AnyAsync(p => p.PaymentMethodId == paymentMethodId && p.IsActive)
             : context.PaymentMethods.AnyAsync(p => p.PaymentMethodId == paymentMethodId);
+
+    public async Task<IReadOnlyList<Transaction>> GetTrackedByUserIdAsync(Guid userId) =>
+        await context.Transactions
+            .Where(t => t.UserId == userId)
+            .ToListAsync();
 }

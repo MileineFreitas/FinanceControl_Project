@@ -28,4 +28,6 @@ public interface ITransactionRepository
     Task<bool> UserExistsAsync(Guid userId);
 
     Task<bool> PaymentMethodExistsAsync(Guid paymentMethodId, bool requireActive = true);
+
+    Task<IReadOnlyList<Transaction>> GetTrackedByUserIdAsync(Guid userId);
 }
