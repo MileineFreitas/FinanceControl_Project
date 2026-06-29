@@ -1,7 +1,7 @@
 @model FinanceControl.Web.Models.ViewModels.Auth.LoginViewModel
 @{
     Layout = "~/Views/Shared/_LayoutAuth.cshtml";
-    ViewData["Title"] = "Entrar";
+    ViewData["Title"] = Localizer["Auth.LoginTitle"].Value;
 }
 @section Styles {
     <link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
@@ -10,45 +10,44 @@
 <div class="login-wrapper">
     <div class="login-left">
         <div class="brand">
-            <img src="~/cashly-logo.png" alt="Cashly" class="brand-logo" />
+            <img src="~/cashly-logo.png" alt="@Localizer["AppName"]" class="brand-logo" />
         </div>
 
         <div class="left-content">
             <h1 class="left-title">
-                Controle suas <span class="accent">finanças</span> com precisão.
+                @Html.Raw(string.Format(Localizer["Auth.LoginHero"].Value, $"<span class=\"accent\">{Localizer["Auth.LoginHeroAccent"]}</span>"))
             </h1>
             <p class="left-subtitle">
-                Gerencie receitas, despesas e categorias em um só lugar.
-                Simples, rápido e seguro.
+                @Localizer["Auth.LoginHeroSub"]
             </p>
 
             <div class="balance-card">
                 <div class="feature-list">
                     <div class="feature-item">
                         <span class="feature-check">✓</span>
-                        Relatórios e dashboards em tempo real
+                        @Localizer["Auth.FeatureReports"]
                     </div>
                     <div class="feature-item">
                         <span class="feature-check">✓</span>
-                        Categorize receitas e despesas facilmente
+                        @Localizer["Auth.FeatureCategories"]
                     </div>
                     <div class="feature-item">
                         <span class="feature-check">✓</span>
-                        Seus dados sempre protegidos
+                        @Localizer["Auth.FeatureSecurity"]
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="left-footer">
-            © 2026 Cashly. Todos os direitos reservados.
+            @Localizer["Common.Copyright"]
         </div>
     </div>
 
     <div class="login-right">
-        <p class="form-eyebrow">Bem-vindo de volta</p>
-        <h1 class="form-title">Entre na sua conta</h1>
-        <p class="form-desc">Acesse seu painel e continue no controle das suas finanças.</p>
+        <p class="form-eyebrow">@Localizer["Auth.WelcomeBack"]</p>
+        <h1 class="form-title">@Localizer["Auth.SignInTitle"]</h1>
+        <p class="form-desc">@Localizer["Auth.SignInSub"]</p>
 
         @if (!string.IsNullOrEmpty(Model.Message))
         {
@@ -58,29 +57,29 @@
         <form method="post" novalidate>
             @Html.AntiForgeryToken()
             <div class="field-group">
-                <label class="field-label" asp-for="LoginRequest.Email">Email</label>
+                <label class="field-label" asp-for="LoginRequest.Email">@Localizer["Auth.Email"]</label>
                 <div class="input-icon">
                     <span class="icon">✉</span>
-                    <input asp-for="LoginRequest.Email" class="form-control" placeholder="seu@email.com" autocomplete="username" />
+                    <input asp-for="LoginRequest.Email" class="form-control" placeholder="@Localizer["Auth.EmailPlaceholder"]" autocomplete="username" />
                 </div>
                 <span asp-validation-for="LoginRequest.Email" class="text-danger"></span>
             </div>
 
             <div class="field-group">
-                <label class="field-label" asp-for="LoginRequest.Password">Senha</label>
+                <label class="field-label" asp-for="LoginRequest.Password">@Localizer["Auth.Password"]</label>
                 <div class="input-icon">
                     <span class="icon">🔒</span>
-                    <input asp-for="LoginRequest.Password" type="password" class="form-control" placeholder="sua senha" autocomplete="current-password" />
+                    <input asp-for="LoginRequest.Password" type="password" class="form-control" placeholder="@Localizer["Auth.PasswordPlaceholder"]" autocomplete="current-password" />
                 </div>
                 <span asp-validation-for="LoginRequest.Password" class="text-danger"></span>
             </div>
 
-            <button type="submit" class="btn-login">Entrar</button>
+            <button type="submit" class="btn-login">@Localizer["Auth.SignIn"]</button>
 
-            <div class="divider">ou</div>
+            <div class="divider">@Localizer["Common.Or"]</div>
 
             <div class="register-account">
-                <a href="/register" class="btn-register">Criar uma conta</a>
+                <a href="/register" class="btn-register">@Localizer["Auth.CreateAccount"]</a>
             </div>
         </form>
     </div>

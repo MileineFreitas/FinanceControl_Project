@@ -10,6 +10,10 @@
     var locale = (data && data.locale) || 'pt-BR';
     var currencyCode = (data && data.currency) || 'BRL';
     var currency = new Intl.NumberFormat(locale, { style: 'currency', currency: currencyCode });
+    var typeLabels = (window.fcLocale && window.fcLocale.type) || {};
+    var incomeLabel = typeLabels.income || 'Income';
+    var expenseLabel = typeLabels.expense || 'Expense';
+    var dayOfMonthLabel = (window.fcLocale && window.fcLocale.reports && window.fcLocale.reports.dayOfMonth) || 'Day of month';
 
     Chart.defaults.color = 'rgba(148, 163, 184, 0.95)';
     Chart.defaults.borderColor = 'rgba(65, 139, 224, 0.15)';
@@ -48,7 +52,7 @@
                     labels: payload.comparativo.labels,
                     datasets: [
                         {
-                            label: 'Receitas',
+                            label: incomeLabel,
                             data: payload.comparativo.receitas,
                             backgroundColor: 'rgba(52, 211, 153, 0.75)',
                             borderColor: 'rgba(52, 211, 153, 1)',
@@ -57,7 +61,7 @@
                             barThickness: 18
                         },
                         {
-                            label: 'Despesas',
+                            label: expenseLabel,
                             data: payload.comparativo.despesas,
                             backgroundColor: 'rgba(248, 113, 113, 0.75)',
                             borderColor: 'rgba(248, 113, 113, 1)',
@@ -102,7 +106,7 @@
                     labels: payload.diario.labels,
                     datasets: [
                         {
-                            label: 'Receitas',
+                            label: incomeLabel,
                             data: payload.diario.receitas,
                             backgroundColor: 'rgba(52, 211, 153, 0.7)',
                             borderColor: 'rgba(52, 211, 153, 1)',
@@ -110,7 +114,7 @@
                             borderRadius: 4
                         },
                         {
-                            label: 'Despesas',
+                            label: expenseLabel,
                             data: payload.diario.despesas,
                             backgroundColor: 'rgba(248, 113, 113, 0.7)',
                             borderColor: 'rgba(248, 113, 113, 1)',
@@ -125,7 +129,7 @@
                     scales: {
                         x: {
                             grid: { display: false },
-                            title: { display: true, text: 'Dia do mês', color: 'rgba(148, 163, 184, 0.9)' }
+                            title: { display: true, text: dayOfMonthLabel, color: 'rgba(148, 163, 184, 0.9)' }
                         },
                         y: {
                             grid: { color: 'rgba(65, 139, 224, 0.08)' },

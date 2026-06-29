@@ -7,7 +7,9 @@ using FinanceControl.Contracts.Filters;
 using FinanceControl.Web.Helpers;
 using FinanceControl.Web.Models.ViewModels;
 using FinanceControl.Web.Models.ViewModels.Home;
+using FinanceControl.Web.Resources;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 
 namespace FinanceControl.Web.Controllers.Home;
 
@@ -15,7 +17,8 @@ namespace FinanceControl.Web.Controllers.Home;
 public class HomeController(
     ITransactionCliService transactionCli,
     ICategoryCliService categoryCli,
-    IAccountCliService accountCli) : Controller
+    IAccountCliService accountCli,
+    IStringLocalizer<SharedResources> localizer) : Controller
 {
     [HttpGet("")]
     [HttpGet("Index")]
@@ -33,11 +36,11 @@ public class HomeController(
             var data = await transactionCli.ListAsync(new DataFilterDto { Page = 1, PageSize = 200 });
             txs = data?.Result;
             if (txs == null)
-                vm.ApiMensagem = "Não foi possível carregar transações da API.";
+                vm.ApiMensagem = localizer["Messages.ApiLoadTxError"].Value;
         }
         catch
         {
-            vm.ApiMensagem = "Não foi possível conectar à API. Verifique se o serviço está em execução.";
+            vm.ApiMensagem = localizer["Messages.ApiConnectError"].Value;
         }
 
         if (txs is not { Count: > 0 })
@@ -68,21 +71,21 @@ public class HomeController(
         vm.Metrics =
         [
             new DashboardMetricVm(
-                "Gasto total no mês",
+                localizer["Home.MetricMonthlySpend"].Value,
                 fmt.FormatCurrency(gastosMes),
-                "Despesas no mês financeiro vigente",
+                localizer["Home.TrendMonthlyExpenses"].Value,
                 true,
                 "chart"),
             new DashboardMetricVm(
-                "Receitas no mês",
+                localizer["Home.MetricMonthlyIncome"].Value,
                 fmt.FormatCurrency(receitasMes),
-                "Entradas no mês financeiro vigente",
+                localizer["Home.TrendMonthlyIncome"].Value,
                 false,
                 "bank"),
             new DashboardMetricVm(
-                "Saldo em contas",
+                localizer["Home.MetricAccountBalance"].Value,
                 fmt.FormatCurrency(saldoConta),
-                "Soma do saldo atual das contas",
+                localizer["Home.TrendAccountSum"].Value,
                 saldoConta < 0,
                 "rocket",
                 IsSaldo: true),
@@ -101,7 +104,9 @@ public class HomeController(
             var abs = Math.Abs(t.TransactionValue);
             var valorOrdenacao = isRec ? abs : -abs;
             var valorFmt = fmt.FormatSignedCurrency(abs, isRec);
-            var sub = string.IsNullOrWhiteSpace(t.AccountName) ? $"Conta {t.AccountId}" : t.AccountName;
+            var sub = string.IsNullOrWhiteSpace(t.AccountName)
+                ? $"{localizer["Common.Account"].Value} {t.AccountId}"
+                : t.AccountName;
             var dataUtc = t.Date.UtcDateTime;
             var dataFmt = fmt.FormatDateTimeLong(dataUtc);
             return new DashboardTxRowVm(
@@ -125,12 +130,12 @@ public class HomeController(
 
         vm.Metrics =
         [
-            new DashboardMetricVm("Gasto total no mês", fmt.FormatCurrency(0), "—", false, "chart"),
-            new DashboardMetricVm("Receitas no mês", fmt.FormatCurrency(0), "—", false, "bank"),
+            new DashboardMetricVm(localizer["Home.MetricMonthlySpend"].Value, fmt.FormatCurrency(0), "—", false, "chart"),
+            new DashboardMetricVm(localizer["Home.MetricMonthlyIncome"].Value, fmt.FormatCurrency(0), "—", false, "bank"),
             new DashboardMetricVm(
-                "Saldo em contas",
+                localizer["Home.MetricAccountBalance"].Value,
                 fmt.FormatCurrency(saldoConta),
-                saldoConta == 0 ? "Cadastre uma conta para começar" : "Saldo atual das contas",
+                saldoConta == 0 ? localizer["Home.RegisterAccountHint"].Value : localizer["Home.CurrentBalance"].Value,
                 saldoConta < 0,
                 "rocket",
                 IsSaldo: true),
@@ -151,13 +156,13 @@ public class HomeController(
         }
     }
 
-    private static string ResolverNomeCategoria(TransactionDto t, IReadOnlyDictionary<Guid, string> nomePorCategoriaId)
+    private string ResolverNomeCategoria(TransactionDto t, IReadOnlyDictionary<Guid, string> nomePorCategoriaId)
     {
         if (!string.IsNullOrWhiteSpace(t.CategoryName))
             return t.CategoryName.Trim();
         if (nomePorCategoriaId.TryGetValue(t.CategoryId, out var nome) && !string.IsNullOrWhiteSpace(nome))
             return nome.Trim();
-        return "Categoria";
+        return localizer["Common.Category"].Value;
     }
 
     private async Task<Dictionary<Guid, string>> CarregarNomesCategoriasAsync()

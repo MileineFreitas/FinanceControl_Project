@@ -4,9 +4,6 @@
     var cultura = FinancialFormatHelper.GetCulture(Model.Idioma, Model.Moeda);
     var periodoCapitalizado = char.ToUpper(Model.PeriodoLabel[0], cultura) + Model.PeriodoLabel[1..];
 }
-@section Styles {
-    <link rel="stylesheet" href="~/css/reports-category.css" asp-append-version="true" />
-}
 
 <div class="rep-cat">
     <header class="rep-cat__head">
@@ -14,8 +11,8 @@
             <h1 class="rep-cat__title">@Model.PageTitle</h1>
             <p class="rep-cat__sub">@Model.PageSubtitle</p>
         </div>
-        <form method="get" class="rep-cat__filter" aria-label="Filtrar por mês">
-            <label for="mes" class="rep-cat__filter-label">Período</label>
+        <form method="get" class="rep-cat__filter" aria-label="@Localizer["Reports.PeriodFilter"]">
+            <label for="mes" class="rep-cat__filter-label">@Localizer["Reports.Period"]</label>
             <select id="mes" name="mes" class="rep-cat__filter-select" onchange="this.form.submit()">
                 @foreach (var opt in Model.MonthOptions)
                 {
@@ -37,19 +34,19 @@
         <p class="rep-cat__banner" role="status">@Model.ApiMensagem</p>
     }
 
-    <p class="rep-cat__period">Período: <strong>@periodoCapitalizado</strong></p>
+    <p class="rep-cat__period">@Localizer["Reports.PeriodLabel", periodoCapitalizado]</p>
 
-    <div class="rep-cat__metrics" aria-label="Totais do período">
+    <div class="rep-cat__metrics" aria-label="@Localizer["Reports.PeriodTotals"]">
         <article class="rep-metric rep-metric--income">
-            <p class="rep-metric__label">Receitas</p>
+            <p class="rep-metric__label">@Localizer["Type.Income"]</p>
             <p class="rep-metric__value">@Model.TotalReceitasFmt</p>
         </article>
         <article class="rep-metric rep-metric--expense">
-            <p class="rep-metric__label">Despesas</p>
+            <p class="rep-metric__label">@Localizer["Type.Expense"]</p>
             <p class="rep-metric__value">@Model.TotalDespesasFmt</p>
         </article>
         <article class="rep-metric @(Model.SaldoNegativo ? "rep-metric--expense" : "rep-metric--income")">
-            <p class="rep-metric__label">Saldo do período</p>
+            <p class="rep-metric__label">@Localizer["Reports.PeriodBalance"]</p>
             <p class="rep-metric__value">@Model.SaldoFmt</p>
         </article>
     </div>
@@ -57,8 +54,8 @@
     @if (!Model.TemDados)
     {
         <div class="rep-cat__empty">
-            <p>Nenhuma transação encontrada em <strong>@periodoCapitalizado</strong>.</p>
-            <p class="rep-cat__empty-hint">Selecione outro mês ou cadastre transações para visualizar os gráficos.</p>
+            <p>@Localizer["Reports.EmptyInPeriod", periodoCapitalizado]</p>
+            <p class="rep-cat__empty-hint">@Localizer["Reports.EmptyHint"]</p>
         </div>
     }
     else
@@ -95,11 +92,11 @@
                     <thead>
                         <tr>
                             <th scope="col">@Model.GroupColumnHeader</th>
-                            <th scope="col">Receitas</th>
-                            <th scope="col">Despesas</th>
-                            <th scope="col">Saldo</th>
-                            <th scope="col">Transações</th>
-                            <th scope="col">% despesas</th>
+                            <th scope="col">@Localizer["Type.Income"]</th>
+                            <th scope="col">@Localizer["Type.Expense"]</th>
+                            <th scope="col">@Localizer["Reports.Balance"]</th>
+                            <th scope="col">@Localizer["Reports.TransactionsCount"]</th>
+                            <th scope="col">@Localizer["Reports.ExpensePercent"]</th>
                         </tr>
                     </thead>
                     <tbody>

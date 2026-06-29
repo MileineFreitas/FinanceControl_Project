@@ -14,7 +14,7 @@
         overlay.innerHTML =
             '<div class="fc-loading-overlay__panel">' +
             '<div class="fc-loading-overlay__spinner" aria-hidden="true"></div>' +
-            '<span class="fc-loading-overlay__text">Aguarde</span>' +
+            '<span class="fc-loading-overlay__text">' + ((window.fcLocale && window.fcLocale.loadingWait) || 'Please wait') + '</span>' +
             '</div>';
 
         document.body.appendChild(overlay);

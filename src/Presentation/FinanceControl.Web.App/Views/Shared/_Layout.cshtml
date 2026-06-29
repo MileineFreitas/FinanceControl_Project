@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="@User.GetFinancialPreferences().Idioma">
+<html lang="@System.Globalization.CultureInfo.CurrentUICulture.Name">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] — Cashly</title>
+    <title>@ViewData["Title"] — @Localizer["AppName"]</title>
     <link rel="icon" type="image/png" sizes="32x32" href="~/cashly-favicon.png" asp-append-version="true" />
     <link rel="icon" type="image/png" sizes="192x192" href="~/cashly-favicon.png" asp-append-version="true" />
     <link rel="apple-touch-icon" href="~/cashly-favicon.png" asp-append-version="true" />
@@ -24,7 +24,7 @@
 <body>
     <div class="page page--wealth" id="fc-page-root">
         @await Component.InvokeAsync("MainHeader")
-        <button type="button" class="fc-sidebar-backdrop" data-fc-sidebar-backdrop tabindex="-1" aria-label="Fechar menu"></button>
+        <button type="button" class="fc-sidebar-backdrop" data-fc-sidebar-backdrop tabindex="-1" aria-label="@Localizer["Header.CloseMenu"]"></button>
         <div class="page-shell">
             <aside class="sidebar fc-wt-sidebar" id="fc-sidebar">
                 <partial name="_Nav" />
@@ -37,6 +37,7 @@
         </div>
     </div>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <partial name="_JsLocale" />
     <script src="~/js/fc-dialog.js" asp-append-version="true"></script>
     <script src="~/js/loading-overlay.js" asp-append-version="true"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

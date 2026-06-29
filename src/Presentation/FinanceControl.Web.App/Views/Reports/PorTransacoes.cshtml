@@ -1,6 +1,6 @@
 @model FinanceControl.Web.Models.ViewModels.Reports.TransactionReportViewModel
 @{
-    ViewData["Title"] = "Relatório de transações";
+    ViewData["Title"] = Localizer["Reports.TxReportTitle"].Value;
     var cultura = FinancialFormatHelper.GetCulture(Model.Idioma, Model.Moeda);
     var periodoCapitalizado = char.ToUpper(Model.PeriodoLabel[0], cultura) + Model.PeriodoLabel[1..];
 }
@@ -11,11 +11,11 @@
 <div class="rep-cat">
     <header class="rep-cat__head">
         <div>
-            <h1 class="rep-cat__title">Relatório de transações</h1>
-            <p class="rep-cat__sub">Visão consolidada dos lançamentos do período com gráficos e histórico detalhado.</p>
+            <h1 class="rep-cat__title">@Localizer["Reports.TxReportTitle"]</h1>
+            <p class="rep-cat__sub">@Localizer["Reports.TxReportSubtitle"]</p>
         </div>
-        <form method="get" class="rep-cat__filter" aria-label="Filtrar por mês">
-            <label for="mes" class="rep-cat__filter-label">Período</label>
+        <form method="get" class="rep-cat__filter" aria-label="@Localizer["Reports.PeriodFilter"]">
+            <label for="mes" class="rep-cat__filter-label">@Localizer["Reports.Period"]</label>
             <select id="mes" name="mes" class="rep-cat__filter-select" onchange="this.form.submit()">
                 @foreach (var opt in Model.MonthOptions)
                 {
@@ -37,23 +37,23 @@
         <p class="rep-cat__banner" role="status">@Model.ApiMensagem</p>
     }
 
-    <p class="rep-cat__period">Período: <strong>@periodoCapitalizado</strong> · <strong>@Model.TotalTransacoes</strong> transação(ões)</p>
+    <p class="rep-cat__period">@Localizer["Reports.PeriodWithCount", periodoCapitalizado, Model.TotalTransacoes]</p>
 
-    <div class="rep-cat__metrics rep-cat__metrics--four" aria-label="Totais do período">
+    <div class="rep-cat__metrics rep-cat__metrics--four" aria-label="@Localizer["Reports.PeriodTotals"]">
         <article class="rep-metric rep-metric--income">
-            <p class="rep-metric__label">Receitas</p>
+            <p class="rep-metric__label">@Localizer["Type.Income"]</p>
             <p class="rep-metric__value">@Model.TotalReceitasFmt</p>
         </article>
         <article class="rep-metric rep-metric--expense">
-            <p class="rep-metric__label">Despesas</p>
+            <p class="rep-metric__label">@Localizer["Type.Expense"]</p>
             <p class="rep-metric__value">@Model.TotalDespesasFmt</p>
         </article>
         <article class="rep-metric @(Model.SaldoNegativo ? "rep-metric--expense" : "rep-metric--income")">
-            <p class="rep-metric__label">Saldo do período</p>
+            <p class="rep-metric__label">@Localizer["Reports.PeriodBalance"]</p>
             <p class="rep-metric__value">@Model.SaldoFmt</p>
         </article>
         <article class="rep-metric">
-            <p class="rep-metric__label">Lançamentos</p>
+            <p class="rep-metric__label">@Localizer["Reports.Entries"]</p>
             <p class="rep-metric__value">@Model.TotalTransacoes</p>
         </article>
     </div>
@@ -61,8 +61,8 @@
     @if (!Model.TemDados)
     {
         <div class="rep-cat__empty">
-            <p>Nenhuma transação encontrada em <strong>@periodoCapitalizado</strong>.</p>
-            <p class="rep-cat__empty-hint">Selecione outro mês ou cadastre transações para visualizar os gráficos.</p>
+            <p>@Localizer["Reports.EmptyInPeriod", periodoCapitalizado]</p>
+            <p class="rep-cat__empty-hint">@Localizer["Reports.EmptyHint"]</p>
         </div>
     }
     else
@@ -70,40 +70,40 @@
         <div class="rep-cat__charts">
             <section class="rep-panel" aria-labelledby="rep-tipo-heading">
                 <div class="rep-panel__head">
-                    <h2 id="rep-tipo-heading">Receitas vs despesas</h2>
-                    <p>Proporção entre entradas e saídas no mês.</p>
+                    <h2 id="rep-tipo-heading">@Localizer["Reports.IncomeVsExpenses"]</h2>
+                    <p>@Localizer["Reports.IncomeVsExpensesSub"]</p>
                 </div>
                 <div class="rep-panel__chart rep-panel__chart--doughnut">
-                    <canvas id="rep-chart-tipo" aria-label="Gráfico receitas e despesas"></canvas>
+                    <canvas id="rep-chart-tipo" aria-label="@Localizer["Reports.IncomeVsExpensesChart"]"></canvas>
                 </div>
             </section>
 
             <section class="rep-panel" aria-labelledby="rep-daily-heading">
                 <div class="rep-panel__head">
-                    <h2 id="rep-daily-heading">Movimento diário</h2>
-                    <p>Receitas e despesas por dia do mês selecionado.</p>
+                    <h2 id="rep-daily-heading">@Localizer["Reports.DailyMovement"]</h2>
+                    <p>@Localizer["Reports.DailyMovementSub"]</p>
                 </div>
                 <div class="rep-panel__chart rep-panel__chart--daily">
-                    <canvas id="rep-chart-diario" aria-label="Gráfico de movimento diário"></canvas>
+                    <canvas id="rep-chart-diario" aria-label="@Localizer["Reports.DailyChart"]"></canvas>
                 </div>
             </section>
         </div>
 
         <section class="rep-panel rep-panel--table" aria-labelledby="rep-tx-table-heading">
             <div class="rep-panel__head">
-                <h2 id="rep-tx-table-heading">Histórico de transações</h2>
-                <p>Todos os lançamentos registrados no período.</p>
+                <h2 id="rep-tx-table-heading">@Localizer["Reports.TxHistory"]</h2>
+                <p>@Localizer["Reports.TxHistorySub"]</p>
             </div>
             <div class="rep-table-wrap">
                 <table class="rep-table">
                     <thead>
                         <tr>
-                            <th scope="col">Data</th>
-                            <th scope="col">Descrição</th>
-                            <th scope="col">Categoria</th>
-                            <th scope="col">Meio pagamento</th>
-                            <th scope="col">Tipo</th>
-                            <th scope="col">Valor</th>
+                            <th scope="col">@Localizer["Home.ColDate"]</th>
+                            <th scope="col">@Localizer["Home.ColDescription"]</th>
+                            <th scope="col">@Localizer["Home.ColCategory"]</th>
+                            <th scope="col">@Localizer["Reports.PaymentMethodCol"]</th>
+                            <th scope="col">@Localizer["Reports.TypeColumn"]</th>
+                            <th scope="col">@Localizer["Home.ColValue"]</th>
                         </tr>
                     </thead>
                     <tbody>

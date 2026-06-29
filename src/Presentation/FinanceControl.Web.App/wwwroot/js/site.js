@@ -133,17 +133,7 @@
     }
 
     /** Busca global no header: encontra páginas do menu */
-    var FC_GLOBAL_PAGES = [
-        { t: 'Dashboard', u: '/home', k: 'dashboard início home painel principal' },
-        { t: 'Transações', u: '/transacoes', k: 'transações lançamentos movimentações extrato' },
-        { t: 'Categorias', u: '/categorias', k: 'categorias classificação etiquetas' },
-        { t: 'Meios de pagamento', u: '/meios-pagamento', k: 'pagamento pix débito crédito dinheiro meios' },
-        { t: 'Investimentos', u: '/dashboards/geral', k: 'investimentos gráficos portfolio ações' },
-        { t: 'Relatórios', u: '/relatorios', k: 'relatórios exportar resumo' },
-        { t: 'Relatório por meio de pagamento', u: '/relatorios/por-meio-pagamento', k: 'relatórios meio de pagamento pix débito crédito dinheiro' },
-        { t: 'Relatório por categoria', u: '/relatorios/por-categoria', k: 'relatórios categoria gastos receitas classificação' },
-        { t: 'Relatório de transação', u: '/relatorios/por-transacoes', k: 'relatórios transações movimentações extrato lançamentos' }
-    ];
+    var FC_GLOBAL_PAGES = (window.fcLocale && window.fcLocale.pages) || [];
 
     var searchInput = document.getElementById('fc-global-search-input');
     var searchResults = document.getElementById('fc-global-search-results');
@@ -172,7 +162,7 @@
         if (matches.length === 0) {
             var li0 = document.createElement('li');
             li0.className = 'fc-global-search-empty';
-            li0.textContent = 'Nenhuma página encontrada.';
+            li0.textContent = (window.fcLocale && window.fcLocale.searchEmpty) || 'No pages found.';
             searchResults.appendChild(li0);
         } else {
             matches.forEach(function (p) {
@@ -193,6 +183,9 @@
     }
 
     if (searchInput && searchResults) {
+        if (window.fcLocale && window.fcLocale.searchPlaceholder) {
+            searchInput.placeholder = window.fcLocale.searchPlaceholder;
+        }
         searchInput.addEventListener('input', function () {
             renderGlobalSearch(searchInput.value);
         });

@@ -8,10 +8,15 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 
+using FinanceControl.Web.Resources;
+using Microsoft.Extensions.Localization;
+
 namespace FinanceControl.Web.Controllers.Account;
 
 [Route("conta")]
-public class AccountController(IUserCliService userCli) : Controller
+public class AccountController(
+    IUserCliService userCli,
+    IStringLocalizer<SharedResources> localizer) : Controller
 {
     [HttpGet("configuracao")]
     public async Task<IActionResult> Configuracao()
@@ -60,26 +65,26 @@ public class AccountController(IUserCliService userCli) : Controller
             InicioMes = vm.InicioMes
         };
 
-        var moedaAnterior = User.GetFinancialPreferences().Moeda;
-        var moedaAlterada = !string.Equals(moedaAnterior, dto.Moeda, StringComparison.OrdinalIgnoreCase);
+        var prefsAnteriores = User.GetFinancialPreferences();
+        var moedaAlterada = !string.Equals(prefsAnteriores.Moeda, dto.Moeda, StringComparison.OrdinalIgnoreCase);
 
         try
         {
             var response = await userCli.UpdateFinancialPreferencesAsync(userId.Value, dto);
             if (!response.IsSuccessStatusCode)
             {
-                TempData["ConfigErro"] = "Não foi possível salvar as preferências financeiras. Tente novamente.";
+                TempData["ConfigErro"] = localizer["Messages.SettingsSaveError"].Value;
                 return RedirectToAction(nameof(Configuracao));
             }
 
             await HttpContext.RefreshFinancialPreferencesAsync(dto);
             TempData["ConfigSucesso"] = moedaAlterada
-                ? "Preferências salvas. Valores convertidos para a nova moeda selecionada."
-                : "Preferências financeiras salvas com sucesso.";
+                ? localizer["Messages.SettingsSavedCurrency"].Value
+                : localizer["Messages.SettingsSaved"].Value;
         }
         catch
         {
-            TempData["ConfigErro"] = "Não foi possível salvar as preferências financeiras. Tente novamente.";
+            TempData["ConfigErro"] = localizer["Messages.SettingsSaveError"].Value;
         }
 
         return RedirectToAction(nameof(Configuracao));
@@ -98,17 +103,17 @@ public class AccountController(IUserCliService userCli) : Controller
             var response = await userCli.RevokeOtherSessionsAsync(userId.Value);
             if (!response.IsSuccessStatusCode)
             {
-                TempData["ConfigErro"] = "Não foi possível encerrar as sessões. Tente novamente.";
+                TempData["ConfigErro"] = localizer["Messages.SessionsEndError"].Value;
                 return RedirectToAction(nameof(Configuracao));
             }
 
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            TempData["LoginInfo"] = "Todas as sessões foram encerradas. Faça login novamente.";
+            TempData["LoginInfo"] = localizer["Messages.SessionsEnded"].Value;
             return RedirectToAction("Index", "Login");
         }
         catch (Exception)
         {
-            TempData["ConfigErro"] = "Não foi possível encerrar as sessões. Tente novamente.";
+            TempData["ConfigErro"] = localizer["Messages.SessionsEndError"].Value;
         }
 
         return RedirectToAction(nameof(Configuracao));
@@ -124,7 +129,7 @@ public class AccountController(IUserCliService userCli) : Controller
 
         if (string.IsNullOrWhiteSpace(SenhaExclusao))
         {
-            TempData["ConfigErro"] = "Informe sua senha para confirmar a exclusão da conta.";
+            TempData["ConfigErro"] = localizer["Messages.DeletePasswordRequired"].Value;
             return RedirectToAction(nameof(Configuracao));
         }
 
@@ -136,17 +141,17 @@ public class AccountController(IUserCliService userCli) : Controller
                 var body = await response.Content.ReadAsStringAsync();
                 TempData["ConfigErro"] = response.StatusCode == HttpStatusCode.BadRequest
                     ? ExtrairMensagemErro(body)
-                    : "Não foi possível excluir a conta. Tente novamente.";
+                    : localizer["Messages.DeleteAccountError"].Value;
                 return RedirectToAction(nameof(Configuracao));
             }
 
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            TempData["LoginInfo"] = "Sua conta foi excluída permanentemente.";
+            TempData["LoginInfo"] = localizer["Messages.AccountDeleted"].Value;
             return RedirectToAction("Index", "Login");
         }
         catch (Exception)
         {
-            TempData["ConfigErro"] = "Não foi possível excluir a conta. Tente novamente.";
+            TempData["ConfigErro"] = localizer["Messages.DeleteAccountError"].Value;
         }
 
         return RedirectToAction(nameof(Configuracao));

@@ -1,6 +1,6 @@
 @model FinanceControl.Web.Models.ViewModels.Account.ConfigurationViewModel
 @{
-    ViewData["Title"] = "Configurar conta";
+    ViewData["Title"] = Localizer["Settings.Title"].Value;
     var sucesso = TempData["ConfigSucesso"] as string;
     var erro = TempData["ConfigErro"] as string;
 }
@@ -22,10 +22,8 @@
 
         <header class="wt-page-head">
             <div>
-                <h1 class="wt-page-title">Configurações da conta</h1>
-                <p class="wt-page-sub">
-                    Personalize sua experiência: preferências financeiras, notificações, aparência e segurança da conta.
-                </p>
+                <h1 class="wt-page-title">@Localizer["Settings.PageTitle"]</h1>
+                <p class="wt-page-sub">@Localizer["Settings.PageSub"]</p>
             </div>
         </header>
 
@@ -33,12 +31,12 @@
             <!-- Navegação lateral -->
             <aside class="wt-card-panel wt-settings__nav">
                 <ul class="wt-settings__nav-list">
-                    <li><a href="#preferencias"><span class="ico">⚙️</span> Preferências</a></li>
-                    <li><a href="#notificacoes"><span class="ico">🔔</span> Notificações</a></li>
-                    <li><a href="#aparencia"><span class="ico">🎨</span> Aparência</a></li>
-                    <li><a href="#seguranca"><span class="ico">🔒</span> Segurança</a></li>
-                    <li><a href="#privacidade"><span class="ico">🛡️</span> Privacidade e dados</a></li>
-                    <li><a href="#zona-perigo"><span class="ico">⚠️</span> Zona de perigo</a></li>
+                    <li><a href="#preferencias"><span class="ico">⚙️</span> @Localizer["Settings.NavPreferences"]</a></li>
+                    <li><a href="#notificacoes"><span class="ico">🔔</span> @Localizer["Settings.NavNotifications"]</a></li>
+                    <li><a href="#aparencia"><span class="ico">🎨</span> @Localizer["Settings.NavAppearance"]</a></li>
+                    <li><a href="#seguranca"><span class="ico">🔒</span> @Localizer["Settings.NavSecurity"]</a></li>
+                    <li><a href="#privacidade"><span class="ico">🛡️</span> @Localizer["Settings.NavPrivacy"]</a></li>
+                    <li><a href="#zona-perigo"><span class="ico">⚠️</span> @Localizer["Settings.NavDanger"]</a></li>
                 </ul>
             </aside>
 
@@ -52,42 +50,42 @@
                     <div class="wt-settings__section-head">
                         <span class="wt-settings__section-icon">⚙️</span>
                         <div>
-                            <h2 class="wt-settings__section-title">Preferências financeiras</h2>
-                            <p class="wt-settings__section-sub">Como os valores e datas aparecem em todo o sistema.</p>
+                            <h2 class="wt-settings__section-title">@Localizer["Settings.FinancialTitle"]</h2>
+                            <p class="wt-settings__section-sub">@Localizer["Settings.FinancialSub"]</p>
                         </div>
                     </div>
                     <div class="wt-settings__grid">
                         <div class="wt-field">
-                            <label for="cfg-moeda">Moeda</label>
+                            <label for="cfg-moeda">@Localizer["Settings.Currency"]</label>
                             <select asp-for="Moeda" id="cfg-moeda" class="wt-select wt-input--block">
-                                <option value="BRL">Real brasileiro (R$)</option>
-                                <option value="USD">Dólar americano (US$)</option>
-                                <option value="EUR">Euro (€)</option>
+                                <option value="BRL">@Localizer["Settings.CurrencyBRL"]</option>
+                                <option value="USD">@Localizer["Settings.CurrencyUSD"]</option>
+                                <option value="EUR">@Localizer["Settings.CurrencyEUR"]</option>
                             </select>
                         </div>
                         <div class="wt-field">
-                            <label for="cfg-idioma">Idioma</label>
+                            <label for="cfg-idioma">@Localizer["Settings.Language"]</label>
                             <select asp-for="Idioma" id="cfg-idioma" class="wt-select wt-input--block">
-                                <option value="pt-BR">Português (Brasil)</option>
-                                <option value="en-US">English (US)</option>
-                                <option value="es-ES">Español</option>
+                                <option value="pt-BR">@Localizer["Settings.LanguagePt"]</option>
+                                <option value="en-US">@Localizer["Settings.LanguageEn"]</option>
+                                <option value="es-ES">@Localizer["Settings.LanguageEs"]</option>
                             </select>
                         </div>
                         <div class="wt-field">
-                            <label for="cfg-formato-data">Formato de data</label>
+                            <label for="cfg-formato-data">@Localizer["Settings.DateFormat"]</label>
                             <select asp-for="FormatoData" id="cfg-formato-data" class="wt-select wt-input--block">
-                                <option value="dd/MM/yyyy">DD/MM/AAAA</option>
-                                <option value="MM/dd/yyyy">MM/DD/AAAA</option>
-                                <option value="yyyy-MM-dd">AAAA-MM-DD</option>
+                                <option value="dd/MM/yyyy">@Localizer["Settings.DateDMY"]</option>
+                                <option value="MM/dd/yyyy">@Localizer["Settings.DateMDY"]</option>
+                                <option value="yyyy-MM-dd">@Localizer["Settings.DateYMD"]</option>
                             </select>
                         </div>
                         <div class="wt-field">
-                            <label for="cfg-inicio-mes">Início do mês financeiro</label>
+                            <label for="cfg-inicio-mes">@Localizer["Settings.FinancialMonthStart"]</label>
                             <select asp-for="InicioMes" id="cfg-inicio-mes" class="wt-select wt-input--block">
-                                <option value="1">Dia 1</option>
-                                <option value="5">Dia 5</option>
-                                <option value="10">Dia 10</option>
-                                <option value="15">Dia 15</option>
+                                <option value="1">@Localizer["Common.Day", 1]</option>
+                                <option value="5">@Localizer["Common.Day", 5]</option>
+                                <option value="10">@Localizer["Common.Day", 10]</option>
+                                <option value="15">@Localizer["Common.Day", 15]</option>
                             </select>
                         </div>
                     </div>
@@ -98,15 +96,15 @@
                     <div class="wt-settings__section-head">
                         <span class="wt-settings__section-icon">🔔</span>
                         <div>
-                            <h2 class="wt-settings__section-title">Notificações</h2>
-                            <p class="wt-settings__section-sub">Escolha o que deseja receber e quando.</p>
+                            <h2 class="wt-settings__section-title">@Localizer["Settings.NotificationsTitle"]</h2>
+                            <p class="wt-settings__section-sub">@Localizer["Settings.NotificationsSub"]</p>
                         </div>
                     </div>
 
                     <div class="wt-settings__row">
                         <div class="wt-settings__row-text">
-                            <p class="wt-settings__row-title">Resumo mensal por e-mail</p>
-                            <p class="wt-settings__row-desc">Receba um panorama das suas receitas e despesas no fim de cada mês.</p>
+                            <p class="wt-settings__row-title">@Localizer["Settings.NotifMonthlySummary"]</p>
+                            <p class="wt-settings__row-desc">@Localizer["Settings.NotifMonthlySummaryDesc"]</p>
                         </div>
                         <div class="wt-settings__row-control">
                             <label class="wt-switch">
@@ -118,8 +116,8 @@
 
                     <div class="wt-settings__row">
                         <div class="wt-settings__row-text">
-                            <p class="wt-settings__row-title">Alertas de gastos altos</p>
-                            <p class="wt-settings__row-desc">Avisamos quando uma despesa ultrapassar o valor médio das suas categorias.</p>
+                            <p class="wt-settings__row-title">@Localizer["Settings.NotifHighSpending"]</p>
+                            <p class="wt-settings__row-desc">@Localizer["Settings.NotifHighSpendingDesc"]</p>
                         </div>
                         <div class="wt-settings__row-control">
                             <label class="wt-switch">
@@ -131,8 +129,8 @@
 
                     <div class="wt-settings__row">
                         <div class="wt-settings__row-text">
-                            <p class="wt-settings__row-title">Lembretes de contas a pagar</p>
-                            <p class="wt-settings__row-desc">Notificações sobre vencimentos próximos para você não esquecer.</p>
+                            <p class="wt-settings__row-title">@Localizer["Settings.NotifBillReminders"]</p>
+                            <p class="wt-settings__row-desc">@Localizer["Settings.NotifBillRemindersDesc"]</p>
                         </div>
                         <div class="wt-settings__row-control">
                             <label class="wt-switch">
@@ -144,8 +142,8 @@
 
                     <div class="wt-settings__row">
                         <div class="wt-settings__row-text">
-                            <p class="wt-settings__row-title">Novidades e dicas</p>
-                            <p class="wt-settings__row-desc">Conteúdos e atualizações sobre novos recursos do Cashly.</p>
+                            <p class="wt-settings__row-title">@Localizer["Settings.NotifNewsTips"]</p>
+                            <p class="wt-settings__row-desc">@Localizer["Settings.NotifNewsTipsDesc"]</p>
                         </div>
                         <div class="wt-settings__row-control">
                             <label class="wt-switch">
@@ -161,19 +159,19 @@
                     <div class="wt-settings__section-head">
                         <span class="wt-settings__section-icon">🎨</span>
                         <div>
-                            <h2 class="wt-settings__section-title">Aparência</h2>
-                            <p class="wt-settings__section-sub">Defina o tema visual da aplicação.</p>
+                            <h2 class="wt-settings__section-title">@Localizer["Settings.AppearanceTitle"]</h2>
+                            <p class="wt-settings__section-sub">@Localizer["Settings.AppearanceSub"]</p>
                         </div>
                     </div>
                     <div class="wt-field">
-                        <label>Tema</label>
-                        <div class="wt-segment" role="radiogroup" aria-label="Tema">
+                        <label>@Localizer["Settings.Theme"]</label>
+                        <div class="wt-segment" role="radiogroup" aria-label="@Localizer["Settings.Theme"]">
                             <input type="radio" id="tema-escuro" name="Tema" value="escuro" checked />
-                            <label for="tema-escuro">🌙 Escuro</label>
+                            <label for="tema-escuro">@Localizer["Settings.ThemeDark"]</label>
                             <input type="radio" id="tema-claro" name="Tema" value="claro" />
-                            <label for="tema-claro">☀️ Claro</label>
+                            <label for="tema-claro">@Localizer["Settings.ThemeLight"]</label>
                             <input type="radio" id="tema-auto" name="Tema" value="auto" />
-                            <label for="tema-auto">🖥️ Automático</label>
+                            <label for="tema-auto">@Localizer["Settings.ThemeAuto"]</label>
                         </div>
                     </div>
                 </section>
@@ -183,25 +181,25 @@
                     <div class="wt-settings__section-head">
                         <span class="wt-settings__section-icon">🔒</span>
                         <div>
-                            <h2 class="wt-settings__section-title">Segurança</h2>
-                            <p class="wt-settings__section-sub">Proteja o acesso à sua conta.</p>
+                            <h2 class="wt-settings__section-title">@Localizer["Settings.SecurityTitle"]</h2>
+                            <p class="wt-settings__section-sub">@Localizer["Settings.SecuritySub"]</p>
                         </div>
                     </div>
 
                     <div class="wt-settings__row">
                         <div class="wt-settings__row-text">
-                            <p class="wt-settings__row-title">Senha de acesso</p>
-                            <p class="wt-settings__row-desc">Altere sua senha periodicamente para manter a conta segura.</p>
+                            <p class="wt-settings__row-title">@Localizer["Settings.AccessPassword"]</p>
+                            <p class="wt-settings__row-desc">@Localizer["Settings.AccessPasswordDesc"]</p>
                         </div>
                         <div class="wt-settings__row-control">
-                            <a href="~/perfil" class="wt-btn wt-btn--outline">Alterar senha</a>
+                            <a href="~/perfil" class="wt-btn wt-btn--outline">@Localizer["Settings.ChangePassword"]</a>
                         </div>
                     </div>
 
                     <div class="wt-settings__row">
                         <div class="wt-settings__row-text">
-                            <p class="wt-settings__row-title">Autenticação em duas etapas (2FA)</p>
-                            <p class="wt-settings__row-desc">Adicione uma camada extra de proteção ao fazer login.</p>
+                            <p class="wt-settings__row-title">@Localizer["Settings.TwoFactor"]</p>
+                            <p class="wt-settings__row-desc">@Localizer["Settings.TwoFactorDesc"]</p>
                         </div>
                         <div class="wt-settings__row-control">
                             <label class="wt-switch">
@@ -213,16 +211,16 @@
 
                     <div class="wt-settings__row">
                         <div class="wt-settings__row-text">
-                            <p class="wt-settings__row-title">Encerrar sessões</p>
-                            <p class="wt-settings__row-desc">Desconecte sua conta de todos os dispositivos, incluindo este.</p>
+                            <p class="wt-settings__row-title">@Localizer["Settings.EndSessions"]</p>
+                            <p class="wt-settings__row-desc">@Localizer["Settings.EndSessionsDesc"]</p>
                         </div>
                         <div class="wt-settings__row-control">
                             <button type="submit"
                                     formaction="@Url.Action("EncerrarSessoes", "Account")"
                                     formmethod="post"
                                     class="wt-btn wt-btn--outline"
-                                    data-fc-confirm="Desconectar sua conta de todos os dispositivos? Você precisará fazer login novamente.">
-                                Encerrar sessões
+                                    data-fc-confirm="@Localizer["Settings.EndSessionsConfirm"]">
+                                @Localizer["Settings.EndSessions"]
                             </button>
                         </div>
                     </div>
@@ -233,25 +231,25 @@
                     <div class="wt-settings__section-head">
                         <span class="wt-settings__section-icon">🛡️</span>
                         <div>
-                            <h2 class="wt-settings__section-title">Privacidade e dados</h2>
-                            <p class="wt-settings__section-sub">Controle como seus dados são tratados.</p>
+                            <h2 class="wt-settings__section-title">@Localizer["Settings.PrivacyTitle"]</h2>
+                            <p class="wt-settings__section-sub">@Localizer["Settings.PrivacySub"]</p>
                         </div>
                     </div>
 
                     <div class="wt-settings__row">
                         <div class="wt-settings__row-text">
-                            <p class="wt-settings__row-title">Política de Privacidade</p>
-                            <p class="wt-settings__row-desc">Saiba como coletamos, usamos e protegemos seus dados.</p>
+                            <p class="wt-settings__row-title">@Localizer["Settings.PrivacyPolicy"]</p>
+                            <p class="wt-settings__row-desc">@Localizer["Settings.PrivacyPolicyDesc"]</p>
                         </div>
                         <div class="wt-settings__row-control">
-                            <a href="~/conta/privacidade" class="wt-btn wt-btn--ghost">Ver política</a>
+                            <a href="~/conta/privacidade" class="wt-btn wt-btn--ghost">@Localizer["Settings.ViewPolicy"]</a>
                         </div>
                     </div>
                 </section>
 
                 <div class="wt-settings__actions">
-                    <a href="~/home" class="wt-btn wt-btn--outline">Cancelar</a>
-                    <button type="submit" class="wt-btn wt-btn--primary wt-btn--glow">Salvar alterações</button>
+                    <a href="~/home" class="wt-btn wt-btn--outline">@Localizer["Common.Cancel"]</a>
+                    <button type="submit" class="wt-btn wt-btn--primary wt-btn--glow">@Localizer["Common.Save"]</button>
                 </div>
             </form>
 
@@ -263,32 +261,32 @@
                     <div class="wt-settings__section-head">
                         <span class="wt-settings__section-icon">⚠️</span>
                         <div>
-                            <h2 class="wt-settings__section-title">Zona de perigo</h2>
-                            <p class="wt-settings__section-sub">Ações permanentes que não podem ser desfeitas.</p>
+                            <h2 class="wt-settings__section-title">@Localizer["Settings.DangerTitle"]</h2>
+                            <p class="wt-settings__section-sub">@Localizer["Settings.DangerSub"]</p>
                         </div>
                     </div>
 
                     <div class="wt-settings__row wt-settings__row--stack">
                         <div class="wt-settings__row-text">
-                            <p class="wt-settings__row-title">Excluir conta</p>
-                            <p class="wt-settings__row-desc">Remove permanentemente sua conta e todos os dados financeiros associados. Informe sua senha para confirmar.</p>
+                            <p class="wt-settings__row-title">@Localizer["Settings.DeleteAccount"]</p>
+                            <p class="wt-settings__row-desc">@Localizer["Settings.DeleteAccountDesc"]</p>
                         </div>
                         <div class="wt-settings__delete-fields">
                             <div class="wt-field wt-field--compact">
-                                <label for="senha-exclusao">Senha</label>
+                                <label for="senha-exclusao">@Localizer["Settings.Password"]</label>
                                 <input type="password"
                                        id="senha-exclusao"
                                        name="SenhaExclusao"
                                        class="wt-input wt-input--block"
                                        autocomplete="current-password"
-                                       placeholder="Digite sua senha atual"
+                                       placeholder="@Localizer["Settings.PasswordPlaceholder"]"
                                        required />
                             </div>
                             <button type="submit"
                                     class="wt-btn wt-btn--danger"
-                                    data-fc-confirm="Tem certeza que deseja excluir sua conta? Todos os seus dados financeiros serão removidos permanentemente e esta ação não pode ser desfeita."
+                                    data-fc-confirm="@Localizer["Settings.DeleteAccountConfirm"]"
                                     data-fc-confirm-danger="true">
-                                Excluir conta
+                                @Localizer["Settings.DeleteAccount"]
                             </button>
                         </div>
                     </div>

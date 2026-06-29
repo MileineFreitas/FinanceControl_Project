@@ -8,7 +8,9 @@ using FinanceControl.Contracts.Dtos.Transactions;
 using FinanceControl.Contracts.Filters;
 using FinanceControl.Web.Helpers;
 using FinanceControl.Web.Models.ViewModels.Reports;
+using FinanceControl.Web.Resources;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 
 namespace FinanceControl.Web.Controllers.Reports;
 
@@ -16,7 +18,8 @@ namespace FinanceControl.Web.Controllers.Reports;
 public class ReportsController(
     ITransactionCliService transactionCli,
     ICategoryCliService categoryCli,
-    IPaymentMethodCliService paymentMethodCli) : Controller
+    IPaymentMethodCliService paymentMethodCli,
+    IStringLocalizer<SharedResources> localizer) : Controller
 {
     [HttpGet("")]
     [HttpGet("Index")]
@@ -42,15 +45,15 @@ public class ReportsController(
         var fmt = GetFormatContext();
         var reference = ReportDataBuilder.ParseMonth(mes, fmt) ?? DateTime.UtcNow;
         var vm = ReportDataBuilder.CreateMonthShell(reference, fmt);
-        vm.PageTitle = "Resumo por categoria";
-        vm.PageSubtitle = "Distribuição de receitas e despesas conforme suas categorias cadastradas.";
-        vm.DoughnutTitle = "Despesas por categoria";
-        vm.DoughnutSubtitle = "Participação de cada categoria no total de saídas.";
-        vm.BarTitle = "Receitas vs despesas";
-        vm.BarSubtitle = "Comparativo das principais categorias do período.";
-        vm.TableTitle = "Detalhamento por categoria";
-        vm.TableSubtitle = "Valores absolutos e percentual sobre o total do mês.";
-        vm.GroupColumnHeader = "Categoria";
+        vm.PageTitle = localizer["Reports.ByCategoryTitle"].Value;
+        vm.PageSubtitle = localizer["Reports.ByCategorySubtitle"].Value;
+        vm.DoughnutTitle = localizer["Reports.ExpensesByCategory"].Value;
+        vm.DoughnutSubtitle = localizer["Reports.ExpensesByCategorySub"].Value;
+        vm.BarTitle = localizer["Reports.IncomeVsExpenses"].Value;
+        vm.BarSubtitle = localizer["Reports.IncomeVsExpensesSubCategory"].Value;
+        vm.TableTitle = localizer["Reports.DetailByCategory"].Value;
+        vm.TableSubtitle = localizer["Reports.DetailSub"].Value;
+        vm.GroupColumnHeader = localizer["Common.Category"].Value;
 
         var (transactions, categories) = await LoadTransactionsAndCategoriesAsync(vm);
         var lookup = categories.ToDictionary(c => c.CategoryId);
@@ -73,15 +76,15 @@ public class ReportsController(
         var fmt = GetFormatContext();
         var reference = ReportDataBuilder.ParseMonth(mes, fmt) ?? DateTime.UtcNow;
         var vm = ReportDataBuilder.CreateMonthShell(reference, fmt);
-        vm.PageTitle = "Resumo por meio de pagamento";
-        vm.PageSubtitle = "Distribuição de receitas e despesas conforme os meios de pagamento cadastrados.";
-        vm.DoughnutTitle = "Despesas por meio de pagamento";
-        vm.DoughnutSubtitle = "Participação de cada meio no total de saídas.";
-        vm.BarTitle = "Receitas vs despesas";
-        vm.BarSubtitle = "Comparativo dos principais meios de pagamento no período.";
-        vm.TableTitle = "Detalhamento por meio de pagamento";
-        vm.TableSubtitle = "Valores absolutos e percentual sobre o total do mês.";
-        vm.GroupColumnHeader = "Meio de pagamento";
+        vm.PageTitle = localizer["Reports.ByPaymentTitle"].Value;
+        vm.PageSubtitle = localizer["Reports.ByPaymentSubtitle"].Value;
+        vm.DoughnutTitle = localizer["Reports.ExpensesByPayment"].Value;
+        vm.DoughnutSubtitle = localizer["Reports.ExpensesByPaymentSub"].Value;
+        vm.BarTitle = localizer["Reports.IncomeVsExpenses"].Value;
+        vm.BarSubtitle = localizer["Reports.IncomeVsExpensesSubPayment"].Value;
+        vm.TableTitle = localizer["Reports.DetailByPayment"].Value;
+        vm.TableSubtitle = localizer["Reports.DetailSub"].Value;
+        vm.GroupColumnHeader = localizer["Reports.PaymentMethodColumn"].Value;
 
         var (transactions, _) = await LoadTransactionsAndCategoriesAsync(vm);
         IReadOnlyList<PaymentMethodDto> paymentMethods = [];
@@ -92,7 +95,7 @@ public class ReportsController(
         }
         catch
         {
-            vm.ApiMensagem ??= "Não foi possível carregar meios de pagamento da API.";
+            vm.ApiMensagem ??= localizer["Messages.ApiLoadPaymentMethods"].Value;
         }
 
         var lookup = paymentMethods.ToDictionary(p => p.PaymentMethodId);
@@ -115,18 +118,20 @@ public class ReportsController(
         var fmt = GetFormatContext();
         var reference = ReportDataBuilder.ParseMonth(mes, fmt) ?? DateTime.UtcNow;
         var vm = ReportDataBuilder.CreateTransactionMonthShell(reference, fmt);
+        var incomeLabel = localizer["Type.Income"].Value;
+        var expenseLabel = localizer["Type.Expense"].Value;
 
         try
         {
             var txData = await transactionCli.ListAsync(new DataFilterDto { Page = 1, PageSize = 500 });
             if (txData?.Result == null)
-                vm.ApiMensagem = "Não foi possível carregar transações da API.";
+                vm.ApiMensagem = localizer["Messages.ApiLoadTxError"].Value;
             else
-                ReportDataBuilder.FillTransactionReport(vm, reference, txData.Result, fmt);
+                ReportDataBuilder.FillTransactionReport(vm, reference, txData.Result, fmt, incomeLabel, expenseLabel);
         }
         catch
         {
-            vm.ApiMensagem = "Não foi possível conectar à API. Verifique se o serviço está em execução.";
+            vm.ApiMensagem = localizer["Messages.ApiConnectError"].Value;
         }
 
         return vm;
@@ -142,11 +147,11 @@ public class ReportsController(
             var txData = await transactionCli.ListAsync(new DataFilterDto { Page = 1, PageSize = 500 });
             transactions = txData?.Result ?? [];
             if (txData?.Result == null)
-                vm.ApiMensagem = "Não foi possível carregar transações da API.";
+                vm.ApiMensagem = localizer["Messages.ApiLoadTxError"].Value;
         }
         catch
         {
-            vm.ApiMensagem = "Não foi possível conectar à API. Verifique se o serviço está em execução.";
+            vm.ApiMensagem = localizer["Messages.ApiConnectError"].Value;
         }
 
         try
@@ -156,13 +161,13 @@ public class ReportsController(
         }
         catch
         {
-            vm.ApiMensagem ??= "Não foi possível carregar categorias da API.";
+            vm.ApiMensagem ??= localizer["Messages.ApiLoadCategories"].Value;
         }
 
         return (transactions, categories);
     }
 
-    private static string ResolveCategoryName(
+    private string ResolveCategoryName(
         Guid categoryId,
         IReadOnlyDictionary<Guid, CategoryDto> lookup,
         IReadOnlyList<TransactionDto>? txs)
@@ -174,10 +179,10 @@ public class ReportsController(
         if (!string.IsNullOrWhiteSpace(fromTx))
             return fromTx.Trim();
 
-        return "Sem categoria";
+        return localizer["Reports.NoCategory"].Value;
     }
 
-    private static string ResolvePaymentMethodName(
+    private string ResolvePaymentMethodName(
         Guid paymentMethodId,
         IReadOnlyDictionary<Guid, PaymentMethodDto> lookup,
         IReadOnlyList<TransactionDto>? txs)
@@ -189,6 +194,6 @@ public class ReportsController(
         if (!string.IsNullOrWhiteSpace(fromTx))
             return fromTx.Trim();
 
-        return "Sem meio de pagamento";
+        return localizer["Reports.NoPaymentMethod"].Value;
     }
 }

@@ -1,0 +1,924 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppName" xml:space="preserve">
+    <value>Cashly</value>
+  </data>
+  <data name="Common.Save" xml:space="preserve">
+    <value>Salvar alterações</value>
+  </data>
+  <data name="Common.SaveShort" xml:space="preserve">
+    <value>Salvar</value>
+  </data>
+  <data name="Common.Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="Common.Filter" xml:space="preserve">
+    <value>Filtrar</value>
+  </data>
+  <data name="Common.Edit" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="Common.Delete" xml:space="preserve">
+    <value>Excluir</value>
+  </data>
+  <data name="Common.Close" xml:space="preserve">
+    <value>Fechar</value>
+  </data>
+  <data name="Common.Confirm" xml:space="preserve">
+    <value>Confirmar</value>
+  </data>
+  <data name="Common.Ok" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="Common.Select" xml:space="preserve">
+    <value>Selecione…</value>
+  </data>
+  <data name="Common.All" xml:space="preserve">
+    <value>Todos</value>
+  </data>
+  <data name="Common.AllFem" xml:space="preserve">
+    <value>Todas</value>
+  </data>
+  <data name="Common.Actions" xml:space="preserve">
+    <value>Ações</value>
+  </data>
+  <data name="Common.Search" xml:space="preserve">
+    <value>Buscar</value>
+  </data>
+  <data name="Common.Or" xml:space="preserve">
+    <value>ou</value>
+  </data>
+  <data name="Common.Day" xml:space="preserve">
+    <value>Dia {0}</value>
+  </data>
+  <data name="Common.Active" xml:space="preserve">
+    <value>Ativo</value>
+  </data>
+  <data name="Common.Inactive" xml:space="preserve">
+    <value>Inativo</value>
+  </data>
+  <data name="Common.Account" xml:space="preserve">
+    <value>Conta</value>
+  </data>
+  <data name="Common.Category" xml:space="preserve">
+    <value>Categoria</value>
+  </data>
+  <data name="Common.User" xml:space="preserve">
+    <value>Usuário</value>
+  </data>
+  <data name="Common.Copyright" xml:space="preserve">
+    <value>© 2026 Cashly. Todos os direitos reservados.</value>
+  </data>
+  <data name="Type.Income" xml:space="preserve">
+    <value>Receita</value>
+  </data>
+  <data name="Type.Expense" xml:space="preserve">
+    <value>Despesa</value>
+  </data>
+  <data name="Nav.Dashboard" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="Nav.Transactions" xml:space="preserve">
+    <value>Transações</value>
+  </data>
+  <data name="Nav.Categories" xml:space="preserve">
+    <value>Categorias</value>
+  </data>
+  <data name="Nav.PaymentMethods" xml:space="preserve">
+    <value>Meios de pagamento</value>
+  </data>
+  <data name="Nav.Investments" xml:space="preserve">
+    <value>Investimentos</value>
+  </data>
+  <data name="Nav.Reports" xml:space="preserve">
+    <value>Relatórios</value>
+  </data>
+  <data name="Nav.ReportByPayment" xml:space="preserve">
+    <value>Relatório por meio pagamento</value>
+  </data>
+  <data name="Nav.ReportByCategory" xml:space="preserve">
+    <value>Relatório por tipo categoria</value>
+  </data>
+  <data name="Nav.ReportByTransactions" xml:space="preserve">
+    <value>Relatório de transações</value>
+  </data>
+  <data name="Nav.Portfolio" xml:space="preserve">
+    <value>Navegação do portfólio</value>
+  </data>
+  <data name="Nav.ReportsSubmenu" xml:space="preserve">
+    <value>Submenu de relatórios</value>
+  </data>
+  <data name="Header.OpenMenu" xml:space="preserve">
+    <value>Abrir ou fechar menu</value>
+  </data>
+  <data name="Header.CloseMenu" xml:space="preserve">
+    <value>Fechar menu</value>
+  </data>
+  <data name="Header.Home" xml:space="preserve">
+    <value>Cashly — página inicial</value>
+  </data>
+  <data name="Header.SearchPlaceholder" xml:space="preserve">
+    <value>Buscar páginas do sistema…</value>
+  </data>
+  <data name="Header.SearchLabel" xml:space="preserve">
+    <value>Buscar telas e menus</value>
+  </data>
+  <data name="Header.SearchEmpty" xml:space="preserve">
+    <value>Nenhuma página encontrada.</value>
+  </data>
+  <data name="Header.Notifications" xml:space="preserve">
+    <value>Notificações</value>
+  </data>
+  <data name="Header.CloseNotifications" xml:space="preserve">
+    <value>Fechar notificações</value>
+  </data>
+  <data name="Header.MarkAllRead" xml:space="preserve">
+    <value>Marcar todas como lidas</value>
+  </data>
+  <data name="Header.ViewAllNotifications" xml:space="preserve">
+    <value>Ver todas as notificações</value>
+  </data>
+  <data name="Header.NotificationsPanel" xml:space="preserve">
+    <value>Painel de notificações</value>
+  </data>
+  <data name="Header.MyProfile" xml:space="preserve">
+    <value>Meu Perfil</value>
+  </data>
+  <data name="Header.Settings" xml:space="preserve">
+    <value>Configurações</value>
+  </data>
+  <data name="Header.Privacy" xml:space="preserve">
+    <value>Privacidade</value>
+  </data>
+  <data name="Header.Logout" xml:space="preserve">
+    <value>Sair</value>
+  </data>
+  <data name="Header.ProfileMenu" xml:space="preserve">
+    <value>Menu do perfil</value>
+  </data>
+  <data name="Home.Title" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="Home.TxSummary" xml:space="preserve">
+    <value>Resumo de transações</value>
+  </data>
+  <data name="Home.TxSummarySub" xml:space="preserve">
+    <value>Visão consolidada dos seus últimos lançamentos.</value>
+  </data>
+  <data name="Home.PeriodMonthly" xml:space="preserve">
+    <value>Mensal</value>
+  </data>
+  <data name="Home.PeriodWeekly" xml:space="preserve">
+    <value>Semanal</value>
+  </data>
+  <data name="Home.FilterTx" xml:space="preserve">
+    <value>Filtrar transações…</value>
+  </data>
+  <data name="Home.FilterTxLabel" xml:space="preserve">
+    <value>Filtrar transações na tabela</value>
+  </data>
+  <data name="Home.MoreFilters" xml:space="preserve">
+    <value>Mais filtros</value>
+  </data>
+  <data name="Home.OpenFilters" xml:space="preserve">
+    <value>Abrir filtros adicionais</value>
+  </data>
+  <data name="Home.ColDate" xml:space="preserve">
+    <value>Data</value>
+  </data>
+  <data name="Home.ColDescription" xml:space="preserve">
+    <value>Descrição</value>
+  </data>
+  <data name="Home.ColCategory" xml:space="preserve">
+    <value>Categoria</value>
+  </data>
+  <data name="Home.ColValue" xml:space="preserve">
+    <value>Valor</value>
+  </data>
+  <data name="Home.SortByDate" xml:space="preserve">
+    <value>Ordenar por data</value>
+  </data>
+  <data name="Home.SortByDescription" xml:space="preserve">
+    <value>Ordenar por descrição</value>
+  </data>
+  <data name="Home.SortByCategory" xml:space="preserve">
+    <value>Ordenar por categoria</value>
+  </data>
+  <data name="Home.SortByValue" xml:space="preserve">
+    <value>Ordenar por valor</value>
+  </data>
+  <data name="Home.EmptyTx" xml:space="preserve">
+    <value>Nenhuma transação encontrada. Cadastre a primeira na tela de Transações ou ajuste os filtros.</value>
+  </data>
+  <data name="Home.ShowingTx" xml:space="preserve">
+    <value>Mostrando {0} de {1} transações</value>
+  </data>
+  <data name="Home.PrevPage" xml:space="preserve">
+    <value>Página anterior</value>
+  </data>
+  <data name="Home.NextPage" xml:space="preserve">
+    <value>Próxima página</value>
+  </data>
+  <data name="Home.PeriodIndicators" xml:space="preserve">
+    <value>Indicadores do período</value>
+  </data>
+  <data name="Home.PeriodSummary" xml:space="preserve">
+    <value>Período do resumo</value>
+  </data>
+  <data name="Home.MetricMonthlySpend" xml:space="preserve">
+    <value>Gasto total no mês</value>
+  </data>
+  <data name="Home.MetricMonthlyIncome" xml:space="preserve">
+    <value>Receitas no mês</value>
+  </data>
+  <data name="Home.MetricAccountBalance" xml:space="preserve">
+    <value>Saldo em contas</value>
+  </data>
+  <data name="Home.TrendMonthlyExpenses" xml:space="preserve">
+    <value>Despesas no mês financeiro vigente</value>
+  </data>
+  <data name="Home.TrendMonthlyIncome" xml:space="preserve">
+    <value>Entradas no mês financeiro vigente</value>
+  </data>
+  <data name="Home.TrendAccountSum" xml:space="preserve">
+    <value>Soma do saldo atual das contas</value>
+  </data>
+  <data name="Home.RegisterAccountHint" xml:space="preserve">
+    <value>Cadastre uma conta para começar</value>
+  </data>
+  <data name="Home.CurrentBalance" xml:space="preserve">
+    <value>Saldo atual das contas</value>
+  </data>
+  <data name="Transactions.Title" xml:space="preserve">
+    <value>Transações</value>
+  </data>
+  <data name="Transactions.Subtitle" xml:space="preserve">
+    <value>Histórico completo de movimentações financeiras.</value>
+  </data>
+  <data name="Transactions.New" xml:space="preserve">
+    <value>+ Nova transação</value>
+  </data>
+  <data name="Transactions.Type" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="Transactions.SearchPlaceholder" xml:space="preserve">
+    <value>Descrição, categoria ou meio de pagamento...</value>
+  </data>
+  <data name="Transactions.Empty" xml:space="preserve">
+    <value>Nenhuma transação encontrada. Cadastre a primeira com o botão acima ou ajuste os filtros.</value>
+  </data>
+  <data name="Transactions.Pagination" xml:space="preserve">
+    <value>Mostrando {0}–{1} de {2} transações</value>
+  </data>
+  <data name="Transactions.MonthlyBalance" xml:space="preserve">
+    <value>Saldo mensal</value>
+  </data>
+  <data name="Transactions.BiggestExpense" xml:space="preserve">
+    <value>Maior gasto</value>
+  </data>
+  <data name="Transactions.BudgetAlert" xml:space="preserve">
+    <value>Alerta de orçamento</value>
+  </data>
+  <data name="Transactions.EditTitle" xml:space="preserve">
+    <value>Editar transação</value>
+  </data>
+  <data name="Transactions.NewTitle" xml:space="preserve">
+    <value>Nova transação</value>
+  </data>
+  <data name="Transactions.EditSub" xml:space="preserve">
+    <value>Altere os dados do lançamento</value>
+  </data>
+  <data name="Transactions.NewSub" xml:space="preserve">
+    <value>Registro de movimento de capital</value>
+  </data>
+  <data name="Transactions.TxDate" xml:space="preserve">
+    <value>Data da transação</value>
+  </data>
+  <data name="Transactions.TxType" xml:space="preserve">
+    <value>Tipo de transação</value>
+  </data>
+  <data name="Transactions.TxDescription" xml:space="preserve">
+    <value>Descrição do lançamento</value>
+  </data>
+  <data name="Transactions.TxDescriptionPlaceholder" xml:space="preserve">
+    <value>Ex: Pagamento consultoria financeira</value>
+  </data>
+  <data name="Transactions.PaymentMethod" xml:space="preserve">
+    <value>Meio de pagamento</value>
+  </data>
+  <data name="Transactions.Amount" xml:space="preserve">
+    <value>Valor</value>
+  </data>
+  <data name="Transactions.ConfirmEntry" xml:space="preserve">
+    <value>Confirmar lançamento</value>
+  </data>
+  <data name="Transactions.DeleteConfirm" xml:space="preserve">
+    <value>Excluir esta transação?</value>
+  </data>
+  <data name="Transactions.VsPreviousMonth" xml:space="preserve">
+    <value>vs mês anterior</value>
+  </data>
+  <data name="Transactions.BudgetShare" xml:space="preserve">
+    <value>Representa {0} do total de despesas filtradas.</value>
+  </data>
+  <data name="Transactions.AmountWithCurrency" xml:space="preserve">
+    <value>Valor ({0})</value>
+  </data>
+  <data name="Transactions.TrendUp" xml:space="preserve">
+    <value>↑ {0}</value>
+  </data>
+  <data name="Transactions.TrendDown" xml:space="preserve">
+    <value>↓ {0}</value>
+  </data>
+  <data name="Transactions.NoBalanceChange" xml:space="preserve">
+    <value>Sem variação em relação ao mês anterior</value>
+  </data>
+  <data name="Transactions.NoPreviousMonthBalance" xml:space="preserve">
+    <value>Sem saldo no mês anterior para comparar</value>
+  </data>
+  <data name="Transactions.BiggestExpenseHint" xml:space="preserve">
+    <value>{0} · {1}</value>
+  </data>
+  <data name="Categories.Title" xml:space="preserve">
+    <value>Categorias</value>
+  </data>
+  <data name="Categories.Subtitle" xml:space="preserve">
+    <value>Cadastre categorias para classificar seus lançamentos. Receita ou despesa é definida na transação.</value>
+  </data>
+  <data name="Categories.New" xml:space="preserve">
+    <value>+ Nova categoria</value>
+  </data>
+  <data name="Categories.SearchPlaceholder" xml:space="preserve">
+    <value>Nome da categoria...</value>
+  </data>
+  <data name="Categories.Empty" xml:space="preserve">
+    <value>Nenhuma categoria encontrada. Cadastre a primeira com o botão acima ou ajuste os filtros.</value>
+  </data>
+  <data name="Categories.Count" xml:space="preserve">
+    <value>{0} categoria(s)</value>
+  </data>
+  <data name="Categories.DeleteConfirm" xml:space="preserve">
+    <value>Excluir esta categoria? Transações vinculadas impedem a exclusão.</value>
+  </data>
+  <data name="PaymentMethods.Title" xml:space="preserve">
+    <value>Meios de pagamento</value>
+  </data>
+  <data name="PaymentMethods.Subtitle" xml:space="preserve">
+    <value>Cadastre formas de pagamento para usar nos lançamentos.</value>
+  </data>
+  <data name="PaymentMethods.New" xml:space="preserve">
+    <value>+ Novo meio de pagamento</value>
+  </data>
+  <data name="PaymentMethods.DeleteConfirm" xml:space="preserve">
+    <value>Excluir este meio de pagamento?</value>
+  </data>
+  <data name="PaymentMethods.SearchPlaceholder" xml:space="preserve">
+    <value>Nome ou código...</value>
+  </data>
+  <data name="PaymentMethods.Empty" xml:space="preserve">
+    <value>Nenhum meio de pagamento encontrado. Cadastre o primeiro com o botão acima ou ajuste os filtros.</value>
+  </data>
+  <data name="PaymentMethods.Count" xml:space="preserve">
+    <value>{0} meio(s) de pagamento</value>
+  </data>
+  <data name="Settings.Title" xml:space="preserve">
+    <value>Configurar conta</value>
+  </data>
+  <data name="Settings.PageTitle" xml:space="preserve">
+    <value>Configurações da conta</value>
+  </data>
+  <data name="Settings.PageSub" xml:space="preserve">
+    <value>Personalize sua experiência: preferências financeiras, notificações, aparência e segurança da conta.</value>
+  </data>
+  <data name="Settings.NavPreferences" xml:space="preserve">
+    <value>Preferências</value>
+  </data>
+  <data name="Settings.NavNotifications" xml:space="preserve">
+    <value>Notificações</value>
+  </data>
+  <data name="Settings.NavAppearance" xml:space="preserve">
+    <value>Aparência</value>
+  </data>
+  <data name="Settings.NavSecurity" xml:space="preserve">
+    <value>Segurança</value>
+  </data>
+  <data name="Settings.NavPrivacy" xml:space="preserve">
+    <value>Privacidade e dados</value>
+  </data>
+  <data name="Settings.NavDanger" xml:space="preserve">
+    <value>Zona de perigo</value>
+  </data>
+  <data name="Settings.FinancialTitle" xml:space="preserve">
+    <value>Preferências financeiras</value>
+  </data>
+  <data name="Settings.FinancialSub" xml:space="preserve">
+    <value>Como os valores e datas aparecem em todo o sistema.</value>
+  </data>
+  <data name="Settings.Currency" xml:space="preserve">
+    <value>Moeda</value>
+  </data>
+  <data name="Settings.Language" xml:space="preserve">
+    <value>Idioma</value>
+  </data>
+  <data name="Settings.DateFormat" xml:space="preserve">
+    <value>Formato de data</value>
+  </data>
+  <data name="Settings.FinancialMonthStart" xml:space="preserve">
+    <value>Início do mês financeiro</value>
+  </data>
+  <data name="Settings.CurrencyBRL" xml:space="preserve">
+    <value>Real brasileiro (R$)</value>
+  </data>
+  <data name="Settings.CurrencyUSD" xml:space="preserve">
+    <value>Dólar americano (US$)</value>
+  </data>
+  <data name="Settings.CurrencyEUR" xml:space="preserve">
+    <value>Euro (EUR)</value>
+  </data>
+  <data name="Settings.LanguagePt" xml:space="preserve">
+    <value>Português (Brasil)</value>
+  </data>
+  <data name="Settings.LanguageEn" xml:space="preserve">
+    <value>English (US)</value>
+  </data>
+  <data name="Settings.LanguageEs" xml:space="preserve">
+    <value>Español</value>
+  </data>
+  <data name="Settings.DateDMY" xml:space="preserve">
+    <value>DD/MM/AAAA</value>
+  </data>
+  <data name="Settings.DateMDY" xml:space="preserve">
+    <value>MM/DD/AAAA</value>
+  </data>
+  <data name="Settings.DateYMD" xml:space="preserve">
+    <value>AAAA-MM-DD</value>
+  </data>
+  <data name="Settings.NotificationsTitle" xml:space="preserve">
+    <value>Notificações</value>
+  </data>
+  <data name="Settings.NotificationsSub" xml:space="preserve">
+    <value>Escolha o que deseja receber e quando.</value>
+  </data>
+  <data name="Settings.NotifMonthlySummary" xml:space="preserve">
+    <value>Resumo mensal por e-mail</value>
+  </data>
+  <data name="Settings.NotifMonthlySummaryDesc" xml:space="preserve">
+    <value>Receba um panorama das suas receitas e despesas no fim de cada mês.</value>
+  </data>
+  <data name="Settings.NotifHighSpending" xml:space="preserve">
+    <value>Alertas de gastos altos</value>
+  </data>
+  <data name="Settings.NotifHighSpendingDesc" xml:space="preserve">
+    <value>Avisamos quando uma despesa ultrapassar o valor médio das suas categorias.</value>
+  </data>
+  <data name="Settings.NotifBillReminders" xml:space="preserve">
+    <value>Lembretes de contas a pagar</value>
+  </data>
+  <data name="Settings.NotifBillRemindersDesc" xml:space="preserve">
+    <value>Notificações sobre vencimentos próximos para você não esquecer.</value>
+  </data>
+  <data name="Settings.NotifNewsTips" xml:space="preserve">
+    <value>Novidades e dicas</value>
+  </data>
+  <data name="Settings.NotifNewsTipsDesc" xml:space="preserve">
+    <value>Conteúdos e atualizações sobre novos recursos do Cashly.</value>
+  </data>
+  <data name="Settings.AppearanceTitle" xml:space="preserve">
+    <value>Aparência</value>
+  </data>
+  <data name="Settings.AppearanceSub" xml:space="preserve">
+    <value>Defina o tema visual da aplicação.</value>
+  </data>
+  <data name="Settings.Theme" xml:space="preserve">
+    <value>Tema</value>
+  </data>
+  <data name="Settings.ThemeDark" xml:space="preserve">
+    <value>🌙 Escuro</value>
+  </data>
+  <data name="Settings.ThemeLight" xml:space="preserve">
+    <value>☀️ Claro</value>
+  </data>
+  <data name="Settings.ThemeAuto" xml:space="preserve">
+    <value>🖥️ Automático</value>
+  </data>
+  <data name="Settings.SecurityTitle" xml:space="preserve">
+    <value>Segurança</value>
+  </data>
+  <data name="Settings.SecuritySub" xml:space="preserve">
+    <value>Proteja o acesso à sua conta.</value>
+  </data>
+  <data name="Settings.ChangePassword" xml:space="preserve">
+    <value>Alterar senha</value>
+  </data>
+  <data name="Settings.AccessPassword" xml:space="preserve">
+    <value>Senha de acesso</value>
+  </data>
+  <data name="Settings.AccessPasswordDesc" xml:space="preserve">
+    <value>Altere sua senha periodicamente para manter a conta segura.</value>
+  </data>
+  <data name="Settings.TwoFactor" xml:space="preserve">
+    <value>Autenticação em duas etapas (2FA)</value>
+  </data>
+  <data name="Settings.TwoFactorDesc" xml:space="preserve">
+    <value>Adicione uma camada extra de proteção ao fazer login.</value>
+  </data>
+  <data name="Settings.EndSessions" xml:space="preserve">
+    <value>Encerrar sessões</value>
+  </data>
+  <data name="Settings.EndSessionsDesc" xml:space="preserve">
+    <value>Desconecte sua conta de todos os dispositivos, incluindo este.</value>
+  </data>
+  <data name="Settings.PrivacyPolicy" xml:space="preserve">
+    <value>Política de Privacidade</value>
+  </data>
+  <data name="Settings.PrivacyPolicyDesc" xml:space="preserve">
+    <value>Saiba como coletamos, usamos e protegemos seus dados.</value>
+  </data>
+  <data name="Settings.DeleteAccountDesc" xml:space="preserve">
+    <value>Remove permanentemente sua conta e todos os dados financeiros associados. Informe sua senha para confirmar.</value>
+  </data>
+  <data name="Settings.PrivacyTitle" xml:space="preserve">
+    <value>Privacidade e dados</value>
+  </data>
+  <data name="Settings.PrivacySub" xml:space="preserve">
+    <value>Controle como seus dados são tratados.</value>
+  </data>
+  <data name="Settings.ViewPolicy" xml:space="preserve">
+    <value>Ver política</value>
+  </data>
+  <data name="Settings.DangerTitle" xml:space="preserve">
+    <value>Zona de perigo</value>
+  </data>
+  <data name="Settings.DangerSub" xml:space="preserve">
+    <value>Ações permanentes que não podem ser desfeitas.</value>
+  </data>
+  <data name="Settings.DeleteAccount" xml:space="preserve">
+    <value>Excluir conta</value>
+  </data>
+  <data name="Settings.Password" xml:space="preserve">
+    <value>Senha</value>
+  </data>
+  <data name="Settings.PasswordPlaceholder" xml:space="preserve">
+    <value>Digite sua senha atual</value>
+  </data>
+  <data name="Settings.DeleteAccountConfirm" xml:space="preserve">
+    <value>Tem certeza que deseja excluir sua conta? Todos os seus dados financeiros serão removidos permanentemente e esta ação não pode ser desfeita.</value>
+  </data>
+  <data name="Settings.EndSessionsConfirm" xml:space="preserve">
+    <value>Desconectar sua conta de todos os dispositivos? Você precisará fazer login novamente.</value>
+  </data>
+  <data name="Auth.LoginTitle" xml:space="preserve">
+    <value>Entrar</value>
+  </data>
+  <data name="Auth.LoginHero" xml:space="preserve">
+    <value>Controle suas {0} com precisão.</value>
+  </data>
+  <data name="Auth.LoginHeroAccent" xml:space="preserve">
+    <value>finanças</value>
+  </data>
+  <data name="Auth.LoginHeroSub" xml:space="preserve">
+    <value>Gerencie receitas, despesas e categorias em um só lugar. Simples, rápido e seguro.</value>
+  </data>
+  <data name="Auth.FeatureReports" xml:space="preserve">
+    <value>Relatórios e dashboards em tempo real</value>
+  </data>
+  <data name="Auth.FeatureCategories" xml:space="preserve">
+    <value>Categorize receitas e despesas facilmente</value>
+  </data>
+  <data name="Auth.FeatureSecurity" xml:space="preserve">
+    <value>Seus dados sempre protegidos</value>
+  </data>
+  <data name="Auth.WelcomeBack" xml:space="preserve">
+    <value>Bem-vindo de volta</value>
+  </data>
+  <data name="Auth.SignInTitle" xml:space="preserve">
+    <value>Entre na sua conta</value>
+  </data>
+  <data name="Auth.SignInSub" xml:space="preserve">
+    <value>Acesse seu painel e continue no controle das suas finanças.</value>
+  </data>
+  <data name="Auth.Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="Auth.EmailPlaceholder" xml:space="preserve">
+    <value>seu@email.com</value>
+  </data>
+  <data name="Auth.Password" xml:space="preserve">
+    <value>Senha</value>
+  </data>
+  <data name="Auth.PasswordPlaceholder" xml:space="preserve">
+    <value>sua senha</value>
+  </data>
+  <data name="Auth.PasswordWeak" xml:space="preserve">
+    <value>Fraca</value>
+  </data>
+  <data name="Auth.PasswordMedium" xml:space="preserve">
+    <value>Média</value>
+  </data>
+  <data name="Auth.PasswordGood" xml:space="preserve">
+    <value>Boa</value>
+  </data>
+  <data name="Auth.PasswordStrong" xml:space="preserve">
+    <value>Forte</value>
+  </data>
+  <data name="Auth.SignIn" xml:space="preserve">
+    <value>Entrar</value>
+  </data>
+  <data name="Auth.CreateAccount" xml:space="preserve">
+    <value>Criar uma conta</value>
+  </data>
+  <data name="Auth.RegisterTitle" xml:space="preserve">
+    <value>Cadastre-se</value>
+  </data>
+  <data name="Auth.RegisterHero" xml:space="preserve">
+    <value>Crie sua conta e controle suas {0}.</value>
+  </data>
+  <data name="Auth.RegisterHeroSub" xml:space="preserve">
+    <value>Cadastre-se gratuitamente e comece a gerenciar receitas, despesas e categorias em um só lugar. Simples, rápido e seguro.</value>
+  </data>
+  <data name="Auth.FeatureFree" xml:space="preserve">
+    <value>Cadastro rápido e 100% gratuito</value>
+  </data>
+  <data name="Auth.RegisterEyebrow" xml:space="preserve">
+    <value>Crie sua conta</value>
+  </data>
+  <data name="Auth.RegisterFormTitle" xml:space="preserve">
+    <value>Cadastre-se no Cashly</value>
+  </data>
+  <data name="Auth.RegisterFormSub" xml:space="preserve">
+    <value>Leva menos de um minuto para começar.</value>
+  </data>
+  <data name="Profile.Title" xml:space="preserve">
+    <value>Meu perfil</value>
+  </data>
+  <data name="Profile.Subtitle" xml:space="preserve">
+    <value>Visualize e atualize seus dados pessoais, foto e preferências de acesso.</value>
+  </data>
+  <data name="Profile.NoUser" xml:space="preserve">
+    <value>Nenhum usuário encontrado. Cadastre-se ou verifique se a API está em execução.</value>
+  </data>
+  <data name="Profile.ChangePhoto" xml:space="preserve">
+    <value>Alterar foto</value>
+  </data>
+  <data name="Profile.PhotoHint" xml:space="preserve">
+    <value>PNG ou JPG, até 2 MB.</value>
+  </data>
+  <data name="Profile.AccountSettings" xml:space="preserve">
+    <value>Configurações da conta</value>
+  </data>
+  <data name="Profile.PersonalData" xml:space="preserve">
+    <value>Dados pessoais</value>
+  </data>
+  <data name="Profile.PersonalDataSub" xml:space="preserve">
+    <value>Informações exibidas no sistema e usadas no login.</value>
+  </data>
+  <data name="Profile.Username" xml:space="preserve">
+    <value>Nome de usuário</value>
+  </data>
+  <data name="Profile.UsernamePlaceholder" xml:space="preserve">
+    <value>Seu nome</value>
+  </data>
+  <data name="Profile.ActiveAccount" xml:space="preserve">
+    <value>Conta ativa</value>
+  </data>
+  <data name="Profile.InactiveAccount" xml:space="preserve">
+    <value>Conta inativa</value>
+  </data>
+  <data name="Profile.PhotoAlt" xml:space="preserve">
+    <value>Foto de perfil</value>
+  </data>
+  <data name="Loading.Wait" xml:space="preserve">
+    <value>Aguarde</value>
+  </data>
+  <data name="Reports.DayOfMonth" xml:space="preserve">
+    <value>Dia do mês</value>
+  </data>
+  <data name="Reports.ByPaymentTitle" xml:space="preserve">
+    <value>Resumo por meio de pagamento</value>
+  </data>
+  <data name="Reports.ByPaymentSubtitle" xml:space="preserve">
+    <value>Distribuição de receitas e despesas conforme os meios de pagamento cadastrados.</value>
+  </data>
+  <data name="Reports.ByCategoryTitle" xml:space="preserve">
+    <value>Resumo por categoria</value>
+  </data>
+  <data name="Reports.ByCategorySubtitle" xml:space="preserve">
+    <value>Distribuição de receitas e despesas conforme suas categorias cadastradas.</value>
+  </data>
+  <data name="Reports.ExpensesByPayment" xml:space="preserve">
+    <value>Despesas por meio de pagamento</value>
+  </data>
+  <data name="Reports.ExpensesByPaymentSub" xml:space="preserve">
+    <value>Participação de cada meio no total de saídas.</value>
+  </data>
+  <data name="Reports.ExpensesByCategory" xml:space="preserve">
+    <value>Despesas por categoria</value>
+  </data>
+  <data name="Reports.ExpensesByCategorySub" xml:space="preserve">
+    <value>Participação de cada categoria no total de saídas.</value>
+  </data>
+  <data name="Reports.IncomeVsExpenses" xml:space="preserve">
+    <value>Receitas vs despesas</value>
+  </data>
+  <data name="Reports.IncomeVsExpensesSubPayment" xml:space="preserve">
+    <value>Comparativo dos principais meios de pagamento no período.</value>
+  </data>
+  <data name="Reports.IncomeVsExpensesSubCategory" xml:space="preserve">
+    <value>Comparativo das principais categorias do período.</value>
+  </data>
+  <data name="Reports.DetailByPayment" xml:space="preserve">
+    <value>Detalhamento por meio de pagamento</value>
+  </data>
+  <data name="Reports.DetailByCategory" xml:space="preserve">
+    <value>Detalhamento por categoria</value>
+  </data>
+  <data name="Reports.DetailSub" xml:space="preserve">
+    <value>Valores absolutos e percentual sobre o total do mês.</value>
+  </data>
+  <data name="Reports.PaymentMethodColumn" xml:space="preserve">
+    <value>Meio de pagamento</value>
+  </data>
+  <data name="Reports.Period" xml:space="preserve">
+    <value>Período</value>
+  </data>
+  <data name="Reports.PeriodFilter" xml:space="preserve">
+    <value>Filtrar por mês</value>
+  </data>
+  <data name="Reports.PeriodLabel" xml:space="preserve">
+    <value>Período: {0}</value>
+  </data>
+  <data name="Reports.PeriodWithCount" xml:space="preserve">
+    <value>Período: {0} · {1} transação(ões)</value>
+  </data>
+  <data name="Reports.PeriodTotals" xml:space="preserve">
+    <value>Totais do período</value>
+  </data>
+  <data name="Reports.PeriodBalance" xml:space="preserve">
+    <value>Saldo do período</value>
+  </data>
+  <data name="Reports.Entries" xml:space="preserve">
+    <value>Lançamentos</value>
+  </data>
+  <data name="Reports.Balance" xml:space="preserve">
+    <value>Saldo</value>
+  </data>
+  <data name="Reports.TransactionsCount" xml:space="preserve">
+    <value>Transações</value>
+  </data>
+  <data name="Reports.ExpensePercent" xml:space="preserve">
+    <value>% despesas</value>
+  </data>
+  <data name="Reports.EmptyInPeriod" xml:space="preserve">
+    <value>Nenhuma transação encontrada em {0}.</value>
+  </data>
+  <data name="Reports.EmptyHint" xml:space="preserve">
+    <value>Selecione outro mês ou cadastre transações para visualizar os gráficos.</value>
+  </data>
+  <data name="Reports.TxReportTitle" xml:space="preserve">
+    <value>Relatório de transações</value>
+  </data>
+  <data name="Reports.TxReportSubtitle" xml:space="preserve">
+    <value>Visão consolidada dos lançamentos do período com gráficos e histórico detalhado.</value>
+  </data>
+  <data name="Reports.IncomeVsExpensesSub" xml:space="preserve">
+    <value>Proporção entre entradas e saídas no mês.</value>
+  </data>
+  <data name="Reports.DailyMovement" xml:space="preserve">
+    <value>Movimento diário</value>
+  </data>
+  <data name="Reports.DailyMovementSub" xml:space="preserve">
+    <value>Receitas e despesas por dia do mês selecionado.</value>
+  </data>
+  <data name="Reports.TxHistory" xml:space="preserve">
+    <value>Histórico de transações</value>
+  </data>
+  <data name="Reports.TxHistorySub" xml:space="preserve">
+    <value>Todos os lançamentos registrados no período.</value>
+  </data>
+  <data name="Reports.PaymentMethodCol" xml:space="preserve">
+    <value>Meio pagamento</value>
+  </data>
+  <data name="Reports.NoCategory" xml:space="preserve">
+    <value>Sem categoria</value>
+  </data>
+  <data name="Reports.NoPaymentMethod" xml:space="preserve">
+    <value>Sem meio de pagamento</value>
+  </data>
+  <data name="Reports.IncomeVsExpensesChart" xml:space="preserve">
+    <value>Gráfico receitas e despesas</value>
+  </data>
+  <data name="Reports.DailyChart" xml:space="preserve">
+    <value>Gráfico de movimento diário</value>
+  </data>
+  <data name="Messages.ApiLoadPaymentMethods" xml:space="preserve">
+    <value>Não foi possível carregar meios de pagamento da API.</value>
+  </data>
+  <data name="Messages.ApiLoadCategories" xml:space="preserve">
+    <value>Não foi possível carregar categorias da API.</value>
+  </data>
+  <data name="Dialog.Info" xml:space="preserve">
+    <value>Informação</value>
+  </data>
+  <data name="Dialog.Success" xml:space="preserve">
+    <value>Sucesso</value>
+  </data>
+  <data name="Dialog.Error" xml:space="preserve">
+    <value>Atenção</value>
+  </data>
+  <data name="Dialog.ConfirmTitle" xml:space="preserve">
+    <value>Confirmar</value>
+  </data>
+  <data name="Dialog.InvalidFileTitle" xml:space="preserve">
+    <value>Arquivo inválido</value>
+  </data>
+  <data name="Dialog.InvalidFileMessage" xml:space="preserve">
+    <value>A imagem deve ter no máximo 2 MB.</value>
+  </data>
+  <data name="Dialog.CurrentPasswordRequired" xml:space="preserve">
+    <value>Informe sua senha atual para continuar.</value>
+  </data>
+  <data name="Messages.SettingsSaved" xml:space="preserve">
+    <value>Preferências financeiras salvas com sucesso.</value>
+  </data>
+  <data name="Messages.SettingsSavedCurrency" xml:space="preserve">
+    <value>Preferências salvas. Valores convertidos para a nova moeda selecionada.</value>
+  </data>
+  <data name="Messages.SettingsSaveError" xml:space="preserve">
+    <value>Não foi possível salvar as preferências financeiras. Tente novamente.</value>
+  </data>
+  <data name="Messages.SessionsEnded" xml:space="preserve">
+    <value>Todas as sessões foram encerradas. Faça login novamente.</value>
+  </data>
+  <data name="Messages.SessionsEndError" xml:space="preserve">
+    <value>Não foi possível encerrar as sessões. Tente novamente.</value>
+  </data>
+  <data name="Messages.DeletePasswordRequired" xml:space="preserve">
+    <value>Informe sua senha para confirmar a exclusão da conta.</value>
+  </data>
+  <data name="Messages.AccountDeleted" xml:space="preserve">
+    <value>Sua conta foi excluída permanentemente.</value>
+  </data>
+  <data name="Messages.DeleteAccountError" xml:space="preserve">
+    <value>Não foi possível excluir a conta. Tente novamente.</value>
+  </data>
+  <data name="Messages.ApiLoadTxError" xml:space="preserve">
+    <value>Não foi possível carregar transações da API.</value>
+  </data>
+  <data name="Messages.ApiConnectError" xml:space="preserve">
+    <value>Não foi possível conectar à API. Verifique se o serviço está em execução.</value>
+  </data>
+  <data name="Messages.TxDescriptionRequired" xml:space="preserve">
+    <value>Informe uma descrição (mín. 2 caracteres).</value>
+  </data>
+  <data name="Messages.TxValueRequired" xml:space="preserve">
+    <value>Valor deve ser maior que zero.</value>
+  </data>
+  <data name="Messages.TxCategoryRequired" xml:space="preserve">
+    <value>Selecione uma categoria.</value>
+  </data>
+  <data name="Messages.TxCategoryInvalid" xml:space="preserve">
+    <value>Categoria inválida ou inativa.</value>
+  </data>
+  <data name="Messages.TxPaymentRequired" xml:space="preserve">
+    <value>Selecione um meio de pagamento.</value>
+  </data>
+  <data name="Messages.TxPaymentInvalid" xml:space="preserve">
+    <value>Meio de pagamento inválido.</value>
+  </data>
+  <data name="Messages.TxAccountUnavailable" xml:space="preserve">
+    <value>Conta da transação não disponível.</value>
+  </data>
+  <data name="Messages.TxNotFound" xml:space="preserve">
+    <value>Transação não encontrada.</value>
+  </data>
+  <data name="Messages.NameMinLength" xml:space="preserve">
+    <value>Nome deve ter pelo menos 2 caracteres.</value>
+  </data>
+  <data name="Messages.PaymentMethodNotFound" xml:space="preserve">
+    <value>Meio de pagamento não encontrado.</value>
+  </data>
+  <data name="Messages.BudgetNoTx" xml:space="preserve">
+    <value>Nenhuma transação nos filtros atuais.</value>
+  </data>
+  <data name="Messages.BudgetNoExpense" xml:space="preserve">
+    <value>Nenhuma despesa nos filtros atuais.</value>
+  </data>
+  <data name="Messages.BudgetTopCategory" xml:space="preserve">
+    <value>Maior volume de despesas na categoria «{0}» (filtros atuais).</value>
+  </data>
+  <data name="Messages.BudgetRegisterTx" xml:space="preserve">
+    <value>Cadastre transações para acompanhar seu orçamento.</value>
+  </data>
+</root>

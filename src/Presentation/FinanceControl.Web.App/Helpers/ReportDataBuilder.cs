@@ -105,7 +105,9 @@ internal static class ReportDataBuilder
         TransactionReportViewModel vm,
         DateTime reference,
         IReadOnlyList<TransactionDto> transactions,
-        FinancialFormatContext fmt)
+        FinancialFormatContext fmt,
+        string incomeLabel,
+        string expenseLabel)
     {
         var noPeriodo = FilterByMonth(transactions, reference).OrderByDescending(t => t.Date).ToList();
         decimal totalReceitas = 0, totalDespesas = 0;
@@ -138,14 +140,14 @@ internal static class ReportDataBuilder
                 string.IsNullOrWhiteSpace(t.CategoryName) ? "—" : t.CategoryName.Trim(),
                 string.IsNullOrWhiteSpace(t.PaymentMethodName) ? "—" : t.PaymentMethodName.Trim(),
                 isRec,
-                isRec ? "Receita" : "Despesa",
+                isRec ? incomeLabel : expenseLabel,
                 t.TransactionValue,
                 valueFmt);
         }).ToList();
 
         vm.ChartTipoJson = JsonSerializer.Serialize(new
         {
-            labels = new[] { "Receitas", "Despesas" },
+            labels = new[] { incomeLabel, expenseLabel },
             values = new[] { totalReceitas, totalDespesas },
         }, JsonOpts);
 

@@ -7,7 +7,10 @@ using FinanceControl.Contracts.Enumerators.Transactions;
 using FinanceControl.Contracts.Filters;
 using FinanceControl.Web.Helpers;
 using FinanceControl.Web.Models.ViewModels.Transactions;
+using FinanceControl.Web.Resources;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
+using System.Globalization;
 
 namespace FinanceControl.Web.Controllers.Transactions;
 
@@ -17,17 +20,20 @@ public class TransactionsController : Controller
     private readonly ITransactionCliService _transactionCli;
     private readonly ICategoryCliService _categoryCli;
     private readonly IPaymentMethodCliService _paymentMethodCli;
+    private readonly IStringLocalizer<SharedResources> _localizer;
 
     private List<TransacaoListaVm> _todas = [];
 
     public TransactionsController(
         ITransactionCliService transactionCli,
         ICategoryCliService categoryCli,
-        IPaymentMethodCliService paymentMethodCli)
+        IPaymentMethodCliService paymentMethodCli,
+        IStringLocalizer<SharedResources> localizer)
     {
         _transactionCli = transactionCli;
         _categoryCli = categoryCli;
         _paymentMethodCli = paymentMethodCli;
+        _localizer = localizer;
     }
 
     [HttpGet("")]
@@ -367,38 +373,79 @@ public class TransactionsController : Controller
     private void AtualizarResumos(TransactionIndexViewModel vm, IReadOnlyList<TransacaoListaVm> filtradas)
     {
         var fmt = FinancialFormatContext.From(User);
+        var culture = fmt.Culture;
 
         if (filtradas.Count == 0)
         {
             vm.ResumoSaldoMensal = fmt.FormatCurrency(0);
             vm.ResumoSaldoMensalNegativo = false;
+            vm.ResumoSaldoHint = "";
             vm.ResumoMaiorGasto = "—";
-            vm.AlertaOrcamento = "Nenhuma transação nos filtros atuais.";
+            vm.ResumoMaiorGastoHint = "";
+            vm.AlertaOrcamento = _localizer["Messages.BudgetNoTx"].Value;
             return;
         }
 
         var saldo = filtradas.Sum(t => t.IsReceita ? t.Valor : -t.Valor);
         vm.ResumoSaldoMensal = fmt.FormatCurrency(saldo);
         vm.ResumoSaldoMensalNegativo = saldo < 0;
+        vm.ResumoSaldoHint = MontarHintSaldo(filtradas, culture);
 
-        var maiorDespesa = filtradas
-            .Where(t => !t.IsReceita)
-            .OrderByDescending(t => t.Valor)
-            .FirstOrDefault();
+        var despesas = filtradas.Where(t => !t.IsReceita).ToList();
+        var maiorDespesa = despesas.OrderByDescending(t => t.Valor).FirstOrDefault();
 
-        vm.ResumoMaiorGasto = maiorDespesa?.CategoriaNome ?? "—";
+        if (maiorDespesa != null)
+        {
+            vm.ResumoMaiorGasto = fmt.FormatCurrency(maiorDespesa.Valor);
+            var totalDespesas = despesas.Sum(t => t.Valor);
+            var share = totalDespesas > 0 ? maiorDespesa.Valor / totalDespesas : 0m;
+            var pctFormatted = share.ToString("P1", culture);
+            var shareText = _localizer["Transactions.BudgetShare", pctFormatted].Value;
+            vm.ResumoMaiorGastoHint = _localizer["Transactions.BiggestExpenseHint", maiorDespesa.CategoriaNome, shareText].Value;
+        }
+        else
+        {
+            vm.ResumoMaiorGasto = "—";
+            vm.ResumoMaiorGastoHint = _localizer["Messages.BudgetNoExpense"].Value;
+        }
 
-        var categoriaMaisGasta = filtradas
-            .Where(t => !t.IsReceita)
+        var categoriaMaisGasta = despesas
             .GroupBy(t => t.CategoriaNome)
             .OrderByDescending(g => g.Sum(t => t.Valor))
             .Select(g => g.Key)
             .FirstOrDefault();
 
         vm.AlertaOrcamento = categoriaMaisGasta != null
-            ? $"Maior volume de despesas na categoria «{categoriaMaisGasta}» (filtros atuais)."
-            : "Nenhuma despesa nos filtros atuais.";
+            ? _localizer["Messages.BudgetTopCategory", categoriaMaisGasta].Value
+            : _localizer["Messages.BudgetNoExpense"].Value;
     }
+
+    private string MontarHintSaldo(IReadOnlyList<TransacaoListaVm> filtradas, CultureInfo culture)
+    {
+        var fmt = FinancialFormatContext.From(User);
+        var now = DateTime.UtcNow;
+        var (inicioMes, fimMes) = fmt.GetFinancialMonthRange(now);
+        var (inicioAnterior, fimAnterior) = fmt.GetFinancialMonthRange(inicioMes.AddDays(-1));
+
+        var saldoMesAtual = SaldoNoPeriodo(filtradas, inicioMes, fimMes);
+        var saldoMesAnterior = SaldoNoPeriodo(filtradas, inicioAnterior, fimAnterior);
+
+        if (saldoMesAnterior == 0 && saldoMesAtual == 0)
+            return _localizer["Transactions.NoBalanceChange"].Value;
+
+        if (saldoMesAnterior == 0)
+            return _localizer["Transactions.NoPreviousMonthBalance"].Value;
+
+        var variacao = (saldoMesAtual - saldoMesAnterior) / Math.Abs(saldoMesAnterior);
+        var pctFormatted = variacao.ToString("P1", culture);
+        var trendKey = variacao >= 0 ? "Transactions.TrendUp" : "Transactions.TrendDown";
+        return $"{_localizer[trendKey, pctFormatted].Value} {_localizer["Transactions.VsPreviousMonth"].Value}";
+    }
+
+    private static decimal SaldoNoPeriodo(IEnumerable<TransacaoListaVm> transacoes, DateTime inicio, DateTime fim) =>
+        transacoes
+            .Where(t => t.Data >= inicio && t.Data < fim)
+            .Sum(t => t.IsReceita ? t.Valor : -t.Valor);
 
     private void PreencherFormularioEdicao(TransactionIndexViewModel vm, TransactionDto dto)
     {
@@ -422,25 +469,25 @@ public class TransactionsController : Controller
 
         if (string.IsNullOrWhiteSpace(vm.Input.Descricao) || vm.Input.Descricao.Length < 2)
         {
-            vm.ErroModal = "Informe uma descrição (mín. 2 caracteres).";
+            vm.ErroModal = _localizer["Messages.TxDescriptionRequired"].Value;
             return false;
         }
 
         if (vm.Input.Valor <= 0)
         {
-            vm.ErroModal = "Valor deve ser maior que zero.";
+            vm.ErroModal = _localizer["Messages.TxValueRequired"].Value;
             return false;
         }
 
         if (vm.Input.CategoryId == Guid.Empty)
         {
-            vm.ErroModal = "Selecione uma categoria.";
+            vm.ErroModal = _localizer["Messages.TxCategoryRequired"].Value;
             return false;
         }
 
         if (vm.CategoriasOpcoes.All(c => c.Id != vm.Input.CategoryId))
         {
-            vm.ErroModal = "Categoria inválida ou inativa.";
+            vm.ErroModal = _localizer["Messages.TxCategoryInvalid"].Value;
             return false;
         }
 
@@ -450,13 +497,13 @@ public class TransactionsController : Controller
 
         if (vm.Input.PaymentMethodId == Guid.Empty)
         {
-            vm.ErroModal = "Selecione um meio de pagamento.";
+            vm.ErroModal = _localizer["Messages.TxPaymentRequired"].Value;
             return false;
         }
 
         if (vm.MeiosPagamentoOpcoes.All(m => m.Id != vm.Input.PaymentMethodId))
         {
-            vm.ErroModal = "Meio de pagamento inválido.";
+            vm.ErroModal = _localizer["Messages.TxPaymentInvalid"].Value;
             return false;
         }
 

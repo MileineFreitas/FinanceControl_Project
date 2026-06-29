@@ -4,6 +4,10 @@
     var activeResolve = null;
     var queue = [];
 
+    function dlg() {
+        return (window.fcLocale && window.fcLocale.dialog) || {};
+    }
+
     var icons = {
         info: 'i',
         success: '✓',
@@ -11,12 +15,15 @@
         confirm: '?'
     };
 
-    var titles = {
-        info: 'Informação',
-        success: 'Sucesso',
-        error: 'Atenção',
-        confirm: 'Confirmar'
-    };
+    function defaultTitles() {
+        var d = dlg();
+        return {
+            info: d.info || 'Information',
+            success: d.success || 'Success',
+            error: d.error || 'Attention',
+            confirm: d.confirm || 'Confirm'
+        };
+    }
 
     function ensureOverlay() {
         if (overlay) return;
@@ -80,6 +87,8 @@
 
         var opts = item.options;
         var variant = opts.variant || 'info';
+        var titles = defaultTitles();
+        var d = dlg();
         var titleEl = overlay.querySelector('#fc-dialog-title');
         var messageEl = overlay.querySelector('#fc-dialog-message');
         var iconEl = overlay.querySelector('#fc-dialog-icon');
@@ -98,7 +107,7 @@
             var cancelBtn = document.createElement('button');
             cancelBtn.type = 'button';
             cancelBtn.className = 'fc-dialog__btn fc-dialog__btn--outline';
-            cancelBtn.textContent = opts.cancelText || 'Cancelar';
+            cancelBtn.textContent = opts.cancelText || d.cancel || 'Cancel';
             cancelBtn.addEventListener('click', function () { finish(false); });
             footerEl.appendChild(cancelBtn);
         }
@@ -106,7 +115,7 @@
         var confirmBtn = document.createElement('button');
         confirmBtn.type = 'button';
         confirmBtn.className = 'fc-dialog__btn ' + (variant === 'error' || opts.danger ? 'fc-dialog__btn--danger' : 'fc-dialog__btn--primary');
-        confirmBtn.textContent = opts.confirmText || (opts.showCancel ? 'Confirmar' : 'OK');
+        confirmBtn.textContent = opts.confirmText || (opts.showCancel ? (d.confirmBtn || 'Confirm') : (d.ok || 'OK'));
         confirmBtn.addEventListener('click', function () { finish(true); });
         footerEl.appendChild(confirmBtn);
 
@@ -118,25 +127,27 @@
 
     function alert(message, options) {
         options = options || {};
+        var d = dlg();
         return enqueue({
             message: message,
             title: options.title,
             variant: options.variant || 'info',
             icon: options.icon,
-            confirmText: options.confirmText || 'OK',
+            confirmText: options.confirmText || d.ok || 'OK',
             showCancel: false
         });
     }
 
     function confirm(message, options) {
         options = options || {};
+        var d = dlg();
         return enqueue({
             message: message,
             title: options.title,
             variant: options.variant || 'confirm',
             icon: options.icon,
-            confirmText: options.confirmText || 'Confirmar',
-            cancelText: options.cancelText || 'Cancelar',
+            confirmText: options.confirmText || d.confirmBtn || 'Confirm',
+            cancelText: options.cancelText || d.cancel || 'Cancel',
             danger: !!options.danger,
             showCancel: true
         });
@@ -200,6 +211,7 @@
             '.wt-alert--error',
             '.alert-box'
         ];
+        var d = dlg();
 
         selectors.forEach(function (selector) {
             document.querySelectorAll(selector).forEach(function (el) {
@@ -213,7 +225,7 @@
 
                 var isError = el.classList.contains('wt-alert--error') || el.classList.contains('alert-box');
                 alert(message, {
-                    title: isError ? 'Atenção' : 'Sucesso',
+                    title: isError ? (d.error || 'Attention') : (d.success || 'Success'),
                     variant: isError ? 'error' : 'success'
                 });
             });

@@ -15,13 +15,25 @@
     var passwordModalError = document.getElementById('profile-password-modal-error');
     var passwordConfirmed = false;
 
+    function dlg() {
+        return (window.fcLocale && window.fcLocale.dialog) || {};
+    }
+
+    function common() {
+        return (window.fcLocale && window.fcLocale.common) || {};
+    }
+
     if (fileInput && preview) {
         fileInput.addEventListener('change', function () {
             var file = fileInput.files && fileInput.files[0];
             if (!file) return;
             if (file.size > 2 * 1024 * 1024) {
                 if (window.FcDialog) {
-                    window.FcDialog.alert('A imagem deve ter no máximo 2 MB.', { variant: 'error', title: 'Arquivo inválido' });
+                    var d = dlg();
+                    window.FcDialog.alert(d.invalidFileMessage || 'The image must be at most 2 MB.', {
+                        variant: 'error',
+                        title: d.invalidFileTitle || 'Invalid file'
+                    });
                 }
                 fileInput.value = '';
                 return;
@@ -39,7 +51,7 @@
 
     function syncDisplay() {
         if (displayName && nameInput) {
-            displayName.textContent = nameInput.value.trim() || 'Usuário';
+            displayName.textContent = nameInput.value.trim() || (common().user || 'User');
         }
         if (displayEmail && emailInput) {
             displayEmail.textContent = emailInput.value.trim() || '—';
@@ -89,6 +101,10 @@
         }
     }
 
+    function currentPasswordMessage() {
+        return dlg().currentPasswordRequired || 'Enter your current password to continue.';
+    }
+
     if (newPasswordInput) {
         newPasswordInput.addEventListener('input', function () {
             resetPasswordConfirmation(!newPasswordInput.value.trim());
@@ -119,7 +135,7 @@
     if (passwordModalConfirm) {
         passwordModalConfirm.addEventListener('click', function () {
             if (!currentPasswordInput || !currentPasswordInput.value.trim()) {
-                showPasswordError('Informe sua senha atual para continuar.');
+                showPasswordError(currentPasswordMessage());
                 return;
             }
 
@@ -161,7 +177,7 @@
             if (!currentPasswordInput || !currentPasswordInput.value.trim()) {
                 event.preventDefault();
                 openPasswordModal();
-                showPasswordError('Informe sua senha atual para continuar.');
+                showPasswordError(currentPasswordMessage());
                 return;
             }
         });

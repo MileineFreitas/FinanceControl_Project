@@ -3,14 +3,14 @@
 <header class="header">
     <div class="header__container">
         <div class="header__start">
-            <button type="button" class="header__menu-toggle" data-fc-mobile-nav-toggle aria-label="Abrir ou fechar menu">
+            <button type="button" class="header__menu-toggle" data-fc-mobile-nav-toggle aria-label="@Localizer["Header.OpenMenu"]">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
                     <path d="M4 6h16M4 12h16M4 18h16" stroke-width="2" stroke-linecap="round"/>
                 </svg>
             </button>
 
-            <a class="header__logo" href="~/home" aria-label="Cashly — página inicial">
-                <img src="~/cashly-logo.png" alt="Cashly" class="header__logo-img" />
+            <a class="header__logo" href="~/home" aria-label="@Localizer["Header.Home"]">
+                <img src="~/cashly-logo.png" alt="@Localizer["AppName"]" class="header__logo-img" />
             </a>
         </div>
 
@@ -23,9 +23,9 @@
                 <input type="search"
                        id="fc-global-search-input"
                        class="header__search-input"
-                       placeholder="Buscar páginas do sistema…"
+                       placeholder="@Localizer["Header.SearchPlaceholder"]"
                        autocomplete="off"
-                       aria-label="Buscar telas e menus"
+                       aria-label="@Localizer["Header.SearchLabel"]"
                        aria-controls="fc-global-search-results"
                        aria-expanded="false"
                        role="combobox" />
@@ -40,8 +40,8 @@
                         data-fc-notifications-toggle
                         aria-expanded="false"
                         aria-haspopup="true"
-                        title="Notificações"
-                        aria-label="Notificações">
+                        title="@Localizer["Header.Notifications"]"
+                        aria-label="@Localizer["Header.Notifications"]">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
                         <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" stroke-width="2" stroke-linecap="round"/>
                         <path d="M13.73 21a2 2 0 0 1-3.46 0" stroke-width="2" stroke-linecap="round"/>
@@ -49,12 +49,12 @@
                     <span class="header-notifications__badge" data-fc-notifications-badge>2</span>
                 </button>
 
-                <button type="button" class="header-dropdown-backdrop" tabindex="-1" aria-label="Fechar notificações" data-fc-notifications-close></button>
-                <div class="header-dropdown header-notifications-dropdown" role="region" aria-label="Painel de notificações">
+                <button type="button" class="header-dropdown-backdrop" tabindex="-1" aria-label="@Localizer["Header.CloseNotifications"]" data-fc-notifications-close></button>
+                <div class="header-dropdown header-notifications-dropdown" role="region" aria-label="@Localizer["Header.NotificationsPanel"]">
                     <div class="header-dropdown-header header-notifications__head">
-                        <p class="header-dropdown-username">Notificações</p>
+                        <p class="header-dropdown-username">@Localizer["Header.Notifications"]</p>
                         <button type="button" class="header-notifications__mark-read" data-fc-notifications-mark-read>
-                            Marcar todas como lidas
+                            @Localizer["Header.MarkAllRead"]
                         </button>
                     </div>
                     <ul class="header-notifications__list" role="list">
@@ -83,7 +83,7 @@
                         </li>
                     </ul>
                     <div class="header-notifications__footer">
-                        <a class="header-notifications__footer-link" href="~/relatorios">Ver todas as notificações</a>
+                        <a class="header-notifications__footer-link" href="~/relatorios">@Localizer["Header.ViewAllNotifications"]</a>
                     </div>
                 </div>
             </div>
@@ -93,12 +93,12 @@
                         data-fc-profile-toggle
                         aria-expanded="false"
                         aria-haspopup="true"
-                        title="Menu do perfil"
-                        aria-label="Menu do perfil">
+                        title="@Localizer["Header.ProfileMenu"]"
+                        aria-label="@Localizer["Header.ProfileMenu"]">
                     <img src="@Model.AvatarSrc" alt="" class="header__profile-img" width="40" height="40" />
                 </button>
 
-                <button type="button" class="header-dropdown-backdrop" tabindex="-1" aria-label="Fechar menu" data-fc-profile-close></button>
+                <button type="button" class="header-dropdown-backdrop" tabindex="-1" aria-label="@Localizer["Header.CloseMenu"]" data-fc-profile-close></button>
                 <div class="header-dropdown header-profile-dropdown" role="menu">
                     <div class="header-dropdown-header">
                         <p class="header-dropdown-username">@Model.DisplayName</p>
@@ -107,19 +107,19 @@
                         <svg class="dropdown-item-icon" viewBox="0 0 24 24" aria-hidden="true">
                             <path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
                         </svg>
-                        <span>Meu Perfil</span>
+                        <span>@Localizer["Header.MyProfile"]</span>
                     </a>
                     <a class="header-dropdown-item" href="~/conta/configuracao" role="menuitem">
                         <svg class="dropdown-item-icon" viewBox="0 0 24 24" aria-hidden="true">
                             <path fill="currentColor" d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.52-.4-1.08-.73-1.69-.98l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.61.25-1.17.59-1.69.98l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.52.4 1.08.73 1.69.98l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.61-.25 1.17-.59 1.69-.98l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" />
                         </svg>
-                        <span>Configurações</span>
+                        <span>@Localizer["Header.Settings"]</span>
                     </a>
                     <a class="header-dropdown-item" href="~/conta/privacidade" role="menuitem">
                         <svg class="dropdown-item-icon" viewBox="0 0 24 24" aria-hidden="true">
                             <path fill="currentColor" d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
                         </svg>
-                        <span>Privacidade</span>
+                        <span>@Localizer["Header.Privacy"]</span>
                     </a>
                     <div class="header-dropdown-divider"></div>
                     <form method="post" action="~/logout" class="m-0">
@@ -128,7 +128,7 @@
                             <svg class="dropdown-item-icon" viewBox="0 0 24 24" aria-hidden="true">
                                 <path fill="currentColor" d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z" />
                             </svg>
-                            <span>Sair</span>
+                            <span>@Localizer["Header.Logout"]</span>
                         </button>
                     </form>
                 </div>

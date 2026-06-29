@@ -14,52 +14,52 @@
     var isRelByCategory = NavActive("relatorios/por-categoria");
     var isRelByTransactions = NavActive("relatorios/por-transacoes");
 }
-<nav class="sidebar__inner" aria-label="Navegação do portfólio">
+<nav class="sidebar__inner" aria-label="@Localizer["Nav.Portfolio"]">
     <div class="sidebar__scroll">
         <div class="sidebar__menu">
-            <a class="sidebar__item @(isHome ? "sidebar__item--active" : null)" href="~/home" title="Dashboard">
+            <a class="sidebar__item @(isHome ? "sidebar__item--active" : null)" href="~/home" title="@Localizer["Nav.Dashboard"]">
                 <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
-                <span class="sidebar__label">Dashboard</span>
+                <span class="sidebar__label">@Localizer["Nav.Dashboard"]</span>
             </a>
 
-            <a class="sidebar__item @(isTrans ? "sidebar__item--active" : null)" href="~/transacoes" title="Transações">
+            <a class="sidebar__item @(isTrans ? "sidebar__item--active" : null)" href="~/transacoes" title="@Localizer["Nav.Transactions"]">
                 <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.35-3.39-3.83V5H10v2.16c-1.97.41-3.6 1.36-3.6 3.15 0 2.19 1.77 3.23 4.6 3.9 2.48.59 3 1.35 3 2.33 0 .92-.71 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
-                <span class="sidebar__label">Transações</span>
+                <span class="sidebar__label">@Localizer["Nav.Transactions"]</span>
             </a>
 
-            <a class="sidebar__item @(isCat ? "sidebar__item--active" : null)" href="~/categorias" title="Categorias">
+            <a class="sidebar__item @(isCat ? "sidebar__item--active" : null)" href="~/categorias" title="@Localizer["Nav.Categories"]">
                 <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l-5.5 9h11L12 2zm0 18c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6-9c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM6 13c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
-                <span class="sidebar__label">Categorias</span>
+                <span class="sidebar__label">@Localizer["Nav.Categories"]</span>
             </a>
 
-            <a class="sidebar__item @(isPay ? "sidebar__item--active" : null)" href="~/meios-pagamento" title="Meios de pagamento">
+            <a class="sidebar__item @(isPay ? "sidebar__item--active" : null)" href="~/meios-pagamento" title="@Localizer["Nav.PaymentMethods"]">
                 <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4V8h16v10zm-6-6h-2v2h2v-2z"/></svg>
-                <span class="sidebar__label">Meios de pagamento</span>
+                <span class="sidebar__label">@Localizer["Nav.PaymentMethods"]</span>
             </a>
 
-            <a class="sidebar__item @(isInv ? "sidebar__item--active" : null)" href="~/dashboards/geral" title="Investimentos">
+            <a class="sidebar__item @(isInv ? "sidebar__item--active" : null)" href="~/dashboards/geral" title="@Localizer["Nav.Investments"]">
                 <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6h-6z"/></svg>
-                <span class="sidebar__label">Investimentos</span>
+                <span class="sidebar__label">@Localizer["Nav.Investments"]</span>
             </a>
 
             <details class="sidebar__group" @(isRel ? "open" : null)>
-                <summary class="sidebar__item sidebar__group-toggle @(isRel ? "sidebar__item--active" : null)" title="Relatórios">
+                <summary class="sidebar__item sidebar__group-toggle @(isRel ? "sidebar__item--active" : null)" title="@Localizer["Nav.Reports"]">
                     <span class="sidebar__group-main">
                         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7v-7zm4-3h2v10h-2V7zm4 6h2v4h-2v-4z"/></svg>
-                        <span class="sidebar__label">Relatórios</span>
+                        <span class="sidebar__label">@Localizer["Nav.Reports"]</span>
                     </span>
                     <svg class="sidebar__group-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </summary>
 
-                <div class="sidebar__submenu" aria-label="Submenu de relatórios">
+                <div class="sidebar__submenu" aria-label="@Localizer["Nav.ReportsSubmenu"]">
                     <a class="sidebar__subitem @(isRelByPaymentMethod ? "sidebar__subitem--active" : null)" href="~/relatorios/por-meio-pagamento">
-                        Relatório por meio pagamento
+                        @Localizer["Nav.ReportByPayment"]
                     </a>
                     <a class="sidebar__subitem @(isRelByCategory ? "sidebar__subitem--active" : null)" href="~/relatorios/por-categoria">
-                        Relatório por tipo categoria
+                        @Localizer["Nav.ReportByCategory"]
                     </a>
                     <a class="sidebar__subitem @(isRelByTransactions ? "sidebar__subitem--active" : null)" href="~/relatorios/por-transacoes">
-                        Relatório de transações
+                        @Localizer["Nav.ReportByTransactions"]
                     </a>
                 </div>
             </details>

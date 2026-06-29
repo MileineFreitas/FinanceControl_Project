@@ -1,6 +1,6 @@
 @model PaymentMethodViewModel
 @{
-    ViewData["Title"] = "Meios de pagamento";
+    ViewData["Title"] = Localizer["PaymentMethods.Title"].Value;
     var showModal = Model.ModalAberto || !string.IsNullOrEmpty(Model.ErroModal);
 }
 @section Styles {
@@ -16,20 +16,20 @@
 
         <header class="wt-page-head">
             <div>
-                <h1 class="wt-page-title">Meios de pagamento</h1>
-                <p class="wt-page-sub">Cadastre PIX, dinheiro, crédito, débito e outros meios usados nos lançamentos. Receita ou despesa é definida na transação.</p>
+                <h1 class="wt-page-title">@Localizer["PaymentMethods.Title"]</h1>
+                <p class="wt-page-sub">@Localizer["PaymentMethods.Subtitle"]</p>
             </div>
             <button type="button" class="wt-btn wt-btn--primary wt-btn--glow" data-wt-modal-open="wt-pay-modal">
-                + Novo meio
+                @Localizer["PaymentMethods.New"]
             </button>
         </header>
 
         <form method="get" class="wt-filters" style="margin-bottom:1rem">
             <div class="wt-field" style="flex:1">
-                <label for="busca">Buscar</label>
-                <input class="wt-input" id="busca" name="busca" value="@Model.Busca" placeholder="Nome ou código..." />
+                <label for="busca">@Localizer["Common.Search"]</label>
+                <input class="wt-input" id="busca" name="busca" value="@Model.Busca" placeholder="@Localizer["PaymentMethods.SearchPlaceholder"]" />
             </div>
-            <button type="submit" class="wt-btn wt-btn--outline">Filtrar</button>
+            <button type="submit" class="wt-btn wt-btn--outline">@Localizer["Common.Filter"]</button>
         </form>
 
         <section class="wt-card-panel">
@@ -37,7 +37,7 @@
                 @if (Model.Meios.Count == 0)
                 {
                     <p class="wt-empty-state">
-                        Nenhum meio de pagamento encontrado. Cadastre o primeiro com o botão acima ou ajuste os filtros.
+                        @Localizer["PaymentMethods.Empty"]
                     </p>
                 }
                 @foreach (var t in Model.Meios)
@@ -52,10 +52,10 @@
                         @if (t.Id != Guid.Empty)
                         {
                             <div class="wt-card-actions">
-                                <a asp-action="Edit" asp-route-id="@t.Id" asp-route-busca="@Model.Busca" class="wt-btn wt-btn--ghost" title="Editar">✎</a>
-                                <form method="post" asp-action="Delete" asp-route-id="@t.Id" asp-route-busca="@Model.Busca" class="js-pay-delete" style="display:inline" data-fc-confirm="Excluir este meio de pagamento?">
+                                <a asp-action="Edit" asp-route-id="@t.Id" asp-route-busca="@Model.Busca" class="wt-btn wt-btn--ghost" title="@Localizer["Common.Edit"]">✎</a>
+                                <form method="post" asp-action="Delete" asp-route-id="@t.Id" asp-route-busca="@Model.Busca" class="js-pay-delete" style="display:inline" data-fc-confirm="@Localizer["PaymentMethods.DeleteConfirm"]">
                                     @Html.AntiForgeryToken()
-                                    <button type="submit" class="wt-btn wt-btn--outline">Excluir</button>
+                                    <button type="submit" class="wt-btn wt-btn--outline">@Localizer["Common.Delete"]</button>
                                 </form>
                             </div>
                         }
@@ -63,7 +63,7 @@
                 }
             </div>
             <div class="wt-pagination" style="margin-top:1rem">
-                <span>@Model.Meios.Count meio(s) de pagamento</span>
+                <span>@Localizer["PaymentMethods.Count", Model.Meios.Count]</span>
             </div>
         </section>
     </div>

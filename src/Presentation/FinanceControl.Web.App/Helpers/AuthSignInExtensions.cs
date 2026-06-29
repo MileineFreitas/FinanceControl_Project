@@ -47,6 +47,8 @@ public static class AuthSignInExtensions
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
         var principal = new ClaimsPrincipal(identity);
 
+        CultureCookieHelper.SetCultureCookie(httpContext.Response, preferences.Idioma);
+
         return httpContext.SignInAsync(
             CookieAuthenticationDefaults.AuthenticationScheme,
             principal,
