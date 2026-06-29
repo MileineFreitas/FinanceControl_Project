@@ -41,7 +41,9 @@ public class CategoriesController(ICategoryCliService categoryCli) : Controller
             {
                 CategoryId = id,
                 CategoryName = vm.Input.CategoryName.Trim(),
-                Description = vm.Input.CategoryDescription?.Trim(),
+                Description = string.IsNullOrWhiteSpace(vm.Input.CategoryDescription)
+                    ? null
+                    : vm.Input.CategoryDescription.Trim(),
                 Icon = vm.Input.Icon,
                 IsActive = vm.Input.IsActive
             };

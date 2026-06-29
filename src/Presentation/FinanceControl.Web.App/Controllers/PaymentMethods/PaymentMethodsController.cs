@@ -54,7 +54,9 @@ public class PaymentMethodsController(IPaymentMethodCliService paymentMethodCli)
                 PaymentMethodId = id,
                 Name = vm.Input.Name,
                 Icon = vm.Input.Icon,
-                Description = vm.Input.Description?.Trim(),
+                Description = string.IsNullOrWhiteSpace(vm.Input.Description)
+                    ? null
+                    : vm.Input.Description.Trim(),
                 IsActive = vm.Input.IsActive
             };
             response = await paymentMethodCli.UpdateAsync(id, update);

@@ -45,16 +45,13 @@
                     <div class="wt-cat-card">
                         <div class="wt-card-icon">@t.Icone</div>
                         <div class="wt-card-name">@t.Nome</div>
-                        @if (!string.IsNullOrWhiteSpace(t.Descricao))
-                        {
-                            <p class="wt-hint" style="margin-top:.35rem">@t.Descricao</p>
-                        }
-                        <p class="wt-hint" style="margin-top:.35rem">
+                        <p class="wt-hint wt-card-desc">@t.Descricao</p>
+                        <p class="wt-hint wt-card-status">
                             <span class="wt-badge @(t.Status == "Ativo" ? "wt-badge--income" : "wt-badge--expense")">@t.Status</span>
                         </p>
                         @if (t.Id != Guid.Empty)
                         {
-                            <div style="display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap">
+                            <div class="wt-card-actions">
                                 <a asp-action="Edit" asp-route-id="@t.Id" asp-route-busca="@Model.Busca" class="wt-btn wt-btn--ghost" title="Editar">✎</a>
                                 <form method="post" asp-action="Delete" asp-route-id="@t.Id" asp-route-busca="@Model.Busca" class="js-pay-delete" style="display:inline">
                                     @Html.AntiForgeryToken()
@@ -91,8 +88,8 @@
                     <input class="wt-input" asp-for="Input.Name" placeholder="Ex.: PIX" />
                 </div>
                 <div class="wt-cat-form__field">
-                    <label class="wt-label" asp-for="Input.Description">Descrição</label>
-                    <textarea class="wt-input wt-textarea" asp-for="Input.Description" rows="3" placeholder="Opcional"></textarea>
+                    <label class="wt-label" asp-for="Input.Description">Descrição (opcional)</label>
+                    <textarea class="wt-input wt-textarea wt-textarea--auto" asp-for="Input.Description" rows="1" placeholder="Ex.: quando usar este meio de pagamento"></textarea>
                 </div>
                 <div class="wt-cat-form__field">
                     <span class="wt-label">Status</span>

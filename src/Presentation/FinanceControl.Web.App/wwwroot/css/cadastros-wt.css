@@ -192,6 +192,20 @@
     font-family: inherit;
 }
 
+.wt-textarea--auto {
+    min-height: calc(0.875rem * 1.45 + 1rem + 2px);
+    max-height: 8rem;
+    resize: vertical;
+    overflow-y: hidden;
+    field-sizing: content;
+}
+
+@supports not (field-sizing: content) {
+    .wt-textarea--auto {
+        overflow-y: auto;
+    }
+}
+
 .wt-input:focus,
 .wt-select:focus,
 .wt-textarea:focus {
@@ -720,6 +734,36 @@
     color: rgba(203, 213, 225, 0.9);
 }
 
+#categories-page .wt-cat-card .wt-card-desc,
+#payment-types-page .wt-cat-card .wt-card-desc {
+    margin: 0.35rem 0 0;
+    min-height: calc(0.75rem * 1.4 * 2);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+#categories-page .wt-cat-card .wt-card-desc:empty::before,
+#payment-types-page .wt-cat-card .wt-card-desc:empty::before {
+    content: "\00a0";
+}
+
+#categories-page .wt-cat-card .wt-card-status,
+#payment-types-page .wt-cat-card .wt-card-status {
+    margin: 0.35rem 0 0;
+}
+
+#categories-page .wt-cat-card .wt-card-actions,
+#payment-types-page .wt-cat-card .wt-card-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    flex-wrap: wrap;
+}
+
 #categories-page .wt-cat-card .wt-btn,
 #payment-types-page .wt-cat-card .wt-btn {
     font-size: 0.75rem;
@@ -808,6 +852,7 @@
 
 .wt-icone-grid .wt-icone-opt,
 button.wt-icone-opt {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -822,7 +867,7 @@ button.wt-icone-opt {
     font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
     user-select: none;
     -webkit-user-select: none;
-    transition: border-color 0.2s ease, background 0.2s ease, outline 0.2s ease;
+    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
     -webkit-tap-highlight-color: transparent;
     appearance: none;
     -webkit-appearance: none;
@@ -839,8 +884,8 @@ button.wt-icone-opt {
     cursor: inherit;
 }
 
-.wt-icone-grid .wt-icone-opt:hover,
-button.wt-icone-opt:hover {
+.wt-icone-grid .wt-icone-opt:hover:not(.wt-icone-opt--selected),
+button.wt-icone-opt:hover:not(.wt-icone-opt--selected) {
     cursor: pointer !important;
     border-color: rgba(65, 139, 224, 0.45);
     background: rgba(65, 139, 224, 0.1);
@@ -851,9 +896,32 @@ button.wt-icone-opt:hover {
     outline-offset: 2px;
 }
 
-.wt-icone-opt--selected {
-    border-color: #4189e0;
-    background: rgba(65, 139, 224, 0.18);
+.wt-icone-grid .wt-icone-opt.wt-icone-opt--selected,
+button.wt-icone-opt.wt-icone-opt--selected {
+    border-color: #7dd3fc;
+    background: rgba(65, 139, 224, 0.32);
+    box-shadow: 0 0 0 2px rgba(125, 211, 252, 0.35), 0 0 14px rgba(65, 139, 224, 0.45);
+    transform: scale(1.06);
+}
+
+.wt-icone-grid .wt-icone-opt.wt-icone-opt--selected::after,
+button.wt-icone-opt.wt-icone-opt--selected::after {
+    content: "✓";
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #7db8e8 0%, #a5b4fc 100%);
+    color: #0f172a;
+    font-size: 0.58rem;
+    font-weight: 800;
+    line-height: 15px;
+    text-align: center;
+    font-family: var(--fc-font-sans, "Inter", system-ui, sans-serif);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+    pointer-events: none;
 }
 
 .wt-bottom-grid {

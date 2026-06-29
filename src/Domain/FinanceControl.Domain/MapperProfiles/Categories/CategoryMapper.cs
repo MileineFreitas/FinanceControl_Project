@@ -23,7 +23,7 @@ public static class CategoryMapper
         new()
         {
             CategoryName = dto.CategoryName.Trim(),
-            Description = dto.CategoryDescription?.Trim(),
+            Description = string.IsNullOrWhiteSpace(dto.CategoryDescription) ? null : dto.CategoryDescription.Trim(),
             Icon = CategoryIcons.Normalize(dto.Icon),
             DateCreated = DateTime.UtcNow,
             UserId = userId,
@@ -33,7 +33,7 @@ public static class CategoryMapper
     public static void ApplyUpdate(Category entity, CategoryUpdateDto dto)
     {
         entity.CategoryName = dto.CategoryName.Trim();
-        entity.Description = dto.Description?.Trim();
+        entity.Description = string.IsNullOrWhiteSpace(dto.Description) ? null : dto.Description.Trim();
         entity.Icon = CategoryIcons.Normalize(dto.Icon);
         entity.UpdatedAt = DateTime.UtcNow;
         entity.IsActive = dto.IsActive;
