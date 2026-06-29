@@ -17,7 +17,7 @@
         <header class="wt-page-head">
             <div>
                 <h1 class="wt-page-title">Categorias</h1>
-                <p class="wt-page-sub">Cadastre categorias para classificar seus lan�amentos. Receita ou despesa � definida na transa��o.</p>
+                <p class="wt-page-sub">Cadastre categorias para classificar seus lançamentos. Receita ou despesa é definida na transação.</p>
             </div>
             <button type="button" class="wt-btn wt-btn--primary wt-btn--glow" data-wt-modal-open="wt-cat-modal">
                 + Nova categoria
@@ -52,7 +52,7 @@
                         @if (cat.CategoryId is Guid cid && cid != Guid.Empty)
                         {
                             <div style="display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap">
-                                <a asp-action="Edit" asp-route-id="@cid" asp-route-busca="@Model.Busca" class="wt-btn wt-btn--ghost" title="Editar">?</a>
+                                <a asp-action="Edit" asp-route-id="@cid" asp-route-busca="@Model.Busca" class="wt-btn wt-btn--ghost" title="Editar">✎</a>
                                 <form method="post" asp-action="Delete" asp-route-id="@cid" asp-route-busca="@Model.Busca" class="js-category-delete" style="display:inline">
                                     @Html.AntiForgeryToken()
                                     <button type="submit" class="wt-btn wt-btn--outline">Excluir</button>
@@ -80,7 +80,7 @@
             <input type="hidden" name="Busca" value="@Model.Busca" />
             <div class="wt-modal__head">
                 <h2 class="wt-modal__title">@(Model.EditingId.HasValue ? "Editar categoria" : "Nova categoria")</h2>
-                <button type="button" class="wt-modal__close" data-wt-close-modal>?</button>
+                <button type="button" class="wt-modal__close" data-wt-close-modal>✕</button>
             </div>
             <div class="wt-cat-form__fields">
                 <div class="wt-cat-form__field">
@@ -88,17 +88,17 @@
                     <input class="wt-input" asp-for="Input.CategoryName" placeholder="Ex.: Assinatura tech" />
                 </div>
                 <div class="wt-cat-form__field">
-                    <label class="wt-label" asp-for="Input.CategoryDescription">Descri��o</label>
+                    <label class="wt-label" asp-for="Input.CategoryDescription">Descrição</label>
                     <textarea class="wt-input wt-textarea" asp-for="Input.CategoryDescription" rows="3" placeholder="Opcional"></textarea>
                 </div>
                 <div class="wt-cat-form__field">
-                    <span class="wt-label">Selecionar �cone</span>
+                    <span class="wt-label">Selecionar ícone</span>
                     <input type="hidden" asp-for="Input.Icon" id="category-icon-value" />
-                    <div class="wt-icone-grid" id="category-icon-grid" role="listbox" aria-label="�cones da categoria">
+                    <div class="wt-icone-grid" id="category-icon-grid" role="listbox" aria-label="Ícones da categoria">
                         @foreach (var icone in Model.IconesDisponiveis)
                         {
                             var selected = icone == Model.Input.Icon ? " wt-icone-opt--selected" : "";
-                            <span class="wt-icone-opt@selected" role="option" tabindex="0" data-category-icon="@icone" aria-label="�cone @icone" aria-selected="@(icone == Model.Input.Icon ? "true" : "false")">@icone</span>
+                            <span class="wt-icone-opt@selected" role="option" tabindex="0" data-category-icon="@icone" aria-label="Ícone @icone" aria-selected="@(icone == Model.Input.Icon ? "true" : "false")">@icone</span>
                         }
                     </div>
                 </div>

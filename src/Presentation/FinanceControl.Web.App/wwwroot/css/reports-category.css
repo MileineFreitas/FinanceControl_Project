@@ -34,8 +34,9 @@
 .rep-cat__sub {
     margin: 0;
     font-size: 0.9rem;
-    color: rgba(148, 163, 184, 0.95);
-    max-width: 36rem;
+    color: rgba(226, 232, 240, 0.88);
+    max-width: 42rem;
+    line-height: 1.55;
 }
 
 .rep-cat__filter {

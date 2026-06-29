@@ -10,6 +10,7 @@
 
 .wt-cadastro {
     width: 100%;
+    color: #e2e8f0;
 }
 
 .wt-cadastro__inner {
@@ -46,9 +47,9 @@
 .wt-page-sub {
     margin: 0;
     font-size: 0.9rem;
-    color: rgba(226, 232, 240, 0.65);
-    max-width: 36rem;
-    line-height: 1.5;
+    color: rgba(226, 232, 240, 0.88);
+    max-width: 42rem;
+    line-height: 1.55;
 }
 
 .wt-btn {
@@ -338,7 +339,7 @@
     gap: 0.75rem;
     padding: 0.85rem 1.1rem;
     font-size: 0.8rem;
-    color: rgba(148, 163, 184, 0.85);
+    color: rgba(203, 213, 225, 0.88);
 }
 
 .wt-pagination__nums {
@@ -416,11 +417,18 @@
     color: #f87171;
 }
 
+.wt-hint {
+    margin: 0;
+    font-size: 0.8rem;
+    line-height: 1.45;
+    color: rgba(203, 213, 225, 0.92);
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
 .wt-summary-card .wt-hint {
     font-size: 0.78rem;
-    color: rgba(148, 163, 184, 0.85);
-    margin: 0;
-    line-height: 1.45;
+    color: rgba(203, 213, 225, 0.88);
 }
 
 .wt-trend-up {
@@ -480,7 +488,7 @@
     font-weight: 600;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: rgba(148, 163, 184, 0.75);
+    color: rgba(203, 213, 225, 0.85);
 }
 
 .wt-modal__close {
@@ -640,11 +648,12 @@
 
 #categories-page .wt-cat-card,
 #payment-types-page .wt-cat-card {
-    flex: 0 0 168px;
-    width: 168px;
-    max-width: 168px;
+    flex: 1 1 200px;
+    width: auto;
+    min-width: 200px;
+    max-width: 240px;
     box-sizing: border-box;
-    padding: 0.95rem 0.85rem;
+    padding: 1rem 0.95rem;
 }
 
 .wt-cat-card {
@@ -699,13 +708,16 @@
 #categories-page .wt-cat-card .wt-card-name,
 #payment-types-page .wt-cat-card .wt-card-name {
     font-size: 0.9rem;
-    line-height: 1.3;
+    line-height: 1.35;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 #categories-page .wt-cat-card .wt-hint,
 #payment-types-page .wt-cat-card .wt-hint {
-    font-size: 0.72rem;
-    line-height: 1.35;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    color: rgba(203, 213, 225, 0.9);
 }
 
 #categories-page .wt-cat-card .wt-btn,

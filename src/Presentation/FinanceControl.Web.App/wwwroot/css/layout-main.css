@@ -20,6 +20,7 @@
     min-height: calc(100vh - 80px);
     background: linear-gradient(160deg, #152238 0%, #1a2f4d 55%, #132042 100%);
     padding: 0;
+    color: #e2e8f0;
 }
 
 .page--wealth article.content {
