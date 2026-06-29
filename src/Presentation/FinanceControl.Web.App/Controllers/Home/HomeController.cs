@@ -141,7 +141,8 @@ public class HomeController(
     {
         try
         {
-            var contas = await accountCli.ListAsync();
+            var userId = User.GetUserId();
+            var contas = await accountCli.ListAsync(userId);
             return contas?.Sum(c => c.CurrentBalance) ?? 0m;
         }
         catch

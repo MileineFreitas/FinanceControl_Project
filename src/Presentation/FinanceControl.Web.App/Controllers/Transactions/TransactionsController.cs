@@ -1,4 +1,3 @@
-using FinanceControl.Client.Services.Interfaces.Accounts;
 using FinanceControl.Client.Services.Interfaces.Categories;
 using FinanceControl.Client.Services.Interfaces.PaymentMethods;
 using FinanceControl.Client.Services.Interfaces.Transactions;
@@ -18,29 +17,23 @@ public class TransactionsController : Controller
     private readonly ITransactionCliService _transactionCli;
     private readonly ICategoryCliService _categoryCli;
     private readonly IPaymentMethodCliService _paymentMethodCli;
-    private readonly IAccountCliService _accountCli;
 
     private List<TransacaoListaVm> _todas = [];
-    private Guid? _contaPadraoId;
-    private Guid? _usuarioPadraoId;
 
     public TransactionsController(
         ITransactionCliService transactionCli,
         ICategoryCliService categoryCli,
-        IPaymentMethodCliService paymentMethodCli,
-        IAccountCliService accountCli)
+        IPaymentMethodCliService paymentMethodCli)
     {
         _transactionCli = transactionCli;
         _categoryCli = categoryCli;
         _paymentMethodCli = paymentMethodCli;
-        _accountCli = accountCli;
     }
 
     [HttpGet("")]
     [HttpGet("Index")]
     public async Task<IActionResult> Index(TransactionIndexViewModel vm)
     {
-        await CarregarContaPadraoAsync(vm);
         await CarregarCategoriasAsync(vm);
         await CarregarMeiosPagamentoAsync(vm);
         await CarregarTransacoesAsync(vm);
@@ -60,8 +53,6 @@ public class TransactionsController : Controller
 
         vm.EditingId = id;
         vm.ModalAberto = true;
-
-        await CarregarContaPadraoAsync(vm);
 
         try
         {
@@ -101,8 +92,11 @@ public class TransactionsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Salvar(TransactionIndexViewModel vm)
     {
+        var userId = User.GetUserId();
+        if (userId == null)
+            return RedirectToAction("Index", "Login");
+
         vm.ModalAberto = true;
-        await CarregarContaPadraoAsync(vm);
         var categoriaIncluir = vm.Input.CategoryId != Guid.Empty ? vm.Input.CategoryId : (Guid?)null;
         var meioIncluir = vm.Input.PaymentMethodId != Guid.Empty ? vm.Input.PaymentMethodId : (Guid?)null;
         await CarregarCategoriasAsync(vm, categoriaIncluir);
@@ -122,8 +116,7 @@ public class TransactionsController : Controller
             HttpResponseMessage response;
             if (vm.EditingId is Guid editId && editId != Guid.Empty)
             {
-                var accountId = vm.AccountIdEdicao != Guid.Empty ? vm.AccountIdEdicao : _contaPadraoId ?? Guid.Empty;
-                if (accountId == Guid.Empty)
+                if (vm.AccountIdEdicao == Guid.Empty)
                 {
                     vm.ErroModal = "Conta da transação não disponível.";
                     AplicarFiltrosEPaginar(vm);
@@ -139,19 +132,12 @@ public class TransactionsController : Controller
                     TransactionTypeKind = tipo,
                     PaymentMethodId = vm.Input.PaymentMethodId,
                     CategoryId = vm.Input.CategoryId,
-                    AccountId = accountId
+                    AccountId = vm.AccountIdEdicao
                 };
                 response = await _transactionCli.UpdateAsync(editId, update);
             }
             else
             {
-                if (_contaPadraoId is not Guid accountId || _usuarioPadraoId is not Guid userId)
-                {
-                    vm.ErroModal = "Conta padrão não disponível. Verifique se a API está em execução.";
-                    AplicarFiltrosEPaginar(vm);
-                    return View("Index", vm);
-                }
-
                 var create = new TransactionCreateDto
                 {
                     TransactionDescription = vm.Input.Descricao.Trim(),
@@ -160,8 +146,7 @@ public class TransactionsController : Controller
                     TransactionTypeKind = tipo,
                     PaymentMethodId = vm.Input.PaymentMethodId,
                     CategoryId = vm.Input.CategoryId,
-                    AccountId = accountId,
-                    UserId = userId
+                    UserId = userId.Value
                 };
                 response = await _transactionCli.CreateAsync(create);
             }
@@ -230,29 +215,6 @@ public class TransactionsController : Controller
         if (vm.Pag < 1) vm.Pag = 1;
         if (vm.Pag > vm.TotalPaginas && vm.TotalPaginas > 0) vm.Pag = vm.TotalPaginas;
         vm.Transacoes = list.Skip((vm.Pag - 1) * vm.TamanhoPagina).Take(vm.TamanhoPagina).ToList();
-    }
-
-    private async Task CarregarContaPadraoAsync(TransactionIndexViewModel vm)
-    {
-        _contaPadraoId = null;
-        _usuarioPadraoId = null;
-        try
-        {
-            var contas = await _accountCli.ListAsync();
-            var conta = contas?.OrderBy(c => c.AccountId).FirstOrDefault();
-            if (conta == null)
-            {
-                vm.ApiMensagem ??= "Nenhuma conta encontrada. Verifique se a API e o seed foram executados.";
-                return;
-            }
-
-            _contaPadraoId = conta.AccountId;
-            _usuarioPadraoId = conta.UserId;
-        }
-        catch (Exception ex)
-        {
-            vm.ApiMensagem ??= $"Não foi possível carregar a conta padrão: {ex.Message}";
-        }
     }
 
     private async Task CarregarCategoriasAsync(TransactionIndexViewModel vm, Guid? incluirCategoriaId = null)

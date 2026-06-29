@@ -82,4 +82,11 @@ public class AccountRepository(FinanceDbContext context) : IAccountRepository
         account.CurrentBalance += delta;
         await context.SaveChangesAsync();
     }
+
+    public Task<Account?> GetFirstByUserIdAsync(Guid userId) =>
+        context.Accounts
+            .AsNoTracking()
+            .Where(a => a.UserId == userId && a.IsActive)
+            .OrderBy(a => a.CreatedAt)
+            .FirstOrDefaultAsync();
 }

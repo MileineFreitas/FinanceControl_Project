@@ -1,10 +1,12 @@
-﻿using FinanceControl.Contracts.Dtos.Common;
+﻿using FinanceControl.Contracts.Dtos.Accounts;
+using FinanceControl.Contracts.Dtos.Common;
 using FinanceControl.Contracts.Dtos.Transactions;
 using FinanceControl.Contracts.Filters;
 using FinanceControl.Domain.Interfaces.AppServices.Transactions;
 using FinanceControl.Domain.Interfaces.DomService.Transactions;
 using FinanceControl.Domain.Interfaces.Repositories.Accounts;
 using FinanceControl.Domain.Interfaces.Repositories.Transactions;
+using FinanceControl.Domain.MapperProfiles.Accounts;
 using FinanceControl.Domain.MapperProfiles.Transactions;
 
 namespace FinanceControl.Services.Transactions;
@@ -22,6 +24,7 @@ public class TransactionAppService(
 
     public async Task<TransactionDto> CreateAsync(TransactionCreateDto dto)
     {
+        dto.AccountId = await ResolveAccountIdAsync(dto.UserId, dto.AccountId);
         await ValidateReferencesAsync(dto.CategoryId, dto.AccountId, dto.UserId, dto.PaymentMethodId);
 
         var entity = domService.CreateFromCreateDto(dto);
@@ -77,6 +80,25 @@ public class TransactionAppService(
         await accountRepository.AdjustBalanceAsync(entity.AccountId, revertDelta);
 
         return await repository.DeleteAsync(id);
+    }
+
+    private async Task<Guid> ResolveAccountIdAsync(Guid userId, Guid accountId)
+    {
+        if (accountId != Guid.Empty)
+            return accountId;
+
+        var existing = await accountRepository.GetFirstByUserIdAsync(userId);
+        if (existing != null)
+            return existing.AccountId;
+
+        var created = await accountRepository.AddAsync(AccountMapper.ToEntity(new AccountCreateDto
+        {
+            Name = "Principal",
+            UserId = userId,
+            InitialBalance = 0,
+            IsActive = true
+        }));
+        return created.AccountId;
     }
 
     private async Task ValidateReferencesAsync(Guid categoryId, Guid accountId, Guid userId, Guid paymentMethodId)
