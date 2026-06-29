@@ -43,6 +43,10 @@ public sealed class GroupedReportViewModel
     public string ChartDespesasJson { get; set; } = "{}";
 
     public string ChartComparativoJson { get; set; } = "{}";
+
+    public string Idioma { get; set; } = "pt-BR";
+
+    public string Moeda { get; set; } = "BRL";
 }
 
 public sealed record ReportMonthOptionVm(string Value, string Label, bool Selected);
@@ -88,6 +92,10 @@ public sealed class TransactionReportViewModel
     public string ChartTipoJson { get; set; } = "{}";
 
     public string ChartDiarioJson { get; set; } = "{}";
+
+    public string Idioma { get; set; } = "pt-BR";
+
+    public string Moeda { get; set; } = "BRL";
 }
 
 public sealed record TransactionReportRowVm(

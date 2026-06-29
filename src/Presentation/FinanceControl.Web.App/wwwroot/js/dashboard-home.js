@@ -48,7 +48,7 @@
         var result = 0;
 
         if (typeof aValue === 'string' || typeof bValue === 'string') {
-            result = String(aValue).localeCompare(String(bValue), 'pt-BR');
+            result = String(aValue).localeCompare(String(bValue), window.dashLocale || 'pt-BR');
         } else if (aValue !== bValue) {
             result = aValue > bValue ? 1 : -1;
         }

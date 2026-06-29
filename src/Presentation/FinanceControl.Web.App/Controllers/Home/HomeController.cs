@@ -4,10 +4,10 @@ using FinanceControl.Client.Services.Interfaces.Transactions;
 using FinanceControl.Contracts.Dtos.Transactions;
 using FinanceControl.Contracts.Enumerators.Transactions;
 using FinanceControl.Contracts.Filters;
+using FinanceControl.Web.Helpers;
 using FinanceControl.Web.Models.ViewModels;
 using FinanceControl.Web.Models.ViewModels.Home;
 using Microsoft.AspNetCore.Mvc;
-using System.Globalization;
 
 namespace FinanceControl.Web.Controllers.Home;
 
@@ -17,13 +17,16 @@ public class HomeController(
     ICategoryCliService categoryCli,
     IAccountCliService accountCli) : Controller
 {
-    private static readonly CultureInfo PtBr = CultureInfo.GetCultureInfo("pt-BR");
-
     [HttpGet("")]
     [HttpGet("Index")]
     public async Task<IActionResult> Index()
     {
-        var vm = new HomeIndexViewModel();
+        var fmt = FinancialFormatContext.From(User);
+        var vm = new HomeIndexViewModel
+        {
+            Idioma = fmt.Idioma,
+            Moeda = fmt.Moeda
+        };
         IReadOnlyList<TransactionDto>? txs = null;
         try
         {
@@ -39,15 +42,14 @@ public class HomeController(
 
         if (txs is not { Count: > 0 })
         {
-            await PreencherEstadoVazioAsync(vm);
+            await PreencherEstadoVazioAsync(vm, fmt);
             return View("Index", vm);
         }
 
         var nomePorCategoriaId = await CarregarNomesCategoriasAsync();
 
         var now = DateTime.UtcNow;
-        var inicioMes = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc);
-        var fimMes = inicioMes.AddMonths(1);
+        var (inicioMes, fimMes) = fmt.GetFinancialMonthRange(now);
 
         decimal gastosMes = 0, receitasMes = 0;
         foreach (var t in txs)
@@ -67,19 +69,19 @@ public class HomeController(
         [
             new DashboardMetricVm(
                 "Gasto total no mês",
-                gastosMes.ToString("C", PtBr),
-                "Despesas no mês vigente",
+                fmt.FormatCurrency(gastosMes),
+                "Despesas no mês financeiro vigente",
                 true,
                 "chart"),
             new DashboardMetricVm(
                 "Receitas no mês",
-                receitasMes.ToString("C", PtBr),
-                "Entradas no mês vigente",
+                fmt.FormatCurrency(receitasMes),
+                "Entradas no mês financeiro vigente",
                 false,
                 "bank"),
             new DashboardMetricVm(
                 "Saldo em contas",
-                saldoConta.ToString("C", PtBr),
+                fmt.FormatCurrency(saldoConta),
                 "Soma do saldo atual das contas",
                 saldoConta < 0,
                 "rocket",
@@ -98,10 +100,10 @@ public class HomeController(
             var isRec = t.TransactionTypeKind == TransactionTypeKind.Receita;
             var abs = Math.Abs(t.TransactionValue);
             var valorOrdenacao = isRec ? abs : -abs;
-            var valorFmt = (isRec ? "+ " : "- ") + abs.ToString("C", PtBr);
+            var valorFmt = fmt.FormatSignedCurrency(abs, isRec);
             var sub = string.IsNullOrWhiteSpace(t.AccountName) ? $"Conta {t.AccountId}" : t.AccountName;
             var dataUtc = t.Date.UtcDateTime;
-            var dataFmt = dataUtc.ToString("dd MMM, yyyy HH:mm", PtBr);
+            var dataFmt = fmt.FormatDateTimeLong(dataUtc);
             return new DashboardTxRowVm(
                 dataFmt,
                 dataUtc.Ticks,
@@ -117,17 +119,17 @@ public class HomeController(
         return View("Index", vm);
     }
 
-    private async Task PreencherEstadoVazioAsync(HomeIndexViewModel vm)
+    private async Task PreencherEstadoVazioAsync(HomeIndexViewModel vm, FinancialFormatContext fmt)
     {
         var saldoConta = await ObterSaldoTotalContasAsync();
 
         vm.Metrics =
         [
-            new DashboardMetricVm("Gasto total no mês", 0m.ToString("C", PtBr), "—", false, "chart"),
-            new DashboardMetricVm("Receitas no mês", 0m.ToString("C", PtBr), "—", false, "bank"),
+            new DashboardMetricVm("Gasto total no mês", fmt.FormatCurrency(0), "—", false, "chart"),
+            new DashboardMetricVm("Receitas no mês", fmt.FormatCurrency(0), "—", false, "bank"),
             new DashboardMetricVm(
                 "Saldo em contas",
-                saldoConta.ToString("C", PtBr),
+                fmt.FormatCurrency(saldoConta),
                 saldoConta == 0 ? "Cadastre uma conta para começar" : "Saldo atual das contas",
                 saldoConta < 0,
                 "rocket",

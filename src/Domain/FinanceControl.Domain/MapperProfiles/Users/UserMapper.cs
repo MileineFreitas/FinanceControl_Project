@@ -12,7 +12,20 @@ public static class UserMapper
             UserName = entity.UserName,
             UserEmail = entity.UserEmail,
             ProfilePhoto = entity.ProfilePhoto,
-            IsActive = entity.IsActive
+            IsActive = entity.IsActive,
+            Moeda = entity.Currency,
+            Idioma = entity.Language,
+            FormatoData = entity.DateFormat,
+            InicioMes = entity.FinancialMonthStartDay
+        };
+
+    public static UserFinancialPreferencesDto ToPreferencesDto(User entity) =>
+        new()
+        {
+            Moeda = entity.Currency,
+            Idioma = entity.Language,
+            FormatoData = entity.DateFormat,
+            InicioMes = entity.FinancialMonthStartDay
         };
 
     public static User ToEntity(UserRegisterDto dto) =>
@@ -24,7 +37,11 @@ public static class UserMapper
             ProfilePhoto = dto.ProfilePhoto,
             DateCreated = DateTime.UtcNow,
             IsActive = true,
-            SecurityStamp = Guid.NewGuid()
+            SecurityStamp = Guid.NewGuid(),
+            Currency = FinancialPreferenceDefaults.Moeda,
+            Language = FinancialPreferenceDefaults.Idioma,
+            DateFormat = FinancialPreferenceDefaults.FormatoData,
+            FinancialMonthStartDay = FinancialPreferenceDefaults.InicioMes
         };
 
     public static void ApplyUpdate(User entity, UserUpdateDto dto)
@@ -36,5 +53,13 @@ public static class UserMapper
         if (dto.ProfilePhoto != null)
             entity.ProfilePhoto = dto.ProfilePhoto;
         entity.IsActive = dto.IsActive;
+    }
+
+    public static void ApplyFinancialPreferences(User entity, UserFinancialPreferencesDto dto)
+    {
+        entity.Currency = dto.Moeda;
+        entity.Language = dto.Idioma;
+        entity.DateFormat = dto.FormatoData;
+        entity.FinancialMonthStartDay = dto.InicioMes;
     }
 }

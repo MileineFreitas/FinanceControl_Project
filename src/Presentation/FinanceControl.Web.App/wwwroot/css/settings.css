@@ -74,6 +74,10 @@
     min-width: 0;
 }
 
+.wt-settings__content > form {
+    display: contents;
+}
+
 .wt-settings__section {
     scroll-margin-top: 1.5rem;
     padding: 1.5rem 1.65rem;
@@ -250,4 +254,29 @@
     background: rgba(153, 27, 27, 0.4);
     border-color: #f87171;
     color: #fff;
+}
+
+.wt-settings__row--stack {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+}
+
+.wt-settings__delete-fields {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 520px;
+}
+
+.wt-settings__delete-fields .wt-field--compact {
+    flex: 1;
+    min-width: 200px;
+    margin: 0;
+}
+
+.wt-settings__delete-fields .wt-btn--danger {
+    flex-shrink: 0;
 }

@@ -86,12 +86,13 @@
                         }
                         @foreach (var t in Model.Transacoes)
                         {
+                            var fmt = FinancialFormatContext.From(User);
                             var badgeClass = t.IsReceita ? "wt-badge--income" : "wt-badge--expense";
                             var numClass = t.IsReceita ? "wt-num--receita" : "wt-num--despesa";
                             var abs = Math.Abs(t.Valor);
-                            var formatted = (t.IsReceita ? "+ " : "- ") + "R$ " + abs.ToString("N2");
+                            var formatted = fmt.FormatSignedCurrency(abs, t.IsReceita);
                             <tr>
-                                <td>@t.Data.ToString("dd MMM yyyy")</td>
+                                <td>@fmt.FormatDate(t.Data)</td>
                                 <td>@t.Descricao</td>
                                 <td><span class="wt-badge @badgeClass">@t.CategoriaNome</span></td>
                                 <td style="text-align:right" class="@numClass">@formatted</td>

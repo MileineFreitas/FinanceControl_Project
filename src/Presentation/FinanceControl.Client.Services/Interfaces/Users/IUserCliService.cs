@@ -12,9 +12,13 @@ public interface IUserCliService
 
     Task<HttpResponseMessage> UpdateAsync(Guid id, UserUpdateDto dto);
 
+    Task<HttpResponseMessage> UpdateFinancialPreferencesAsync(Guid id, UserFinancialPreferencesDto dto);
+
     Task<Guid?> GetSecurityStampAsync(Guid id);
 
     Task<HttpResponseMessage> RevokeOtherSessionsAsync(Guid id);
 
     Task<HttpResponseMessage> DeleteAsync(Guid id);
+
+    Task<HttpResponseMessage> DeleteAccountAsync(Guid id, string password);
 }

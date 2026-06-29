@@ -17,7 +17,11 @@ public interface IUserAppService
 
     Task<UserDto?> UpdateAsync(UserUpdateDto dto);
 
+    Task<UserDto?> UpdateFinancialPreferencesAsync(Guid id, UserFinancialPreferencesDto dto);
+
     Task<bool> DeleteAsync(Guid id);
+
+    Task<bool> DeleteAccountAsync(Guid id, string password);
 
     Task<Guid?> GetSecurityStampAsync(Guid id);
 

@@ -13,4 +13,8 @@ public sealed class HomeIndexViewModel
     public int TransacoesMostradas { get; set; }
 
     public string? ApiMensagem { get; set; }
+
+    public string Idioma { get; set; } = "pt-BR";
+
+    public string Moeda { get; set; } = "BRL";
 }

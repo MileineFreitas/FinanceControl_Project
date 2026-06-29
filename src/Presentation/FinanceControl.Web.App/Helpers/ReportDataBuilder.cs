@@ -8,23 +8,26 @@ namespace FinanceControl.Web.Helpers;
 
 internal static class ReportDataBuilder
 {
-    private static readonly CultureInfo PtBr = CultureInfo.GetCultureInfo("pt-BR");
     private static readonly JsonSerializerOptions JsonOpts = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
-    public static GroupedReportViewModel CreateMonthShell(DateTime reference) =>
+    public static GroupedReportViewModel CreateMonthShell(DateTime reference, FinancialFormatContext fmt) =>
         new()
         {
             SelectedMonth = reference.ToString("yyyy-MM"),
-            PeriodoLabel = reference.ToString("MMMM yyyy", PtBr),
-            MonthOptions = BuildMonthOptions(reference),
+            PeriodoLabel = reference.ToString("MMMM yyyy", fmt.Culture),
+            MonthOptions = BuildMonthOptions(reference, fmt),
+            Idioma = fmt.Idioma,
+            Moeda = fmt.Moeda,
         };
 
-    public static TransactionReportViewModel CreateTransactionMonthShell(DateTime reference) =>
+    public static TransactionReportViewModel CreateTransactionMonthShell(DateTime reference, FinancialFormatContext fmt) =>
         new()
         {
             SelectedMonth = reference.ToString("yyyy-MM"),
-            PeriodoLabel = reference.ToString("MMMM yyyy", PtBr),
-            MonthOptions = BuildMonthOptions(reference),
+            PeriodoLabel = reference.ToString("MMMM yyyy", fmt.Culture),
+            MonthOptions = BuildMonthOptions(reference, fmt),
+            Idioma = fmt.Idioma,
+            Moeda = fmt.Moeda,
         };
 
     public static IReadOnlyList<TransactionDto> FilterByMonth(IReadOnlyList<TransactionDto> transactions, DateTime reference)
@@ -47,7 +50,8 @@ internal static class ReportDataBuilder
         IEnumerable<Guid> registeredGroupIds,
         Func<TransactionDto, Guid> groupKeySelector,
         Func<Guid, IReadOnlyList<TransactionDto>?, string> resolveName,
-        Func<Guid, string> resolveIcon)
+        Func<Guid, string> resolveIcon,
+        FinancialFormatContext fmt)
     {
         var noPeriodo = FilterByMonth(transactions, reference);
         var porGrupo = noPeriodo.GroupBy(groupKeySelector).ToDictionary(g => g.Key, g => g.ToList());
@@ -76,9 +80,9 @@ internal static class ReportDataBuilder
                 txs?.Count ?? 0,
                 0,
                 0,
-                receita.ToString("C", PtBr),
-                despesa.ToString("C", PtBr),
-                (receita - despesa).ToString("C", PtBr)));
+                fmt.FormatCurrency(receita),
+                fmt.FormatCurrency(despesa),
+                fmt.FormatCurrency(receita - despesa)));
         }
 
         rows = rows
@@ -91,7 +95,7 @@ internal static class ReportDataBuilder
             .ThenBy(r => r.GroupName)
             .ToList();
 
-        ApplyTotals(vm, totalReceitas, totalDespesas, noPeriodo.Count);
+        ApplyTotals(vm, totalReceitas, totalDespesas, noPeriodo.Count, fmt);
         vm.Rows = rows;
         vm.ChartDespesasJson = BuildDespesasChartJson(rows);
         vm.ChartComparativoJson = BuildComparativoChartJson(rows);
@@ -100,7 +104,8 @@ internal static class ReportDataBuilder
     public static void FillTransactionReport(
         TransactionReportViewModel vm,
         DateTime reference,
-        IReadOnlyList<TransactionDto> transactions)
+        IReadOnlyList<TransactionDto> transactions,
+        FinancialFormatContext fmt)
     {
         var noPeriodo = FilterByMonth(transactions, reference).OrderByDescending(t => t.Date).ToList();
         decimal totalReceitas = 0, totalDespesas = 0;
@@ -114,9 +119,9 @@ internal static class ReportDataBuilder
         }
 
         var saldo = totalReceitas - totalDespesas;
-        vm.TotalReceitasFmt = totalReceitas.ToString("C", PtBr);
-        vm.TotalDespesasFmt = totalDespesas.ToString("C", PtBr);
-        vm.SaldoFmt = saldo.ToString("C", PtBr);
+        vm.TotalReceitasFmt = fmt.FormatCurrency(totalReceitas);
+        vm.TotalDespesasFmt = fmt.FormatCurrency(totalDespesas);
+        vm.SaldoFmt = fmt.FormatCurrency(saldo);
         vm.SaldoNegativo = saldo < 0;
         vm.TemDados = noPeriodo.Count > 0;
         vm.TotalTransacoes = noPeriodo.Count;
@@ -125,10 +130,10 @@ internal static class ReportDataBuilder
         {
             var isRec = t.TransactionTypeKind == TransactionTypeKind.Receita;
             var abs = Math.Abs(t.TransactionValue);
-            var valueFmt = (isRec ? "+ " : "- ") + abs.ToString("C", PtBr);
+            var valueFmt = fmt.FormatSignedCurrency(abs, isRec);
             return new TransactionReportRowVm(
                 t.Date.UtcDateTime,
-                t.Date.UtcDateTime.ToString("dd/MM/yyyy HH:mm", PtBr),
+                fmt.FormatDateTime(t.Date.UtcDateTime),
                 string.IsNullOrWhiteSpace(t.TransactionDescription) ? "—" : t.TransactionDescription.Trim(),
                 string.IsNullOrWhiteSpace(t.CategoryName) ? "—" : t.CategoryName.Trim(),
                 string.IsNullOrWhiteSpace(t.PaymentMethodName) ? "—" : t.PaymentMethodName.Trim(),
@@ -144,15 +149,15 @@ internal static class ReportDataBuilder
             values = new[] { totalReceitas, totalDespesas },
         }, JsonOpts);
 
-        vm.ChartDiarioJson = BuildDailyChartJson(noPeriodo, reference);
+        vm.ChartDiarioJson = BuildDailyChartJson(noPeriodo, reference, fmt);
     }
 
-    public static DateTime? ParseMonth(string? mes)
+    public static DateTime? ParseMonth(string? mes, FinancialFormatContext fmt)
     {
         if (string.IsNullOrWhiteSpace(mes))
             return null;
 
-        if (DateTime.TryParseExact(mes.Trim(), "yyyy-MM", PtBr, DateTimeStyles.None, out var parsed))
+        if (DateTime.TryParseExact(mes.Trim(), "yyyy-MM", fmt.Culture, DateTimeStyles.None, out var parsed))
             return MonthStart(parsed);
 
         return null;
@@ -161,7 +166,7 @@ internal static class ReportDataBuilder
     private static DateTime MonthStart(DateTime date) =>
         new(date.Year, date.Month, 1, 0, 0, 0, DateTimeKind.Utc);
 
-    private static List<ReportMonthOptionVm> BuildMonthOptions(DateTime reference)
+    private static List<ReportMonthOptionVm> BuildMonthOptions(DateTime reference, FinancialFormatContext fmt)
     {
         var now = DateTime.UtcNow;
         var options = new List<ReportMonthOptionVm>();
@@ -171,19 +176,19 @@ internal static class ReportDataBuilder
             var month = MonthStart(now).AddMonths(-i);
             options.Add(new ReportMonthOptionVm(
                 month.ToString("yyyy-MM"),
-                month.ToString("MMMM yyyy", PtBr),
+                month.ToString("MMMM yyyy", fmt.Culture),
                 month.Year == reference.Year && month.Month == reference.Month));
         }
 
         return options;
     }
 
-    private static void ApplyTotals(GroupedReportViewModel vm, decimal totalReceitas, decimal totalDespesas, int count)
+    private static void ApplyTotals(GroupedReportViewModel vm, decimal totalReceitas, decimal totalDespesas, int count, FinancialFormatContext fmt)
     {
         var saldo = totalReceitas - totalDespesas;
-        vm.TotalReceitasFmt = totalReceitas.ToString("C", PtBr);
-        vm.TotalDespesasFmt = totalDespesas.ToString("C", PtBr);
-        vm.SaldoFmt = saldo.ToString("C", PtBr);
+        vm.TotalReceitasFmt = fmt.FormatCurrency(totalReceitas);
+        vm.TotalDespesasFmt = fmt.FormatCurrency(totalDespesas);
+        vm.SaldoFmt = fmt.FormatCurrency(saldo);
         vm.SaldoNegativo = saldo < 0;
         vm.TemDados = count > 0;
     }
@@ -231,7 +236,7 @@ internal static class ReportDataBuilder
         }, JsonOpts);
     }
 
-    private static string BuildDailyChartJson(IReadOnlyList<TransactionDto> noPeriodo, DateTime reference)
+    private static string BuildDailyChartJson(IReadOnlyList<TransactionDto> noPeriodo, DateTime reference, FinancialFormatContext fmt)
     {
         var daysInMonth = DateTime.DaysInMonth(reference.Year, reference.Month);
         var labels = new List<string>();
@@ -240,7 +245,7 @@ internal static class ReportDataBuilder
 
         for (var day = 1; day <= daysInMonth; day++)
         {
-            labels.Add(day.ToString("00", PtBr));
+            labels.Add(day.ToString("00", fmt.Culture));
             var dayStart = new DateTime(reference.Year, reference.Month, day, 0, 0, 0, DateTimeKind.Utc);
             var dayEnd = dayStart.AddDays(1);
 

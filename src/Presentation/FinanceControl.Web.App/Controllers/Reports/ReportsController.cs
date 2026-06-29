@@ -34,10 +34,14 @@ public class ReportsController(
     public async Task<IActionResult> PorTransacoes([FromQuery] string? mes) =>
         View("PorTransacoes", await BuildTransactionReportAsync(mes));
 
+    private FinancialFormatContext GetFormatContext() =>
+        FinancialFormatContext.From(User);
+
     private async Task<GroupedReportViewModel> BuildCategoryReportAsync(string? mes)
     {
-        var reference = ReportDataBuilder.ParseMonth(mes) ?? DateTime.UtcNow;
-        var vm = ReportDataBuilder.CreateMonthShell(reference);
+        var fmt = GetFormatContext();
+        var reference = ReportDataBuilder.ParseMonth(mes, fmt) ?? DateTime.UtcNow;
+        var vm = ReportDataBuilder.CreateMonthShell(reference, fmt);
         vm.PageTitle = "Resumo por categoria";
         vm.PageSubtitle = "Distribuição de receitas e despesas conforme suas categorias cadastradas.";
         vm.DoughnutTitle = "Despesas por categoria";
@@ -58,15 +62,17 @@ public class ReportsController(
             lookup.Keys,
             t => t.CategoryId,
             (id, txs) => ResolveCategoryName(id, lookup, txs),
-            id => lookup.TryGetValue(id, out var c) ? CategoryIcons.Normalize(c.Icon) : CategoryIcons.Default);
+            id => lookup.TryGetValue(id, out var c) ? CategoryIcons.Normalize(c.Icon) : CategoryIcons.Default,
+            fmt);
 
         return vm;
     }
 
     private async Task<GroupedReportViewModel> BuildPaymentMethodReportAsync(string? mes)
     {
-        var reference = ReportDataBuilder.ParseMonth(mes) ?? DateTime.UtcNow;
-        var vm = ReportDataBuilder.CreateMonthShell(reference);
+        var fmt = GetFormatContext();
+        var reference = ReportDataBuilder.ParseMonth(mes, fmt) ?? DateTime.UtcNow;
+        var vm = ReportDataBuilder.CreateMonthShell(reference, fmt);
         vm.PageTitle = "Resumo por meio de pagamento";
         vm.PageSubtitle = "Distribuição de receitas e despesas conforme os meios de pagamento cadastrados.";
         vm.DoughnutTitle = "Despesas por meio de pagamento";
@@ -98,15 +104,17 @@ public class ReportsController(
             lookup.Keys,
             t => t.PaymentMethodId,
             (id, txs) => ResolvePaymentMethodName(id, lookup, txs),
-            id => lookup.TryGetValue(id, out var p) ? PaymentMethodIcons.Normalize(p.Icon) : PaymentMethodIcons.Default);
+            id => lookup.TryGetValue(id, out var p) ? PaymentMethodIcons.Normalize(p.Icon) : PaymentMethodIcons.Default,
+            fmt);
 
         return vm;
     }
 
     private async Task<TransactionReportViewModel> BuildTransactionReportAsync(string? mes)
     {
-        var reference = ReportDataBuilder.ParseMonth(mes) ?? DateTime.UtcNow;
-        var vm = ReportDataBuilder.CreateTransactionMonthShell(reference);
+        var fmt = GetFormatContext();
+        var reference = ReportDataBuilder.ParseMonth(mes, fmt) ?? DateTime.UtcNow;
+        var vm = ReportDataBuilder.CreateTransactionMonthShell(reference, fmt);
 
         try
         {
@@ -114,7 +122,7 @@ public class ReportsController(
             if (txData?.Result == null)
                 vm.ApiMensagem = "Não foi possível carregar transações da API.";
             else
-                ReportDataBuilder.FillTransactionReport(vm, reference, txData.Result);
+                ReportDataBuilder.FillTransactionReport(vm, reference, txData.Result, fmt);
         }
         catch
         {

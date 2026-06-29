@@ -45,8 +45,27 @@ public class UserAppService(
         return await repository.GetByIdAsync(entity.UserId);
     }
 
+    public async Task<UserDto?> UpdateFinancialPreferencesAsync(Guid id, UserFinancialPreferencesDto dto)
+    {
+        var entity = await repository.FindTrackedAsync(id);
+        if (entity == null) return null;
+
+        domService.ApplyFinancialPreferences(entity, dto);
+        await repository.SaveChangesAsync();
+        return await repository.GetByIdAsync(entity.UserId);
+    }
+
     public Task<bool> DeleteAsync(Guid id) =>
         repository.DeleteAsync(id);
+
+    public async Task<bool> DeleteAccountAsync(Guid id, string password)
+    {
+        var entity = await repository.FindTrackedAsync(id);
+        if (entity == null) return false;
+
+        domService.ValidateDeleteAccount(entity, password);
+        return await repository.DeleteAsync(id);
+    }
 
     public Task<Guid?> GetSecurityStampAsync(Guid id) =>
         repository.GetSecurityStampAsync(id);

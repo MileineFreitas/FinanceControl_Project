@@ -1,12 +1,12 @@
-using System.Globalization;
 using FinanceControl.Client.Services.Interfaces.Accounts;
 using FinanceControl.Client.Services.Interfaces.Categories;
-using FinanceControl.Client.Services.Interfaces.Transactions;
 using FinanceControl.Client.Services.Interfaces.PaymentMethods;
+using FinanceControl.Client.Services.Interfaces.Transactions;
 using FinanceControl.Contracts.Constants;
 using FinanceControl.Contracts.Dtos.Transactions;
 using FinanceControl.Contracts.Enumerators.Transactions;
 using FinanceControl.Contracts.Filters;
+using FinanceControl.Web.Helpers;
 using FinanceControl.Web.Models.ViewModels.Transactions;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,8 +15,6 @@ namespace FinanceControl.Web.Controllers.Transactions;
 [Route("transacoes")]
 public class TransactionsController : Controller
 {
-    private static readonly CultureInfo PtBr = CultureInfo.GetCultureInfo("pt-BR");
-
     private readonly ITransactionCliService _transactionCli;
     private readonly ICategoryCliService _categoryCli;
     private readonly IPaymentMethodCliService _paymentMethodCli;
@@ -406,9 +404,11 @@ public class TransactionsController : Controller
 
     private void AtualizarResumos(TransactionIndexViewModel vm, IReadOnlyList<TransacaoListaVm> filtradas)
     {
+        var fmt = FinancialFormatContext.From(User);
+
         if (filtradas.Count == 0)
         {
-            vm.ResumoSaldoMensal = "R$ 0,00";
+            vm.ResumoSaldoMensal = fmt.FormatCurrency(0);
             vm.ResumoSaldoMensalNegativo = false;
             vm.ResumoMaiorGasto = "—";
             vm.AlertaOrcamento = "Nenhuma transação nos filtros atuais.";
@@ -416,7 +416,7 @@ public class TransactionsController : Controller
         }
 
         var saldo = filtradas.Sum(t => t.IsReceita ? t.Valor : -t.Valor);
-        vm.ResumoSaldoMensal = saldo.ToString("C", PtBr);
+        vm.ResumoSaldoMensal = fmt.FormatCurrency(saldo);
         vm.ResumoSaldoMensalNegativo = saldo < 0;
 
         var maiorDespesa = filtradas

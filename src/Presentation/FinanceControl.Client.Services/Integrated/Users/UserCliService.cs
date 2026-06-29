@@ -1,5 +1,6 @@
 using System.Net.Http.Json;
 using FinanceControl.Client.Services.Interfaces.Users;
+using FinanceControl.Contracts.Dtos.Auth;
 using FinanceControl.Contracts.Dtos.Common;
 using FinanceControl.Contracts.Dtos.Users;
 using FinanceControl.Contracts.Filters;
@@ -23,6 +24,9 @@ public sealed class UserCliService(HttpClient httpClient) : IUserCliService
     public Task<HttpResponseMessage> UpdateAsync(Guid id, UserUpdateDto dto) =>
         httpClient.PutAsJsonAsync($"{BaseRoute}/{id}/user-update", dto);
 
+    public Task<HttpResponseMessage> UpdateFinancialPreferencesAsync(Guid id, UserFinancialPreferencesDto dto) =>
+        httpClient.PutAsJsonAsync($"{BaseRoute}/{id}/financial-preferences", dto);
+
     public async Task<Guid?> GetSecurityStampAsync(Guid id)
     {
         var response = await httpClient.GetAsync($"{BaseRoute}/{id}/security-stamp");
@@ -37,6 +41,9 @@ public sealed class UserCliService(HttpClient httpClient) : IUserCliService
 
     public Task<HttpResponseMessage> DeleteAsync(Guid id) =>
         httpClient.DeleteAsync($"{BaseRoute}/{id}");
+
+    public Task<HttpResponseMessage> DeleteAccountAsync(Guid id, string password) =>
+        httpClient.PostAsJsonAsync($"{BaseRoute}/{id}/delete-account", new DeleteAccountRequestDto { Password = password });
 
     private sealed class SecurityStampResponse
     {

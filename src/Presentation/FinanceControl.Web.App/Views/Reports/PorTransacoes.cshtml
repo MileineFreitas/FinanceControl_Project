@@ -1,7 +1,7 @@
 @model FinanceControl.Web.Models.ViewModels.Reports.TransactionReportViewModel
 @{
     ViewData["Title"] = "Relatório de transações";
-    var cultura = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
+    var cultura = FinancialFormatHelper.GetCulture(Model.Idioma, Model.Moeda);
     var periodoCapitalizado = char.ToUpper(Model.PeriodoLabel[0], cultura) + Model.PeriodoLabel[1..];
 }
 @section Styles {
@@ -134,6 +134,8 @@
         <script>
             window.repCharts = {
                 mode: 'transactions',
+                locale: '@Model.Idioma',
+                currency: '@Model.Moeda',
                 tipo: @Html.Raw(Model.ChartTipoJson),
                 diario: @Html.Raw(Model.ChartDiarioJson)
             };

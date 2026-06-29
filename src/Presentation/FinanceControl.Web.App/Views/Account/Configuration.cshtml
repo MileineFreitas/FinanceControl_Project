@@ -1,3 +1,4 @@
+@model FinanceControl.Web.Models.ViewModels.Account.ConfigurationViewModel
 @{
     ViewData["Title"] = "Configurar conta";
     var sucesso = TempData["ConfigSucesso"] as string;
@@ -42,7 +43,8 @@
             </aside>
 
             <!-- Conteúdo -->
-            <form method="post" asp-action="Configuracao" class="wt-settings__content">
+            <div class="wt-settings__content">
+            <form method="post" asp-action="Configuracao">
                 @Html.AntiForgeryToken()
 
                 <!-- Preferências -->
@@ -57,32 +59,32 @@
                     <div class="wt-settings__grid">
                         <div class="wt-field">
                             <label for="cfg-moeda">Moeda</label>
-                            <select id="cfg-moeda" name="Moeda" class="wt-select wt-input--block">
-                                <option value="BRL" selected>Real brasileiro (R$)</option>
+                            <select asp-for="Moeda" id="cfg-moeda" class="wt-select wt-input--block">
+                                <option value="BRL">Real brasileiro (R$)</option>
                                 <option value="USD">Dólar americano (US$)</option>
                                 <option value="EUR">Euro (€)</option>
                             </select>
                         </div>
                         <div class="wt-field">
                             <label for="cfg-idioma">Idioma</label>
-                            <select id="cfg-idioma" name="Idioma" class="wt-select wt-input--block">
-                                <option value="pt-BR" selected>Português (Brasil)</option>
+                            <select asp-for="Idioma" id="cfg-idioma" class="wt-select wt-input--block">
+                                <option value="pt-BR">Português (Brasil)</option>
                                 <option value="en-US">English (US)</option>
                                 <option value="es-ES">Español</option>
                             </select>
                         </div>
                         <div class="wt-field">
                             <label for="cfg-formato-data">Formato de data</label>
-                            <select id="cfg-formato-data" name="FormatoData" class="wt-select wt-input--block">
-                                <option value="dd/MM/yyyy" selected>DD/MM/AAAA</option>
+                            <select asp-for="FormatoData" id="cfg-formato-data" class="wt-select wt-input--block">
+                                <option value="dd/MM/yyyy">DD/MM/AAAA</option>
                                 <option value="MM/dd/yyyy">MM/DD/AAAA</option>
                                 <option value="yyyy-MM-dd">AAAA-MM-DD</option>
                             </select>
                         </div>
                         <div class="wt-field">
                             <label for="cfg-inicio-mes">Início do mês financeiro</label>
-                            <select id="cfg-inicio-mes" name="InicioMes" class="wt-select wt-input--block">
-                                <option value="1" selected>Dia 1</option>
+                            <select asp-for="InicioMes" id="cfg-inicio-mes" class="wt-select wt-input--block">
+                                <option value="1">Dia 1</option>
                                 <option value="5">Dia 5</option>
                                 <option value="10">Dia 10</option>
                                 <option value="15">Dia 15</option>
@@ -251,6 +253,10 @@
                     <a href="~/home" class="wt-btn wt-btn--outline">Cancelar</a>
                     <button type="submit" class="wt-btn wt-btn--primary wt-btn--glow">Salvar alterações</button>
                 </div>
+            </form>
+
+            <form method="post" asp-action="ExcluirConta">
+                @Html.AntiForgeryToken()
 
                 <!-- Zona de perigo -->
                 <section id="zona-perigo" class="wt-card-panel wt-settings__section wt-settings__section--danger">
@@ -262,15 +268,23 @@
                         </div>
                     </div>
 
-                    <div class="wt-settings__row">
+                    <div class="wt-settings__row wt-settings__row--stack">
                         <div class="wt-settings__row-text">
                             <p class="wt-settings__row-title">Excluir conta</p>
-                            <p class="wt-settings__row-desc">Remove permanentemente sua conta e todos os dados financeiros associados.</p>
+                            <p class="wt-settings__row-desc">Remove permanentemente sua conta e todos os dados financeiros associados. Informe sua senha para confirmar.</p>
                         </div>
-                        <div class="wt-settings__row-control">
+                        <div class="wt-settings__delete-fields">
+                            <div class="wt-field wt-field--compact">
+                                <label for="senha-exclusao">Senha</label>
+                                <input type="password"
+                                       id="senha-exclusao"
+                                       name="SenhaExclusao"
+                                       class="wt-input wt-input--block"
+                                       autocomplete="current-password"
+                                       placeholder="Digite sua senha atual"
+                                       required />
+                            </div>
                             <button type="submit"
-                                    formaction="@Url.Action("ExcluirConta", "Account")"
-                                    formmethod="post"
                                     class="wt-btn wt-btn--danger"
                                     onclick="return confirm('Tem certeza que deseja excluir sua conta? Todos os seus dados financeiros serão removidos permanentemente e esta ação não pode ser desfeita.');">
                                 Excluir conta
@@ -279,6 +293,7 @@
                     </div>
                 </section>
             </form>
+            </div>
         </div>
     </div>
 </div>

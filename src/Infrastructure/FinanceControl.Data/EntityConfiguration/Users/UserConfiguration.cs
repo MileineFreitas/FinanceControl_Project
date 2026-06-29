@@ -23,5 +23,9 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .IsRequired()
             .HasDefaultValueSql("NEWID()");
         builder.Property(u => u.DateCreated).IsRequired();
+        builder.Property(u => u.Currency).HasMaxLength(3).IsRequired().HasDefaultValue("BRL");
+        builder.Property(u => u.Language).HasMaxLength(10).IsRequired().HasDefaultValue("pt-BR");
+        builder.Property(u => u.DateFormat).HasMaxLength(20).IsRequired().HasDefaultValue("dd/MM/yyyy");
+        builder.Property(u => u.FinancialMonthStartDay).IsRequired().HasDefaultValue(1);
     }
 }

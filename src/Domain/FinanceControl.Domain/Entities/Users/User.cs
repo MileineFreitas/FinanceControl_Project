@@ -19,6 +19,10 @@ public class User : IUser
     public bool IsActive { get; set; } = true;
     public Guid SecurityStamp { get; set; } = Guid.NewGuid();
     public DateTime DateCreated { get; set; }
+    public string Currency { get; set; } = "BRL";
+    public string Language { get; set; } = "pt-BR";
+    public string DateFormat { get; set; } = "dd/MM/yyyy";
+    public int FinancialMonthStartDay { get; set; } = 1;
     [JsonIgnore]
     public ICollection<Transaction>? Transactions { get; set; }
     [JsonIgnore]

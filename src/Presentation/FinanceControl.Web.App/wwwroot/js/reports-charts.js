@@ -7,7 +7,9 @@
         '#a78bfa', '#fb923c', '#2dd4bf', '#94a3b8', '#ef4444'
     ];
 
-    var currency = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+    var locale = (data && data.locale) || 'pt-BR';
+    var currencyCode = (data && data.currency) || 'BRL';
+    var currency = new Intl.NumberFormat(locale, { style: 'currency', currency: currencyCode });
 
     Chart.defaults.color = 'rgba(148, 163, 184, 0.95)';
     Chart.defaults.borderColor = 'rgba(65, 139, 224, 0.15)';
