@@ -1,6 +1,7 @@
 @{
     ViewData["Title"] = "Configurar conta";
     var sucesso = TempData["ConfigSucesso"] as string;
+    var erro = TempData["ConfigErro"] as string;
 }
 @section Styles {
     <link rel="stylesheet" href="~/css/cadastros-wt.css" asp-append-version="true" />
@@ -12,6 +13,10 @@
         @if (!string.IsNullOrEmpty(sucesso))
         {
             <div class="wt-alert wt-alert--success" role="status">@sucesso</div>
+        }
+        @if (!string.IsNullOrEmpty(erro))
+        {
+            <div class="wt-alert wt-alert--error" role="alert">@erro</div>
         }
 
         <header class="wt-page-head">
@@ -206,11 +211,17 @@
 
                     <div class="wt-settings__row">
                         <div class="wt-settings__row-text">
-                            <p class="wt-settings__row-title">Encerrar outras sessões</p>
-                            <p class="wt-settings__row-desc">Desconecte sua conta de todos os outros dispositivos.</p>
+                            <p class="wt-settings__row-title">Encerrar sessões</p>
+                            <p class="wt-settings__row-desc">Desconecte sua conta de todos os dispositivos, incluindo este.</p>
                         </div>
                         <div class="wt-settings__row-control">
-                            <button type="button" class="wt-btn wt-btn--outline">Encerrar sessões</button>
+                            <button type="submit"
+                                    formaction="@Url.Action("EncerrarSessoes", "Account")"
+                                    formmethod="post"
+                                    class="wt-btn wt-btn--outline"
+                                    onclick="return confirm('Desconectar sua conta de todos os dispositivos? Você precisará fazer login novamente.');">
+                                Encerrar sessões
+                            </button>
                         </div>
                     </div>
                 </section>

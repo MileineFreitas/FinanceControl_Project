@@ -11,4 +11,8 @@ public interface IUserCliService
     Task<UserDto?> GetByIdAsync(Guid id);
 
     Task<HttpResponseMessage> UpdateAsync(Guid id, UserUpdateDto dto);
+
+    Task<Guid?> GetSecurityStampAsync(Guid id);
+
+    Task<HttpResponseMessage> RevokeOtherSessionsAsync(Guid id);
 }

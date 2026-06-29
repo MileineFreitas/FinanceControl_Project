@@ -19,6 +19,9 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.Password).HasMaxLength(20).IsRequired();
         builder.Property(u => u.ProfilePhoto).HasColumnType("nvarchar(max)").IsRequired(false);
         builder.Property(u => u.IsActive).IsRequired().HasDefaultValue(true);
+        builder.Property(u => u.SecurityStamp)
+            .IsRequired()
+            .HasDefaultValueSql("NEWID()");
         builder.Property(u => u.DateCreated).IsRequired();
     }
 }

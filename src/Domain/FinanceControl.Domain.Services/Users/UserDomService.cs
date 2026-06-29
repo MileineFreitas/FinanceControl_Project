@@ -16,7 +16,8 @@ public class UserDomService : IUserDomService
         {
             UserId = user.UserId,
             Name = user.UserName ?? string.Empty,
-            Email = user.UserEmail ?? string.Empty
+            Email = user.UserEmail ?? string.Empty,
+            SecurityStamp = user.SecurityStamp
         };
     }
 

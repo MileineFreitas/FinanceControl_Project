@@ -80,4 +80,25 @@ public class UserRepository(FinanceDbContext context) : IUserRepository
 
     public Task<bool> EmailExistsAsync(string email) =>
         context.Users.AnyAsync(u => u.UserEmail == email);
+
+    public async Task<Guid?> GetSecurityStampAsync(Guid id)
+    {
+        var stamp = await context.Users
+            .AsNoTracking()
+            .Where(u => u.UserId == id)
+            .Select(u => (Guid?)u.SecurityStamp)
+            .FirstOrDefaultAsync();
+
+        return stamp;
+    }
+
+    public async Task<Guid?> RevokeOtherSessionsAsync(Guid id)
+    {
+        var entity = await context.Users.FirstOrDefaultAsync(u => u.UserId == id);
+        if (entity == null) return null;
+
+        entity.SecurityStamp = Guid.NewGuid();
+        await context.SaveChangesAsync();
+        return entity.SecurityStamp;
+    }
 }

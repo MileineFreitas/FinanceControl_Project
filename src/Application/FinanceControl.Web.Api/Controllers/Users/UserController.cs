@@ -75,4 +75,20 @@ public class UserController(IUserAppService appService) : ControllerBase
         var deleted = await appService.DeleteAsync(id);
         return deleted ? Ok("Usuario excluido") : NotFound("Id invalido");
     }
+
+    [HttpGet("{id:guid}/security-stamp")]
+    public async Task<IActionResult> GetSecurityStamp(Guid id)
+    {
+        var stamp = await appService.GetSecurityStampAsync(id);
+        return stamp == null ? NotFound("Usuario não encontrado...") : Ok(new { securityStamp = stamp.Value });
+    }
+
+    [HttpPost("{id:guid}/revoke-sessions")]
+    public async Task<IActionResult> RevokeSessions(Guid id)
+    {
+        var stamp = await appService.RevokeOtherSessionsAsync(id);
+        return stamp == null
+            ? NotFound("Usuario não encontrado...")
+            : Ok(new RevokeSessionsResponseDto { SecurityStamp = stamp.Value });
+    }
 }

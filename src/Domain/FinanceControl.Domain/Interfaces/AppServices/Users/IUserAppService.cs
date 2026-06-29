@@ -18,4 +18,8 @@ public interface IUserAppService
     Task<UserDto?> UpdateAsync(UserUpdateDto dto);
 
     Task<bool> DeleteAsync(Guid id);
+
+    Task<Guid?> GetSecurityStampAsync(Guid id);
+
+    Task<Guid?> RevokeOtherSessionsAsync(Guid id);
 }

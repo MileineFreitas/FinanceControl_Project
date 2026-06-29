@@ -1,9 +1,13 @@
+using FinanceControl.Client.Services.Interfaces.Users;
+using FinanceControl.Web.Helpers;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceControl.Web.Controllers.Account;
 
 [Route("conta")]
-public class AccountController : Controller
+public class AccountController(IUserCliService userCli) : Controller
 {
     [HttpGet("configuracao")]
     public IActionResult Configuracao() => View("Configuration");
@@ -13,6 +17,35 @@ public class AccountController : Controller
     public IActionResult Configuracao(IFormCollection form)
     {
         TempData["ConfigSucesso"] = "Configurações salvas com sucesso.";
+        return RedirectToAction(nameof(Configuracao));
+    }
+
+    [HttpPost("encerrar-sessoes")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EncerrarSessoes()
+    {
+        var userId = User.GetUserId();
+        if (userId == null)
+            return RedirectToAction("Index", "Login");
+
+        try
+        {
+            var response = await userCli.RevokeOtherSessionsAsync(userId.Value);
+            if (!response.IsSuccessStatusCode)
+            {
+                TempData["ConfigErro"] = "Não foi possível encerrar as sessões. Tente novamente.";
+                return RedirectToAction(nameof(Configuracao));
+            }
+
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            TempData["LoginInfo"] = "Todas as sessões foram encerradas. Faça login novamente.";
+            return RedirectToAction("Index", "Login");
+        }
+        catch (Exception)
+        {
+            TempData["ConfigErro"] = "Não foi possível encerrar as sessões. Tente novamente.";
+        }
+
         return RedirectToAction(nameof(Configuracao));
     }
 

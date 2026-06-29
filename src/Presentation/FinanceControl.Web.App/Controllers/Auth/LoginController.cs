@@ -1,8 +1,8 @@
 using System.Net;
 using System.Net.Http.Json;
-using System.Security.Claims;
 using FinanceControl.Client.Services.Interfaces;
 using FinanceControl.Contracts.Dtos.Auth;
+using FinanceControl.Web.Helpers;
 using FinanceControl.Web.Models.ViewModels.Auth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -26,7 +26,10 @@ public class LoginController : Controller
         if (User.Identity?.IsAuthenticated == true)
             return RedirectToAction("Index", "Home");
 
-        return View(new LoginViewModel());
+        return View(new LoginViewModel
+        {
+            Message = TempData["LoginInfo"] as string ?? string.Empty
+        });
     }
 
     [HttpPost("")]
@@ -53,7 +56,7 @@ public class LoginController : Controller
                     return View(vm);
                 }
 
-                await SignInUserAsync(result);
+                await HttpContext.SignInUserAsync(result);
                 return RedirectToAction("Index", "Home");
             }
 
@@ -80,27 +83,5 @@ public class LoginController : Controller
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return RedirectToAction(nameof(Index));
-    }
-
-    private async Task SignInUserAsync(LoginResponseDto user)
-    {
-        var claims = new List<Claim>
-        {
-            new(ClaimTypes.NameIdentifier, user.UserId.ToString()),
-            new(ClaimTypes.Name, user.Name),
-            new(ClaimTypes.Email, user.Email),
-        };
-
-        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-        var principal = new ClaimsPrincipal(identity);
-
-        await HttpContext.SignInAsync(
-            CookieAuthenticationDefaults.AuthenticationScheme,
-            principal,
-            new AuthenticationProperties
-            {
-                IsPersistent = true,
-                ExpiresUtc = DateTimeOffset.UtcNow.AddHours(8),
-            });
     }
 }

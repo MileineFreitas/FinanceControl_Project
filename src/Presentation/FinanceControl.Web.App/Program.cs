@@ -1,4 +1,5 @@
 using FinanceControl.Client.Services.DependencyInjection;
+using FinanceControl.Web.Middleware;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -46,6 +47,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthentication();
+app.UseMiddleware<SecurityStampValidationMiddleware>();
 app.UseAuthorization();
 
 app.MapControllerRoute(

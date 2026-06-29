@@ -47,4 +47,10 @@ public class UserAppService(
 
     public Task<bool> DeleteAsync(Guid id) =>
         repository.DeleteAsync(id);
+
+    public Task<Guid?> GetSecurityStampAsync(Guid id) =>
+        repository.GetSecurityStampAsync(id);
+
+    public Task<Guid?> RevokeOtherSessionsAsync(Guid id) =>
+        repository.RevokeOtherSessionsAsync(id);
 }

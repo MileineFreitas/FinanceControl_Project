@@ -23,7 +23,8 @@ public static class UserMapper
             Password = dto.Password,
             ProfilePhoto = dto.ProfilePhoto,
             DateCreated = DateTime.UtcNow,
-            IsActive = true
+            IsActive = true,
+            SecurityStamp = Guid.NewGuid()
         };
 
     public static void ApplyUpdate(User entity, UserUpdateDto dto)

@@ -23,4 +23,8 @@ public interface IUserRepository
     Task<User?> FindByEmailAndPasswordAsync(string email, string password);
 
     Task<bool> EmailExistsAsync(string email);
+
+    Task<Guid?> GetSecurityStampAsync(Guid id);
+
+    Task<Guid?> RevokeOtherSessionsAsync(Guid id);
 }
