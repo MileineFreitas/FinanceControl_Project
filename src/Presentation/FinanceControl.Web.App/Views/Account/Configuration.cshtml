@@ -245,16 +245,6 @@
                             <a href="~/conta/privacidade" class="wt-btn wt-btn--ghost">Ver política</a>
                         </div>
                     </div>
-
-                    <div class="wt-settings__row">
-                        <div class="wt-settings__row-text">
-                            <p class="wt-settings__row-title">Exportar meus dados</p>
-                            <p class="wt-settings__row-desc">Baixe uma cópia das suas transações e cadastros (CSV).</p>
-                        </div>
-                        <div class="wt-settings__row-control">
-                            <button type="button" class="wt-btn wt-btn--outline">Exportar dados</button>
-                        </div>
-                    </div>
                 </section>
 
                 <div class="wt-settings__actions">
@@ -278,7 +268,13 @@
                             <p class="wt-settings__row-desc">Remove permanentemente sua conta e todos os dados financeiros associados.</p>
                         </div>
                         <div class="wt-settings__row-control">
-                            <button type="button" class="wt-btn wt-btn--danger">Excluir conta</button>
+                            <button type="submit"
+                                    formaction="@Url.Action("ExcluirConta", "Account")"
+                                    formmethod="post"
+                                    class="wt-btn wt-btn--danger"
+                                    onclick="return confirm('Tem certeza que deseja excluir sua conta? Todos os seus dados financeiros serão removidos permanentemente e esta ação não pode ser desfeita.');">
+                                Excluir conta
+                            </button>
                         </div>
                     </div>
                 </section>

@@ -49,6 +49,35 @@ public class AccountController(IUserCliService userCli) : Controller
         return RedirectToAction(nameof(Configuracao));
     }
 
+    [HttpPost("excluir-conta")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ExcluirConta()
+    {
+        var userId = User.GetUserId();
+        if (userId == null)
+            return RedirectToAction("Index", "Login");
+
+        try
+        {
+            var response = await userCli.DeleteAsync(userId.Value);
+            if (!response.IsSuccessStatusCode)
+            {
+                TempData["ConfigErro"] = "Não foi possível excluir a conta. Tente novamente.";
+                return RedirectToAction(nameof(Configuracao));
+            }
+
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            TempData["LoginInfo"] = "Sua conta foi excluída permanentemente.";
+            return RedirectToAction("Index", "Login");
+        }
+        catch (Exception)
+        {
+            TempData["ConfigErro"] = "Não foi possível excluir a conta. Tente novamente.";
+        }
+
+        return RedirectToAction(nameof(Configuracao));
+    }
+
     [HttpGet("privacidade")]
     public IActionResult Privacidade() => View("Privacy");
 }

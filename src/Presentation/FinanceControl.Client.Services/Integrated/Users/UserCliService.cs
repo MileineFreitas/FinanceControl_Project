@@ -35,6 +35,9 @@ public sealed class UserCliService(HttpClient httpClient) : IUserCliService
     public Task<HttpResponseMessage> RevokeOtherSessionsAsync(Guid id) =>
         httpClient.PostAsync($"{BaseRoute}/{id}/revoke-sessions", null);
 
+    public Task<HttpResponseMessage> DeleteAsync(Guid id) =>
+        httpClient.DeleteAsync($"{BaseRoute}/{id}");
+
     private sealed class SecurityStampResponse
     {
         public Guid SecurityStamp { get; set; }

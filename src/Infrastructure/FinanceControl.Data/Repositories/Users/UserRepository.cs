@@ -69,8 +69,27 @@ public class UserRepository(FinanceDbContext context) : IUserRepository
         var entity = await context.Users.FirstOrDefaultAsync(u => u.UserId == id);
         if (entity == null) return false;
 
+        await using var transaction = await context.Database.BeginTransactionAsync();
+
+        await context.Transactions
+            .Where(t => t.UserId == id)
+            .ExecuteDeleteAsync();
+
+        await context.Accounts
+            .Where(a => a.UserId == id)
+            .ExecuteDeleteAsync();
+
+        await context.PaymentMethods
+            .Where(p => p.UserId == id)
+            .ExecuteDeleteAsync();
+
+        await context.Categories
+            .Where(c => c.UserId == id)
+            .ExecuteDeleteAsync();
+
         context.Users.Remove(entity);
         await context.SaveChangesAsync();
+        await transaction.CommitAsync();
         return true;
     }
 

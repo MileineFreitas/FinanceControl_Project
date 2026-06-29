@@ -15,4 +15,6 @@ public interface IUserCliService
     Task<Guid?> GetSecurityStampAsync(Guid id);
 
     Task<HttpResponseMessage> RevokeOtherSessionsAsync(Guid id);
+
+    Task<HttpResponseMessage> DeleteAsync(Guid id);
 }
