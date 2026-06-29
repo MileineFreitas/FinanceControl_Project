@@ -1,14 +1,18 @@
 @{
     var path = (ViewContext.HttpContext.Request.Path.Value ?? "").Trim('/').ToLowerInvariant();
-    var isHome = path is "home" or "";
-    var isTrans = path.StartsWith("transacoes", StringComparison.Ordinal) || path.StartsWith("transactions", StringComparison.Ordinal);
-    var isCat = path.StartsWith("categorias", StringComparison.Ordinal);
-    var isPay = path.StartsWith("meios-pagamento", StringComparison.Ordinal) || path.StartsWith("tipos-transacao", StringComparison.Ordinal);
-    var isInv = path.StartsWith("dashboards", StringComparison.Ordinal);
-    var isRel = path.StartsWith("relatorios", StringComparison.Ordinal);
-    var isRelByPaymentMethod = path.StartsWith("relatorios/por-meio-pagamento", StringComparison.Ordinal);
-    var isRelByCategory = path.StartsWith("relatorios/por-categoria", StringComparison.Ordinal);
-    var isRelByTransactions = path.StartsWith("relatorios/por-transacoes", StringComparison.Ordinal);
+
+    bool NavActive(string segment) =>
+        path == segment || path.StartsWith(segment + "/", StringComparison.Ordinal);
+
+    var isHome = NavActive("home");
+    var isTrans = NavActive("transacoes") || NavActive("transactions");
+    var isCat = NavActive("categorias");
+    var isPay = NavActive("meios-pagamento") || NavActive("tipos-transacao");
+    var isInv = NavActive("dashboards");
+    var isRel = NavActive("relatorios");
+    var isRelByPaymentMethod = NavActive("relatorios/por-meio-pagamento");
+    var isRelByCategory = NavActive("relatorios/por-categoria");
+    var isRelByTransactions = NavActive("relatorios/por-transacoes");
 }
 <nav class="sidebar__inner" aria-label="Navegação do portfólio">
     <div class="sidebar__scroll">
