@@ -13,8 +13,8 @@ public class CategoryAppService(
     ICategoryRepository repository,
     ICategoryDomService domService) : ICategoryAppService
 {
-    public Task<DataResultDto<CategoryDto>> FilterAsync(DataFilterDto filter) =>
-        repository.FilterAsync(filter);
+    public Task<DataResultDto<CategoryDto>> FilterAsync(DataFilterDto filter, bool activeOnly = false) =>
+        repository.FilterAsync(filter, activeOnly);
 
     public Task<CategoryDto?> GetByIdAsync(Guid id) =>
         repository.GetByIdAsync(id);

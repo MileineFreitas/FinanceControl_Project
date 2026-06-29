@@ -64,9 +64,6 @@ public class TransactionsController : Controller
         vm.ModalAberto = true;
 
         await CarregarContaPadraoAsync(vm);
-        await CarregarCategoriasAsync(vm);
-        await CarregarMeiosPagamentoAsync(vm);
-        await CarregarTransacoesAsync(vm);
 
         try
         {
@@ -76,10 +73,16 @@ public class TransactionsController : Controller
                 vm.ApiMensagem = "Transação não encontrada.";
                 vm.EditingId = null;
                 vm.ModalAberto = false;
+                await CarregarCategoriasAsync(vm);
+                await CarregarMeiosPagamentoAsync(vm);
+                await CarregarTransacoesAsync(vm);
                 AplicarFiltrosEPaginar(vm);
                 return View("Index", vm);
             }
 
+            await CarregarCategoriasAsync(vm, dto.CategoryId);
+            await CarregarMeiosPagamentoAsync(vm, dto.PaymentMethodId);
+            await CarregarTransacoesAsync(vm);
             PreencherFormularioEdicao(vm, dto);
         }
         catch (Exception ex)
@@ -87,6 +90,9 @@ public class TransactionsController : Controller
             vm.ApiMensagem = $"Não foi possível carregar a transação: {ex.Message}";
             vm.EditingId = null;
             vm.ModalAberto = false;
+            await CarregarCategoriasAsync(vm);
+            await CarregarMeiosPagamentoAsync(vm);
+            await CarregarTransacoesAsync(vm);
         }
 
         AplicarFiltrosEPaginar(vm);
@@ -99,8 +105,10 @@ public class TransactionsController : Controller
     {
         vm.ModalAberto = true;
         await CarregarContaPadraoAsync(vm);
-        await CarregarCategoriasAsync(vm);
-        await CarregarMeiosPagamentoAsync(vm);
+        var categoriaIncluir = vm.Input.CategoryId != Guid.Empty ? vm.Input.CategoryId : (Guid?)null;
+        var meioIncluir = vm.Input.PaymentMethodId != Guid.Empty ? vm.Input.PaymentMethodId : (Guid?)null;
+        await CarregarCategoriasAsync(vm, categoriaIncluir);
+        await CarregarMeiosPagamentoAsync(vm, meioIncluir);
         await CarregarTransacoesAsync(vm);
 
         if (!ValidarFormulario(vm, out var tipo))
@@ -249,27 +257,39 @@ public class TransactionsController : Controller
         }
     }
 
-    private async Task CarregarCategoriasAsync(TransactionIndexViewModel vm)
+    private async Task CarregarCategoriasAsync(TransactionIndexViewModel vm, Guid? incluirCategoriaId = null)
     {
         vm.CategoriasOpcoes.Clear();
         try
         {
             var data = await _categoryCli.ListAsync(
-                new DataFilterDto { Page = 1, PageSize = 200 });
+                new DataFilterDto { Page = 1, PageSize = 200 },
+                includeInactive: false);
 
-            if (data?.Result is { Count: > 0 })
+            if (data?.Result is not { Count: > 0 })
             {
-                foreach (var c in data.Result.OrderBy(c => c.CategoryName))
+                if (incluirCategoriaId is Guid incluirId && incluirId != Guid.Empty)
                 {
-                    vm.CategoriasOpcoes.Add(new CategoriaOpcaoVm(
-                        c.CategoryId,
-                        c.CategoryName ?? "—",
-                        CategoryIcons.Normalize(c.Icon)));
+                    await IncluirCategoriaOpcionalAsync(vm, incluirId);
                 }
+
+                if (vm.CategoriasOpcoes.Count == 0)
+                    vm.ApiMensagem ??= "Nenhuma categoria ativa cadastrada.";
                 return;
             }
 
-            vm.ApiMensagem ??= "Nenhuma categoria cadastrada.";
+            foreach (var c in data.Result
+                         .Where(c => c.IsActive)
+                         .OrderBy(c => c.CategoryName))
+            {
+                vm.CategoriasOpcoes.Add(new CategoriaOpcaoVm(
+                    c.CategoryId,
+                    c.CategoryName ?? "—",
+                    CategoryIcons.Normalize(c.Icon)));
+            }
+
+            if (incluirCategoriaId is Guid categoriaId && categoriaId != Guid.Empty)
+                await IncluirCategoriaOpcionalAsync(vm, categoriaId);
         }
         catch (Exception ex)
         {
@@ -277,7 +297,22 @@ public class TransactionsController : Controller
         }
     }
 
-    private async Task CarregarMeiosPagamentoAsync(TransactionIndexViewModel vm)
+    private async Task IncluirCategoriaOpcionalAsync(TransactionIndexViewModel vm, Guid categoriaId)
+    {
+        if (vm.CategoriasOpcoes.Any(c => c.Id == categoriaId))
+            return;
+
+        var categoria = await _categoryCli.GetByIdAsync(categoriaId);
+        if (categoria == null)
+            return;
+
+        vm.CategoriasOpcoes.Add(new CategoriaOpcaoVm(
+            categoria.CategoryId,
+            categoria.CategoryName ?? "—",
+            CategoryIcons.Normalize(categoria.Icon)));
+    }
+
+    private async Task CarregarMeiosPagamentoAsync(TransactionIndexViewModel vm, Guid? incluirMeioId = null)
     {
         vm.MeiosPagamentoOpcoes.Clear();
         try
@@ -293,11 +328,29 @@ public class TransactionsController : Controller
                         PaymentMethodIcons.Normalize(m.Icon)));
                 }
             }
+
+            if (incluirMeioId is Guid meioId && meioId != Guid.Empty)
+                await IncluirMeioPagamentoOpcionalAsync(vm, meioId);
         }
         catch (Exception ex)
         {
             vm.ApiMensagem ??= $"Não foi possível carregar meios de pagamento: {ex.Message}";
         }
+    }
+
+    private async Task IncluirMeioPagamentoOpcionalAsync(TransactionIndexViewModel vm, Guid meioId)
+    {
+        if (vm.MeiosPagamentoOpcoes.Any(m => m.Id == meioId))
+            return;
+
+        var meio = await _paymentMethodCli.GetByIdAsync(meioId);
+        if (meio == null)
+            return;
+
+        vm.MeiosPagamentoOpcoes.Add(new MeioPagamentoOpcaoVm(
+            meio.PaymentMethodId,
+            meio.Name,
+            PaymentMethodIcons.Normalize(meio.Icon)));
     }
 
     private async Task CarregarTransacoesAsync(TransactionIndexViewModel vm)
@@ -420,6 +473,12 @@ public class TransactionsController : Controller
         if (vm.Input.CategoryId == Guid.Empty)
         {
             vm.ErroModal = "Selecione uma categoria.";
+            return false;
+        }
+
+        if (vm.CategoriasOpcoes.All(c => c.Id != vm.Input.CategoryId))
+        {
+            vm.ErroModal = "Categoria inválida ou inativa.";
             return false;
         }
 

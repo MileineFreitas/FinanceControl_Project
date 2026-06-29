@@ -49,6 +49,9 @@
                         {
                             <p class="wt-hint" style="margin-top:.35rem">@cat.Descricao</p>
                         }
+                        <p class="wt-hint" style="margin-top:.35rem">
+                            <span class="wt-badge @(cat.Status == "Ativo" ? "wt-badge--income" : "wt-badge--expense")">@cat.Status</span>
+                        </p>
                         @if (cat.CategoryId is Guid cid && cid != Guid.Empty)
                         {
                             <div style="display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap">
@@ -92,13 +95,25 @@
                     <textarea class="wt-input wt-textarea" asp-for="Input.CategoryDescription" rows="3" placeholder="Opcional"></textarea>
                 </div>
                 <div class="wt-cat-form__field">
+                    <span class="wt-label">Status</span>
+                    <div class="wt-segment" role="radiogroup" aria-label="Status da categoria">
+                        <input type="radio" asp-for="Input.IsActive" id="cat-status-active" value="true" />
+                        <label for="cat-status-active">Ativo</label>
+                        <input type="radio" asp-for="Input.IsActive" id="cat-status-inactive" value="false" />
+                        <label for="cat-status-inactive">Inativo</label>
+                    </div>
+                    <p class="wt-hint" style="margin-top:.45rem">Itens inativos não aparecem em novos lançamentos.</p>
+                </div>
+                <div class="wt-cat-form__field">
                     <span class="wt-label">Selecionar ícone</span>
                     <input type="hidden" asp-for="Input.Icon" id="category-icon-value" />
                     <div class="wt-icone-grid" id="category-icon-grid" role="listbox" aria-label="Ícones da categoria">
                         @foreach (var icone in Model.IconesDisponiveis)
                         {
                             var selected = icone == Model.Input.Icon ? " wt-icone-opt--selected" : "";
-                            <span class="wt-icone-opt@selected" role="option" tabindex="0" data-category-icon="@icone" aria-label="Ícone @icone" aria-selected="@(icone == Model.Input.Icon ? "true" : "false")">@icone</span>
+                            <button type="button" class="wt-icone-opt@(selected)" role="option" data-category-icon="@icone" aria-label="Ícone @icone" aria-selected="@(icone == Model.Input.Icon ? "true" : "false")">
+                                <span class="wt-icone-opt__glyph" aria-hidden="true">@icone</span>
+                            </button>
                         }
                     </div>
                 </div>

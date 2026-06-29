@@ -8,7 +8,7 @@ namespace FinanceControl.Domain.Interfaces.Repositories.Categories;
 
 public interface ICategoryRepository
 {
-    Task<DataResultDto<CategoryDto>> FilterAsync(DataFilterDto filter);
+    Task<DataResultDto<CategoryDto>> FilterAsync(DataFilterDto filter, bool activeOnly = false);
 
     Task<CategoryDto?> GetByIdAsync(Guid id);
 

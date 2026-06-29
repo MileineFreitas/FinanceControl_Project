@@ -42,7 +42,8 @@ public class CategoriesController(ICategoryCliService categoryCli) : Controller
                 CategoryId = id,
                 CategoryName = vm.Input.CategoryName.Trim(),
                 Description = vm.Input.CategoryDescription?.Trim(),
-                Icon = vm.Input.Icon
+                Icon = vm.Input.Icon,
+                IsActive = vm.Input.IsActive
             };
             response = await categoryCli.UpdateAsync(id, update);
         }
@@ -71,7 +72,8 @@ public class CategoriesController(ICategoryCliService categoryCli) : Controller
             {
                 CategoryName = dto.CategoryName ?? "",
                 CategoryDescription = dto.Description ?? "",
-                Icon = CategoryIcons.Normalize(dto.Icon)
+                Icon = CategoryIcons.Normalize(dto.Icon),
+                IsActive = dto.IsActive
             };
         }
 
@@ -104,7 +106,7 @@ public class CategoriesController(ICategoryCliService categoryCli) : Controller
 
         try
         {
-            var data = await categoryCli.ListAsync(filter);
+            var data = await categoryCli.ListAsync(filter, includeInactive: true);
             vm.Categorias = (data?.Result ?? []).Select(CategoryViewModelMapper.ToItem).ToList();
         }
         catch (Exception ex)

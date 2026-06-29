@@ -6,7 +6,7 @@ namespace FinanceControl.Client.Services.Interfaces.Categories;
 
 public interface ICategoryCliService
 {
-    Task<DataResultDto<CategoryDto>?> ListAsync(DataFilterDto? filter = null);
+    Task<DataResultDto<CategoryDto>?> ListAsync(DataFilterDto? filter = null, bool includeInactive = true);
 
     Task<CategoryDto?> GetByIdAsync(Guid id);
 

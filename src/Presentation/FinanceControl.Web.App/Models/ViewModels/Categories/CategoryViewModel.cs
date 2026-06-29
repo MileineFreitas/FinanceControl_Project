@@ -22,7 +22,7 @@ public class CategoryViewModel
     public IReadOnlyList<string> IconesDisponiveis { get; } = CategoryIcons.Available;
 }
 
-public sealed record CategoryItemVm(Guid? CategoryId, string Icone, string Nome, string? Descricao);
+public sealed record CategoryItemVm(Guid? CategoryId, string Icone, string Nome, string Status, string? Descricao);
 
 public static class CategoryViewModelMapper
 {
@@ -31,5 +31,6 @@ public static class CategoryViewModelMapper
             dto.CategoryId,
             CategoryIcons.Normalize(dto.Icon),
             dto.CategoryName ?? "—",
+            dto.IsActive ? "Ativo" : "Inativo",
             dto.Description);
 }

@@ -797,6 +797,7 @@
     width: 100%;
     box-sizing: border-box;
     justify-items: center;
+    cursor: pointer;
 }
 
 @media (max-width: 520px) {
@@ -805,7 +806,8 @@
     }
 }
 
-.wt-icone-opt {
+.wt-icone-grid .wt-icone-opt,
+button.wt-icone-opt {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -814,16 +816,32 @@
     border: 2px solid transparent;
     border-radius: 8px;
     background: none;
-    cursor: pointer;
+    cursor: pointer !important;
     font-size: 1.5rem;
     line-height: 1;
     font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
     user-select: none;
+    -webkit-user-select: none;
     transition: border-color 0.2s ease, background 0.2s ease, outline 0.2s ease;
     -webkit-tap-highlight-color: transparent;
+    appearance: none;
+    -webkit-appearance: none;
+    color: inherit;
+    min-width: 2.25rem;
+    min-height: 2.25rem;
 }
 
-.wt-icone-opt:hover {
+.wt-icone-opt__glyph {
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+    line-height: 1;
+    cursor: inherit;
+}
+
+.wt-icone-grid .wt-icone-opt:hover,
+button.wt-icone-opt:hover {
+    cursor: pointer !important;
     border-color: rgba(65, 139, 224, 0.45);
     background: rgba(65, 139, 224, 0.1);
 }
