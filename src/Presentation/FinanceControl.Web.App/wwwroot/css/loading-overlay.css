@@ -1,0 +1,60 @@
+.fc-loading-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.18s ease, visibility 0.18s ease;
+    pointer-events: none;
+}
+
+.fc-loading-overlay.is-visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: all;
+}
+
+.fc-loading-overlay__panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.75rem 2.5rem;
+    border-radius: 1rem;
+    background: rgba(30, 41, 59, 0.92);
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.35);
+}
+
+.fc-loading-overlay__spinner {
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 3px solid rgba(125, 184, 232, 0.25);
+    border-top-color: #7db8e8;
+    border-radius: 50%;
+    animation: fc-loading-spin 0.75s linear infinite;
+}
+
+.fc-loading-overlay__text {
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #f8fafc;
+}
+
+body.fc-loading-active {
+    overflow: hidden;
+}
+
+@keyframes fc-loading-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

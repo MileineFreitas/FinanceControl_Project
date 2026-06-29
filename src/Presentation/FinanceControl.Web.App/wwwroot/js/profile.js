@@ -20,7 +20,9 @@
             var file = fileInput.files && fileInput.files[0];
             if (!file) return;
             if (file.size > 2 * 1024 * 1024) {
-                alert('A imagem deve ter no máximo 2 MB.');
+                if (window.FcDialog) {
+                    window.FcDialog.alert('A imagem deve ter no máximo 2 MB.', { variant: 'error', title: 'Arquivo inválido' });
+                }
                 fileInput.value = '';
                 return;
             }

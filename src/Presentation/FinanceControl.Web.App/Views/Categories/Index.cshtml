@@ -53,7 +53,7 @@
                         {
                             <div class="wt-card-actions">
                                 <a asp-action="Edit" asp-route-id="@cid" asp-route-busca="@Model.Busca" class="wt-btn wt-btn--ghost" title="Editar">✎</a>
-                                <form method="post" asp-action="Delete" asp-route-id="@cid" asp-route-busca="@Model.Busca" class="js-category-delete" style="display:inline">
+                                <form method="post" asp-action="Delete" asp-route-id="@cid" asp-route-busca="@Model.Busca" class="js-category-delete" style="display:inline" data-fc-confirm="Excluir esta categoria? Transações vinculadas impedem a exclusão.">
                                     @Html.AntiForgeryToken()
                                     <button type="submit" class="wt-btn wt-btn--outline">Excluir</button>
                                 </form>
@@ -129,6 +129,5 @@
 
 @section Scripts {
     <script src="~/js/cadastros-wt.js" asp-append-version="true"></script>
-    <script src="~/js/Categories.js" asp-append-version="true"></script>
 }
 

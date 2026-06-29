@@ -110,7 +110,7 @@
                                                asp-route-FiltroCategoriaId="@Model.FiltroCategoriaId"
                                                asp-route-Busca="@Model.Busca"
                                                title="Editar">✎</a>
-                                            <form method="post" asp-controller="Transactions" asp-action="Excluir" asp-route-id="@t.Id" style="display:inline" onsubmit="return confirm('Excluir esta transação?');">
+                                            <form method="post" asp-controller="Transactions" asp-action="Excluir" asp-route-id="@t.Id" style="display:inline" data-fc-confirm="Excluir esta transação?">
                                                 <button type="submit" class="wt-btn wt-btn--ghost" title="Excluir">🗑</button>
                                             </form>
                                         </div>

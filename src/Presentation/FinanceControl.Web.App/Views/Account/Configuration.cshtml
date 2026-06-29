@@ -221,7 +221,7 @@
                                     formaction="@Url.Action("EncerrarSessoes", "Account")"
                                     formmethod="post"
                                     class="wt-btn wt-btn--outline"
-                                    onclick="return confirm('Desconectar sua conta de todos os dispositivos? Você precisará fazer login novamente.');">
+                                    data-fc-confirm="Desconectar sua conta de todos os dispositivos? Você precisará fazer login novamente.">
                                 Encerrar sessões
                             </button>
                         </div>
@@ -286,7 +286,8 @@
                             </div>
                             <button type="submit"
                                     class="wt-btn wt-btn--danger"
-                                    onclick="return confirm('Tem certeza que deseja excluir sua conta? Todos os seus dados financeiros serão removidos permanentemente e esta ação não pode ser desfeita.');">
+                                    data-fc-confirm="Tem certeza que deseja excluir sua conta? Todos os seus dados financeiros serão removidos permanentemente e esta ação não pode ser desfeita."
+                                    data-fc-confirm-danger="true">
                                 Excluir conta
                             </button>
                         </div>

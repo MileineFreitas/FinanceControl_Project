@@ -1,0 +1,145 @@
+.fc-dialog-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(5, 10, 20, 0.72);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    pointer-events: none;
+}
+
+.fc-dialog-overlay.is-visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: all;
+}
+
+.fc-dialog {
+    width: 100%;
+    max-width: 420px;
+    color-scheme: dark;
+    padding: 1.75rem 1.85rem;
+    border-radius: 16px;
+    background: linear-gradient(165deg, #121a2d 0%, #0f1830 100%);
+    border: 1px solid rgba(125, 184, 232, 0.25);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(65, 139, 224, 0.08);
+    transform: translateY(12px) scale(0.98);
+    transition: transform 0.22s ease;
+}
+
+.fc-dialog-overlay.is-visible .fc-dialog {
+    transform: translateY(0) scale(1);
+}
+
+.fc-dialog__icon {
+    width: 3rem;
+    height: 3rem;
+    margin: 0 auto 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 1.35rem;
+    font-weight: 700;
+}
+
+.fc-dialog--info .fc-dialog__icon {
+    background: rgba(65, 139, 224, 0.18);
+    color: #7db8e8;
+}
+
+.fc-dialog--success .fc-dialog__icon {
+    background: rgba(34, 197, 94, 0.16);
+    color: #4ade80;
+}
+
+.fc-dialog--error .fc-dialog__icon {
+    background: rgba(248, 113, 113, 0.16);
+    color: #f87171;
+}
+
+.fc-dialog--confirm .fc-dialog__icon {
+    background: rgba(251, 191, 36, 0.16);
+    color: #fbbf24;
+}
+
+.fc-dialog__title {
+    margin: 0 0 0.65rem;
+    text-align: center;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #f8fafc;
+    letter-spacing: -0.01em;
+}
+
+.fc-dialog__message {
+    margin: 0;
+    text-align: center;
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: rgba(226, 232, 240, 0.88);
+}
+
+.fc-dialog__footer {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 1.65rem;
+    flex-wrap: wrap;
+}
+
+.fc-dialog__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 7rem;
+    padding: 0.65rem 1.35rem;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.fc-dialog__btn--primary {
+    background: linear-gradient(135deg, #7db8e8, #a5b4fc);
+    color: #0f172a;
+    box-shadow: 0 6px 24px rgba(165, 180, 252, 0.35);
+}
+
+.fc-dialog__btn--primary:hover {
+    box-shadow: 0 8px 28px rgba(165, 180, 252, 0.5);
+}
+
+.fc-dialog__btn--danger {
+    background: linear-gradient(135deg, #f87171, #ef4444);
+    color: #fff;
+    box-shadow: 0 6px 24px rgba(248, 113, 113, 0.35);
+}
+
+.fc-dialog__btn--outline {
+    background: rgba(15, 30, 61, 0.8);
+    border-color: rgba(65, 139, 224, 0.3);
+    color: rgba(226, 232, 240, 0.9);
+}
+
+.fc-dialog__btn--outline:hover {
+    border-color: #4189e0;
+    color: #fff;
+}
+
+body.fc-dialog-open {
+    overflow: hidden;
+}
+
+.fc-dialog-source-hidden {
+    display: none !important;
+}
