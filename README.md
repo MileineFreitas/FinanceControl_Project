@@ -545,6 +545,8 @@ User ──┬── Category
 
 ![Diagrama C4 — Componentes](https://github.com/user-attachments/assets/64d2e2ba-6754-4570-b772-4cd2d9fda546)
 
+<img width="3703" height="3226" alt="Diagrama_C4" src="https://github.com/user-attachments/assets/334fe3d1-833a-41ed-bac5-e25e60c029cc" />
+
 ---
 
 ## Pacotes necessários
