@@ -12,12 +12,15 @@ namespace FinanceControl.Infrastructure.Repositories.Categories;
 
 public class CategoryRepository(FinanceDbContext context) : ICategoryRepository
 {
-    public async Task<DataResultDto<CategoryDto>> FilterAsync(DataFilterDto filter)
+    public async Task<DataResultDto<CategoryDto>> FilterAsync(DataFilterDto filter, bool activeOnly = false)
     {
         var query = context.Categories
             .AsNoTracking()
             .OrderBy(c => c.CategoryName)
             .AsQueryable();
+
+        if (activeOnly)
+            query = query.Where(c => c.IsActive);
 
         if (filter.Filters != null &&
             filter.Filters.TryGetValue("search", out var search) &&

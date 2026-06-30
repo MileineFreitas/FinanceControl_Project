@@ -1,6 +1,298 @@
+@model FinanceControl.Web.Models.ViewModels.Account.ConfigurationViewModel
 @{
-    ViewData["Title"] = "Configurar conta";
+    ViewData["Title"] = Localizer["Settings.Title"].Value;
+    var sucesso = TempData["ConfigSucesso"] as string;
+    var erro = TempData["ConfigErro"] as string;
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/cadastros-wt.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/settings.css" asp-append-version="true" />
 }
 
-<h1 class="h4 mb-3">Configurar conta</h1>
-<p class="text-muted">Defina preferências da conta (e-mail, senha, notificações, etc.). Esta página pode ser preenchida conforme as regras do seu backend.</p>
+<div class="wt-cadastro" id="settings-page">
+    <div class="wt-cadastro__inner">
+        @if (!string.IsNullOrEmpty(sucesso))
+        {
+            <div class="wt-alert wt-alert--success" role="status">@sucesso</div>
+        }
+        @if (!string.IsNullOrEmpty(erro))
+        {
+            <div class="wt-alert wt-alert--error" role="alert">@erro</div>
+        }
+
+        <header class="wt-page-head">
+            <div>
+                <h1 class="wt-page-title">@Localizer["Settings.PageTitle"]</h1>
+                <p class="wt-page-sub">@Localizer["Settings.PageSub"]</p>
+            </div>
+        </header>
+
+        <div class="wt-settings__layout">
+            <!-- Navegação lateral -->
+            <aside class="wt-card-panel wt-settings__nav">
+                <ul class="wt-settings__nav-list">
+                    <li><a href="#preferencias"><span class="ico">⚙️</span> @Localizer["Settings.NavPreferences"]</a></li>
+                    <li><a href="#notificacoes"><span class="ico">🔔</span> @Localizer["Settings.NavNotifications"]</a></li>
+                    <li><a href="#aparencia"><span class="ico">🎨</span> @Localizer["Settings.NavAppearance"]</a></li>
+                    <li><a href="#seguranca"><span class="ico">🔒</span> @Localizer["Settings.NavSecurity"]</a></li>
+                    <li><a href="#privacidade"><span class="ico">🛡️</span> @Localizer["Settings.NavPrivacy"]</a></li>
+                    <li><a href="#zona-perigo"><span class="ico">⚠️</span> @Localizer["Settings.NavDanger"]</a></li>
+                </ul>
+            </aside>
+
+            <!-- Conteúdo -->
+            <div class="wt-settings__content">
+            <form method="post" asp-action="Configuracao">
+                @Html.AntiForgeryToken()
+
+                <!-- Preferências -->
+                <section id="preferencias" class="wt-card-panel wt-settings__section">
+                    <div class="wt-settings__section-head">
+                        <span class="wt-settings__section-icon">⚙️</span>
+                        <div>
+                            <h2 class="wt-settings__section-title">@Localizer["Settings.FinancialTitle"]</h2>
+                            <p class="wt-settings__section-sub">@Localizer["Settings.FinancialSub"]</p>
+                        </div>
+                    </div>
+                    <div class="wt-settings__grid">
+                        <div class="wt-field">
+                            <label for="cfg-moeda">@Localizer["Settings.Currency"]</label>
+                            <select asp-for="Moeda" id="cfg-moeda" class="wt-select wt-input--block">
+                                <option value="BRL">@Localizer["Settings.CurrencyBRL"]</option>
+                                <option value="USD">@Localizer["Settings.CurrencyUSD"]</option>
+                                <option value="EUR">@Localizer["Settings.CurrencyEUR"]</option>
+                            </select>
+                        </div>
+                        <div class="wt-field">
+                            <label for="cfg-idioma">@Localizer["Settings.Language"]</label>
+                            <select asp-for="Idioma" id="cfg-idioma" class="wt-select wt-input--block">
+                                <option value="pt-BR">@Localizer["Settings.LanguagePt"]</option>
+                                <option value="en-US">@Localizer["Settings.LanguageEn"]</option>
+                                <option value="es-ES">@Localizer["Settings.LanguageEs"]</option>
+                            </select>
+                        </div>
+                        <div class="wt-field">
+                            <label for="cfg-formato-data">@Localizer["Settings.DateFormat"]</label>
+                            <select asp-for="FormatoData" id="cfg-formato-data" class="wt-select wt-input--block">
+                                <option value="dd/MM/yyyy">@Localizer["Settings.DateDMY"]</option>
+                                <option value="MM/dd/yyyy">@Localizer["Settings.DateMDY"]</option>
+                                <option value="yyyy-MM-dd">@Localizer["Settings.DateYMD"]</option>
+                            </select>
+                        </div>
+                        <div class="wt-field">
+                            <label for="cfg-inicio-mes">@Localizer["Settings.FinancialMonthStart"]</label>
+                            <select asp-for="InicioMes" id="cfg-inicio-mes" class="wt-select wt-input--block">
+                                <option value="1">@Localizer["Common.Day", 1]</option>
+                                <option value="5">@Localizer["Common.Day", 5]</option>
+                                <option value="10">@Localizer["Common.Day", 10]</option>
+                                <option value="15">@Localizer["Common.Day", 15]</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Notificações -->
+                <section id="notificacoes" class="wt-card-panel wt-settings__section">
+                    <div class="wt-settings__section-head">
+                        <span class="wt-settings__section-icon">🔔</span>
+                        <div>
+                            <h2 class="wt-settings__section-title">@Localizer["Settings.NotificationsTitle"]</h2>
+                            <p class="wt-settings__section-sub">@Localizer["Settings.NotificationsSub"]</p>
+                        </div>
+                    </div>
+
+                    <div class="wt-settings__row">
+                        <div class="wt-settings__row-text">
+                            <p class="wt-settings__row-title">@Localizer["Settings.NotifMonthlySummary"]</p>
+                            <p class="wt-settings__row-desc">@Localizer["Settings.NotifMonthlySummaryDesc"]</p>
+                        </div>
+                        <div class="wt-settings__row-control">
+                            <label class="wt-switch">
+                                <input type="checkbox" name="NotifResumoMensal" value="true" checked />
+                                <span class="wt-switch__slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="wt-settings__row">
+                        <div class="wt-settings__row-text">
+                            <p class="wt-settings__row-title">@Localizer["Settings.NotifHighSpending"]</p>
+                            <p class="wt-settings__row-desc">@Localizer["Settings.NotifHighSpendingDesc"]</p>
+                        </div>
+                        <div class="wt-settings__row-control">
+                            <label class="wt-switch">
+                                <input type="checkbox" name="NotifAlertaGastos" value="true" checked />
+                                <span class="wt-switch__slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="wt-settings__row">
+                        <div class="wt-settings__row-text">
+                            <p class="wt-settings__row-title">@Localizer["Settings.NotifBillReminders"]</p>
+                            <p class="wt-settings__row-desc">@Localizer["Settings.NotifBillRemindersDesc"]</p>
+                        </div>
+                        <div class="wt-settings__row-control">
+                            <label class="wt-switch">
+                                <input type="checkbox" name="NotifLembretes" value="true" />
+                                <span class="wt-switch__slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="wt-settings__row">
+                        <div class="wt-settings__row-text">
+                            <p class="wt-settings__row-title">@Localizer["Settings.NotifNewsTips"]</p>
+                            <p class="wt-settings__row-desc">@Localizer["Settings.NotifNewsTipsDesc"]</p>
+                        </div>
+                        <div class="wt-settings__row-control">
+                            <label class="wt-switch">
+                                <input type="checkbox" name="NotifNovidades" value="true" />
+                                <span class="wt-switch__slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Aparência -->
+                <section id="aparencia" class="wt-card-panel wt-settings__section">
+                    <div class="wt-settings__section-head">
+                        <span class="wt-settings__section-icon">🎨</span>
+                        <div>
+                            <h2 class="wt-settings__section-title">@Localizer["Settings.AppearanceTitle"]</h2>
+                            <p class="wt-settings__section-sub">@Localizer["Settings.AppearanceSub"]</p>
+                        </div>
+                    </div>
+                    <div class="wt-field">
+                        <label>@Localizer["Settings.Theme"]</label>
+                        <div class="wt-segment" role="radiogroup" aria-label="@Localizer["Settings.Theme"]">
+                            <input type="radio" id="tema-escuro" name="Tema" value="escuro" checked />
+                            <label for="tema-escuro">@Localizer["Settings.ThemeDark"]</label>
+                            <input type="radio" id="tema-claro" name="Tema" value="claro" />
+                            <label for="tema-claro">@Localizer["Settings.ThemeLight"]</label>
+                            <input type="radio" id="tema-auto" name="Tema" value="auto" />
+                            <label for="tema-auto">@Localizer["Settings.ThemeAuto"]</label>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Segurança -->
+                <section id="seguranca" class="wt-card-panel wt-settings__section">
+                    <div class="wt-settings__section-head">
+                        <span class="wt-settings__section-icon">🔒</span>
+                        <div>
+                            <h2 class="wt-settings__section-title">@Localizer["Settings.SecurityTitle"]</h2>
+                            <p class="wt-settings__section-sub">@Localizer["Settings.SecuritySub"]</p>
+                        </div>
+                    </div>
+
+                    <div class="wt-settings__row">
+                        <div class="wt-settings__row-text">
+                            <p class="wt-settings__row-title">@Localizer["Settings.AccessPassword"]</p>
+                            <p class="wt-settings__row-desc">@Localizer["Settings.AccessPasswordDesc"]</p>
+                        </div>
+                        <div class="wt-settings__row-control">
+                            <a href="~/perfil" class="wt-btn wt-btn--outline">@Localizer["Settings.ChangePassword"]</a>
+                        </div>
+                    </div>
+
+                    <div class="wt-settings__row">
+                        <div class="wt-settings__row-text">
+                            <p class="wt-settings__row-title">@Localizer["Settings.TwoFactor"]</p>
+                            <p class="wt-settings__row-desc">@Localizer["Settings.TwoFactorDesc"]</p>
+                        </div>
+                        <div class="wt-settings__row-control">
+                            <label class="wt-switch">
+                                <input type="checkbox" name="DoisFatores" value="true" />
+                                <span class="wt-switch__slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="wt-settings__row">
+                        <div class="wt-settings__row-text">
+                            <p class="wt-settings__row-title">@Localizer["Settings.EndSessions"]</p>
+                            <p class="wt-settings__row-desc">@Localizer["Settings.EndSessionsDesc"]</p>
+                        </div>
+                        <div class="wt-settings__row-control">
+                            <button type="submit"
+                                    formaction="@Url.Action("EncerrarSessoes", "Account")"
+                                    formmethod="post"
+                                    class="wt-btn wt-btn--outline"
+                                    data-fc-confirm="@Localizer["Settings.EndSessionsConfirm"]">
+                                @Localizer["Settings.EndSessions"]
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Privacidade e dados -->
+                <section id="privacidade" class="wt-card-panel wt-settings__section">
+                    <div class="wt-settings__section-head">
+                        <span class="wt-settings__section-icon">🛡️</span>
+                        <div>
+                            <h2 class="wt-settings__section-title">@Localizer["Settings.PrivacyTitle"]</h2>
+                            <p class="wt-settings__section-sub">@Localizer["Settings.PrivacySub"]</p>
+                        </div>
+                    </div>
+
+                    <div class="wt-settings__row">
+                        <div class="wt-settings__row-text">
+                            <p class="wt-settings__row-title">@Localizer["Settings.PrivacyPolicy"]</p>
+                            <p class="wt-settings__row-desc">@Localizer["Settings.PrivacyPolicyDesc"]</p>
+                        </div>
+                        <div class="wt-settings__row-control">
+                            <a href="~/conta/privacidade" class="wt-btn wt-btn--ghost">@Localizer["Settings.ViewPolicy"]</a>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="wt-settings__actions">
+                    <a href="~/home" class="wt-btn wt-btn--outline">@Localizer["Common.Cancel"]</a>
+                    <button type="submit" class="wt-btn wt-btn--primary wt-btn--glow">@Localizer["Common.Save"]</button>
+                </div>
+            </form>
+
+            <form method="post" asp-action="ExcluirConta">
+                @Html.AntiForgeryToken()
+
+                <!-- Zona de perigo -->
+                <section id="zona-perigo" class="wt-card-panel wt-settings__section wt-settings__section--danger">
+                    <div class="wt-settings__section-head">
+                        <span class="wt-settings__section-icon">⚠️</span>
+                        <div>
+                            <h2 class="wt-settings__section-title">@Localizer["Settings.DangerTitle"]</h2>
+                            <p class="wt-settings__section-sub">@Localizer["Settings.DangerSub"]</p>
+                        </div>
+                    </div>
+
+                    <div class="wt-settings__row wt-settings__row--stack">
+                        <div class="wt-settings__row-text">
+                            <p class="wt-settings__row-title">@Localizer["Settings.DeleteAccount"]</p>
+                            <p class="wt-settings__row-desc">@Localizer["Settings.DeleteAccountDesc"]</p>
+                        </div>
+                        <div class="wt-settings__delete-fields">
+                            <div class="wt-field wt-field--compact">
+                                <label for="senha-exclusao">@Localizer["Settings.Password"]</label>
+                                <input type="password"
+                                       id="senha-exclusao"
+                                       name="SenhaExclusao"
+                                       class="wt-input wt-input--block"
+                                       autocomplete="current-password"
+                                       placeholder="@Localizer["Settings.PasswordPlaceholder"]"
+                                       required />
+                            </div>
+                            <button type="submit"
+                                    class="wt-btn wt-btn--danger"
+                                    data-fc-confirm="@Localizer["Settings.DeleteAccountConfirm"]"
+                                    data-fc-confirm-danger="true">
+                                @Localizer["Settings.DeleteAccount"]
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -24,7 +24,7 @@ public static class PaymentMethodMapper
         {
             Name = dto.Name.Trim(),
             Icon = PaymentMethodIcons.Normalize(dto.Icon),
-            Description = dto.Description?.Trim(),
+            Description = string.IsNullOrWhiteSpace(dto.Description) ? null : dto.Description.Trim(),
             IsActive = dto.IsActive,
             UserId = dto.UserId,
             DateCreated = DateTimeOffset.UtcNow
@@ -34,7 +34,7 @@ public static class PaymentMethodMapper
     {
         entity.Name = dto.Name.Trim();
         entity.Icon = PaymentMethodIcons.Normalize(dto.Icon);
-        entity.Description = dto.Description?.Trim();
+        entity.Description = string.IsNullOrWhiteSpace(dto.Description) ? null : dto.Description.Trim();
         entity.IsActive = dto.IsActive;
         entity.UpdatedAt = DateTimeOffset.UtcNow;
     }

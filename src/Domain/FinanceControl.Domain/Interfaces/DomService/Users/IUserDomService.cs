@@ -12,5 +12,11 @@ public interface IUserDomService
 
     void ApplyUpdate(User entity, UserUpdateDto dto);
 
+    void ApplyFinancialPreferences(User entity, UserFinancialPreferencesDto dto);
+
+    void ValidateFinancialPreferences(UserFinancialPreferencesDto dto);
+
     void ValidateRegister(UserRegisterDto dto);
+
+    void ValidateDeleteAccount(User entity, string password);
 }

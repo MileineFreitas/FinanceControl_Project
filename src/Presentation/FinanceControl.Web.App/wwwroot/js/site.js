@@ -6,6 +6,9 @@
     var sidebar = document.getElementById('fc-sidebar');
     var pageRoot = document.getElementById('fc-page-root');
 
+    localStorage.removeItem('fc-sidebar-collapsed');
+    pageRoot?.classList.remove('sidebar-collapsed');
+
     function setMobileSidebar(open) {
         if (!sidebar) return;
         sidebar.classList.toggle('active', open);
@@ -129,58 +132,8 @@
         });
     }
 
-    /** Menu lateral recolhível (desktop): só ícones quando recolhido */
-    var collapseBtn = document.querySelector('[data-fc-sidebar-collapse]');
-    var mqDesktop = window.matchMedia('(min-width: 769px)');
-
-    function readCollapsed() {
-        return localStorage.getItem('fc-sidebar-collapsed') === '1';
-    }
-
-    function setCollapsedUi(collapsed) {
-        if (!pageRoot) return;
-        if (!mqDesktop.matches) {
-            pageRoot.classList.remove('sidebar-collapsed');
-            return;
-        }
-        pageRoot.classList.toggle('sidebar-collapsed', collapsed);
-        localStorage.setItem('fc-sidebar-collapsed', collapsed ? '1' : '0');
-        if (collapseBtn) {
-            collapseBtn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
-            collapseBtn.setAttribute('aria-label', collapsed ? 'Expandir menu lateral' : 'Recolher menu lateral');
-            collapseBtn.setAttribute('title', collapsed ? 'Expandir menu' : 'Recolher menu');
-        }
-    }
-
-    function syncSidebarCollapse() {
-        if (!pageRoot) return;
-        if (!mqDesktop.matches) {
-            pageRoot.classList.remove('sidebar-collapsed');
-            return;
-        }
-        setCollapsedUi(readCollapsed());
-    }
-
-    collapseBtn?.addEventListener('click', function () {
-        if (!mqDesktop.matches || !pageRoot) return;
-        setCollapsedUi(!pageRoot.classList.contains('sidebar-collapsed'));
-    });
-
-    syncSidebarCollapse();
-    mqDesktop.addEventListener('change', syncSidebarCollapse);
-
     /** Busca global no header: encontra páginas do menu */
-    var FC_GLOBAL_PAGES = [
-        { t: 'Dashboard', u: '/home', k: 'dashboard início home painel principal' },
-        { t: 'Transações', u: '/transacoes', k: 'transações lançamentos movimentações extrato' },
-        { t: 'Categorias', u: '/categorias', k: 'categorias classificação etiquetas' },
-        { t: 'Meios de pagamento', u: '/meios-pagamento', k: 'pagamento pix débito crédito dinheiro meios' },
-        { t: 'Investimentos', u: '/dashboards/geral', k: 'investimentos gráficos portfolio ações' },
-        { t: 'Relatórios', u: '/relatorios', k: 'relatórios exportar resumo' },
-        { t: 'Relatório por meio de pagamento', u: '/relatorios/por-meio-pagamento', k: 'relatórios meio de pagamento pix débito crédito dinheiro' },
-        { t: 'Relatório por categoria', u: '/relatorios/por-categoria', k: 'relatórios categoria gastos receitas classificação' },
-        { t: 'Relatório de transação', u: '/relatorios/por-transacoes', k: 'relatórios transações movimentações extrato lançamentos' }
-    ];
+    var FC_GLOBAL_PAGES = (window.fcLocale && window.fcLocale.pages) || [];
 
     var searchInput = document.getElementById('fc-global-search-input');
     var searchResults = document.getElementById('fc-global-search-results');
@@ -209,7 +162,7 @@
         if (matches.length === 0) {
             var li0 = document.createElement('li');
             li0.className = 'fc-global-search-empty';
-            li0.textContent = 'Nenhuma página encontrada.';
+            li0.textContent = (window.fcLocale && window.fcLocale.searchEmpty) || 'No pages found.';
             searchResults.appendChild(li0);
         } else {
             matches.forEach(function (p) {
@@ -230,6 +183,9 @@
     }
 
     if (searchInput && searchResults) {
+        if (window.fcLocale && window.fcLocale.searchPlaceholder) {
+            searchInput.placeholder = window.fcLocale.searchPlaceholder;
+        }
         searchInput.addEventListener('input', function () {
             renderGlobalSearch(searchInput.value);
         });

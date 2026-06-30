@@ -9,7 +9,7 @@ public class CategoryRegisterDto
     [MinLength(2, ErrorMessage = "Mínimo 2 caracteres.")]
     public string CategoryName { get; set; } = string.Empty;
 
-    public string CategoryDescription { get; set; } = string.Empty;
+    public string? CategoryDescription { get; set; }
 
     public string Icon { get; set; } = CategoryIcons.Default;
 

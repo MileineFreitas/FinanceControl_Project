@@ -46,9 +46,15 @@ public sealed class TransactionIndexViewModel
 
     public string ResumoSaldoMensal { get; set; } = "R$ 0,00";
 
+    public bool ResumoSaldoMensalNegativo { get; set; }
+
     public string ResumoMaiorGasto { get; set; } = "—";
 
-    public string AlertaOrcamento { get; set; } = "Cadastre transações para acompanhar seu orçamento.";
+    public string ResumoSaldoHint { get; set; } = "";
+
+    public string ResumoMaiorGastoHint { get; set; } = "";
+
+    public string AlertaOrcamento { get; set; } = "";
 
     public Dictionary<string, string> RotasPagina(int? pag = null)
     {

@@ -23,4 +23,8 @@ public interface IAccountRepository
     Task<bool> HasTransactionsAsync(Guid accountId);
 
     Task AdjustBalanceAsync(Guid accountId, decimal delta);
+
+    Task<Account?> GetFirstByUserIdAsync(Guid userId);
+
+    Task<IReadOnlyList<Account>> GetTrackedByUserIdAsync(Guid userId);
 }

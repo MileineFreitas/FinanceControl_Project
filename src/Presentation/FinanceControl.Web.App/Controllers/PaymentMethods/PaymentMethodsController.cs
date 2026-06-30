@@ -54,8 +54,10 @@ public class PaymentMethodsController(IPaymentMethodCliService paymentMethodCli)
                 PaymentMethodId = id,
                 Name = vm.Input.Name,
                 Icon = vm.Input.Icon,
-                Description = vm.Input.Description?.Trim(),
-                IsActive = existing.IsActive
+                Description = string.IsNullOrWhiteSpace(vm.Input.Description)
+                    ? null
+                    : vm.Input.Description.Trim(),
+                IsActive = vm.Input.IsActive
             };
             response = await paymentMethodCli.UpdateAsync(id, update);
         }
@@ -85,7 +87,8 @@ public class PaymentMethodsController(IPaymentMethodCliService paymentMethodCli)
             {
                 Name = dto.Name,
                 Icon = PaymentMethodIcons.Normalize(dto.Icon),
-                Description = dto.Description
+                Description = dto.Description,
+                IsActive = dto.IsActive
             };
         }
 

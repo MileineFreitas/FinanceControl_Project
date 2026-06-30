@@ -1,6 +1,170 @@
 @{
     ViewData["Title"] = "Privacidade";
 }
+@section Styles {
+    <link rel="stylesheet" href="~/css/cadastros-wt.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/privacy.css" asp-append-version="true" />
+}
 
-<h1 class="h4 mb-3">Privacidade</h1>
-<p class="text-muted">Gerencie como seus dados são usados, consentimentos e visibilidade. Inclua aqui os textos e opções exigidos pela LGPD quando for implementar.</p>
+<div class="wt-cadastro" id="privacy-page">
+    <div class="wt-cadastro__inner">
+        <header class="wt-page-head">
+            <div>
+                <h1 class="wt-page-title">Política de Privacidade</h1>
+                <p class="wt-page-sub">
+                    Sua privacidade é prioridade. Esta política explica, de forma transparente, quais dados coletamos,
+                    por que os usamos e como você mantém o controle sobre eles, em conformidade com a LGPD (Lei nº 13.709/2018).
+                </p>
+                <div class="wt-privacy__meta">
+                    <span class="wt-privacy__chip"><span class="wt-privacy__chip-dot"></span> Em conformidade com a LGPD</span>
+                    <span class="wt-privacy__chip">Última atualização: 21/06/2026</span>
+                    <span class="wt-privacy__chip">Versão 1.0</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="wt-privacy__layout">
+            <!-- Índice -->
+            <aside class="wt-card-panel wt-privacy__toc">
+                <p class="wt-privacy__toc-title">Nesta página</p>
+                <ul class="wt-privacy__toc-list">
+                    <li><a href="#dados-coletados">1. Dados que coletamos</a></li>
+                    <li><a href="#uso-dados">2. Como usamos seus dados</a></li>
+                    <li><a href="#compartilhamento">3. Compartilhamento</a></li>
+                    <li><a href="#cookies">4. Cookies</a></li>
+                    <li><a href="#seguranca">5. Segurança</a></li>
+                    <li><a href="#retencao">6. Retenção de dados</a></li>
+                    <li><a href="#direitos">7. Seus direitos (LGPD)</a></li>
+                    <li><a href="#alteracoes">8. Alterações</a></li>
+                    <li><a href="#contato">9. Contato</a></li>
+                </ul>
+            </aside>
+
+            <!-- Conteúdo -->
+            <div class="wt-privacy__content">
+
+                <section id="dados-coletados" class="wt-card-panel wt-privacy__section">
+                    <div class="wt-privacy__section-head">
+                        <span class="wt-privacy__section-icon">📋</span>
+                        <h2 class="wt-privacy__section-title">1. Dados que coletamos</h2>
+                    </div>
+                    <p>Coletamos apenas o necessário para oferecer o controle financeiro. Os dados são organizados nas seguintes categorias:</p>
+                    <div class="wt-privacy__grid">
+                        <div class="wt-privacy__data-card">
+                            <h4>👤 Dados cadastrais</h4>
+                            <p>Nome, e-mail e senha (armazenada de forma criptografada) usados para criar e acessar sua conta.</p>
+                        </div>
+                        <div class="wt-privacy__data-card">
+                            <h4>💳 Dados financeiros</h4>
+                            <p>Receitas, despesas, categorias e meios de pagamento que você registra manualmente no sistema.</p>
+                        </div>
+                        <div class="wt-privacy__data-card">
+                            <h4>🖥️ Dados de uso</h4>
+                            <p>Informações técnicas como data de acesso, navegador e ações realizadas, para segurança e melhoria do serviço.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="uso-dados" class="wt-card-panel wt-privacy__section">
+                    <div class="wt-privacy__section-head">
+                        <span class="wt-privacy__section-icon">🎯</span>
+                        <h2 class="wt-privacy__section-title">2. Como usamos seus dados</h2>
+                    </div>
+                    <p>Utilizamos suas informações com finalidades específicas e legítimas:</p>
+                    <ul class="wt-privacy__list">
+                        <li><strong>Operar o serviço:</strong> exibir saldos, relatórios e dashboards das suas finanças.</li>
+                        <li><strong>Autenticação e segurança:</strong> permitir login seguro e proteger sua conta contra acessos indevidos.</li>
+                        <li><strong>Melhoria contínua:</strong> entender como o sistema é usado para corrigir falhas e evoluir funcionalidades.</li>
+                        <li><strong>Comunicações essenciais:</strong> avisos sobre sua conta, segurança ou mudanças nesta política.</li>
+                    </ul>
+                    <div class="wt-privacy__callout">
+                        <span class="wt-privacy__callout-icon">🔒</span>
+                        <p>Nós <strong>nunca vendemos</strong> seus dados financeiros ou pessoais a terceiros para fins de publicidade.</p>
+                    </div>
+                </section>
+
+                <section id="compartilhamento" class="wt-card-panel wt-privacy__section">
+                    <div class="wt-privacy__section-head">
+                        <span class="wt-privacy__section-icon">🤝</span>
+                        <h2 class="wt-privacy__section-title">3. Compartilhamento de dados</h2>
+                    </div>
+                    <p>Seus dados são confidenciais. O compartilhamento ocorre apenas nas situações abaixo:</p>
+                    <ul class="wt-privacy__list">
+                        <li><strong>Provedores de infraestrutura:</strong> serviços de hospedagem e banco de dados estritamente necessários para o funcionamento, sob obrigação de sigilo.</li>
+                        <li><strong>Obrigação legal:</strong> quando exigido por autoridade competente ou determinação judicial.</li>
+                        <li><strong>Com seu consentimento:</strong> em qualquer outra hipótese, somente mediante sua autorização expressa.</li>
+                    </ul>
+                </section>
+
+                <section id="cookies" class="wt-card-panel wt-privacy__section">
+                    <div class="wt-privacy__section-head">
+                        <span class="wt-privacy__section-icon">🍪</span>
+                        <h2 class="wt-privacy__section-title">4. Cookies e tecnologias similares</h2>
+                    </div>
+                    <p>Usamos cookies essenciais para manter sua sessão ativa e garantir a segurança do login. Esses cookies são indispensáveis para o funcionamento da aplicação e não rastreiam você para fins de marketing.</p>
+                    <p>Você pode gerenciar ou bloquear cookies nas configurações do seu navegador, mas isso pode afetar o acesso à sua conta.</p>
+                </section>
+
+                <section id="seguranca" class="wt-card-panel wt-privacy__section">
+                    <div class="wt-privacy__section-head">
+                        <span class="wt-privacy__section-icon">🛡️</span>
+                        <h2 class="wt-privacy__section-title">5. Segurança da informação</h2>
+                    </div>
+                    <p>Adotamos medidas técnicas e organizacionais para proteger seus dados:</p>
+                    <ul class="wt-privacy__list">
+                        <li>Senhas armazenadas com criptografia (hash), nunca em texto puro.</li>
+                        <li>Comunicação protegida por HTTPS entre seu dispositivo e nossos servidores.</li>
+                        <li>Acesso restrito aos dados apenas a processos autorizados da aplicação.</li>
+                    </ul>
+                </section>
+
+                <section id="retencao" class="wt-card-panel wt-privacy__section">
+                    <div class="wt-privacy__section-head">
+                        <span class="wt-privacy__section-icon">🗂️</span>
+                        <h2 class="wt-privacy__section-title">6. Retenção de dados</h2>
+                    </div>
+                    <p>Mantemos seus dados enquanto sua conta estiver ativa ou pelo tempo necessário para cumprir as finalidades descritas e obrigações legais. Ao solicitar a exclusão da conta, seus dados pessoais e financeiros serão removidos de forma permanente, salvo informações que a lei exija reter.</p>
+                </section>
+
+                <section id="direitos" class="wt-card-panel wt-privacy__section">
+                    <div class="wt-privacy__section-head">
+                        <span class="wt-privacy__section-icon">⚖️</span>
+                        <h2 class="wt-privacy__section-title">7. Seus direitos (LGPD)</h2>
+                    </div>
+                    <p>Como titular dos dados, a LGPD garante a você os seguintes direitos:</p>
+                    <div class="wt-privacy__rights">
+                        <div class="wt-privacy__right"><span class="ico">👁️</span> Confirmar a existência e acessar seus dados</div>
+                        <div class="wt-privacy__right"><span class="ico">✏️</span> Corrigir dados incompletos ou desatualizados</div>
+                        <div class="wt-privacy__right"><span class="ico">🗑️</span> Solicitar a exclusão dos seus dados</div>
+                        <div class="wt-privacy__right"><span class="ico">📦</span> Solicitar a portabilidade dos dados</div>
+                        <div class="wt-privacy__right"><span class="ico">🚫</span> Revogar consentimentos a qualquer momento</div>
+                        <div class="wt-privacy__right"><span class="ico">ℹ️</span> Ser informado sobre o uso dos dados</div>
+                    </div>
+                </section>
+
+                <section id="alteracoes" class="wt-card-panel wt-privacy__section">
+                    <div class="wt-privacy__section-head">
+                        <span class="wt-privacy__section-icon">🔄</span>
+                        <h2 class="wt-privacy__section-title">8. Alterações nesta política</h2>
+                    </div>
+                    <p>Podemos atualizar esta política periodicamente para refletir melhorias no serviço ou mudanças legais. Sempre que houver alterações relevantes, indicaremos a nova data de atualização no topo desta página e, quando necessário, notificaremos você.</p>
+                </section>
+
+                <section id="contato" class="wt-card-panel wt-privacy__section">
+                    <div class="wt-privacy__section-head">
+                        <span class="wt-privacy__section-icon">✉️</span>
+                        <h2 class="wt-privacy__section-title">9. Fale com o Encarregado (DPO)</h2>
+                    </div>
+                    <div class="wt-privacy__contact">
+                        <div class="wt-privacy__contact-info">
+                            Para exercer seus direitos ou tirar dúvidas sobre privacidade, entre em contato com nosso Encarregado de Proteção de Dados:<br />
+                            <strong>privacidade@financecontrol.com</strong>
+                        </div>
+                        <a href="mailto:privacidade@financecontrol.com" class="wt-btn wt-btn--primary wt-btn--glow">Enviar solicitação</a>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,48 +1,45 @@
-using System.Globalization;
-using FinanceControl.Client.Services.Interfaces.Accounts;
 using FinanceControl.Client.Services.Interfaces.Categories;
-using FinanceControl.Client.Services.Interfaces.Transactions;
 using FinanceControl.Client.Services.Interfaces.PaymentMethods;
+using FinanceControl.Client.Services.Interfaces.Transactions;
 using FinanceControl.Contracts.Constants;
 using FinanceControl.Contracts.Dtos.Transactions;
 using FinanceControl.Contracts.Enumerators.Transactions;
 using FinanceControl.Contracts.Filters;
+using FinanceControl.Web.Helpers;
 using FinanceControl.Web.Models.ViewModels.Transactions;
+using FinanceControl.Web.Resources;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
+using System.Globalization;
 
 namespace FinanceControl.Web.Controllers.Transactions;
 
 [Route("transacoes")]
 public class TransactionsController : Controller
 {
-    private static readonly CultureInfo PtBr = CultureInfo.GetCultureInfo("pt-BR");
-
     private readonly ITransactionCliService _transactionCli;
     private readonly ICategoryCliService _categoryCli;
     private readonly IPaymentMethodCliService _paymentMethodCli;
-    private readonly IAccountCliService _accountCli;
+    private readonly IStringLocalizer<SharedResources> _localizer;
 
     private List<TransacaoListaVm> _todas = [];
-    private Guid? _contaPadraoId;
-    private Guid? _usuarioPadraoId;
 
     public TransactionsController(
         ITransactionCliService transactionCli,
         ICategoryCliService categoryCli,
         IPaymentMethodCliService paymentMethodCli,
-        IAccountCliService accountCli)
+        IStringLocalizer<SharedResources> localizer)
     {
         _transactionCli = transactionCli;
         _categoryCli = categoryCli;
         _paymentMethodCli = paymentMethodCli;
-        _accountCli = accountCli;
+        _localizer = localizer;
     }
 
     [HttpGet("")]
     [HttpGet("Index")]
     public async Task<IActionResult> Index(TransactionIndexViewModel vm)
     {
-        await CarregarContaPadraoAsync(vm);
         await CarregarCategoriasAsync(vm);
         await CarregarMeiosPagamentoAsync(vm);
         await CarregarTransacoesAsync(vm);
@@ -63,11 +60,6 @@ public class TransactionsController : Controller
         vm.EditingId = id;
         vm.ModalAberto = true;
 
-        await CarregarContaPadraoAsync(vm);
-        await CarregarCategoriasAsync(vm);
-        await CarregarMeiosPagamentoAsync(vm);
-        await CarregarTransacoesAsync(vm);
-
         try
         {
             var dto = await _transactionCli.GetByIdAsync(id);
@@ -76,10 +68,16 @@ public class TransactionsController : Controller
                 vm.ApiMensagem = "Transação não encontrada.";
                 vm.EditingId = null;
                 vm.ModalAberto = false;
+                await CarregarCategoriasAsync(vm);
+                await CarregarMeiosPagamentoAsync(vm);
+                await CarregarTransacoesAsync(vm);
                 AplicarFiltrosEPaginar(vm);
                 return View("Index", vm);
             }
 
+            await CarregarCategoriasAsync(vm, dto.CategoryId);
+            await CarregarMeiosPagamentoAsync(vm, dto.PaymentMethodId);
+            await CarregarTransacoesAsync(vm);
             PreencherFormularioEdicao(vm, dto);
         }
         catch (Exception ex)
@@ -87,6 +85,9 @@ public class TransactionsController : Controller
             vm.ApiMensagem = $"Não foi possível carregar a transação: {ex.Message}";
             vm.EditingId = null;
             vm.ModalAberto = false;
+            await CarregarCategoriasAsync(vm);
+            await CarregarMeiosPagamentoAsync(vm);
+            await CarregarTransacoesAsync(vm);
         }
 
         AplicarFiltrosEPaginar(vm);
@@ -97,10 +98,15 @@ public class TransactionsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Salvar(TransactionIndexViewModel vm)
     {
+        var userId = User.GetUserId();
+        if (userId == null)
+            return RedirectToAction("Index", "Login");
+
         vm.ModalAberto = true;
-        await CarregarContaPadraoAsync(vm);
-        await CarregarCategoriasAsync(vm);
-        await CarregarMeiosPagamentoAsync(vm);
+        var categoriaIncluir = vm.Input.CategoryId != Guid.Empty ? vm.Input.CategoryId : (Guid?)null;
+        var meioIncluir = vm.Input.PaymentMethodId != Guid.Empty ? vm.Input.PaymentMethodId : (Guid?)null;
+        await CarregarCategoriasAsync(vm, categoriaIncluir);
+        await CarregarMeiosPagamentoAsync(vm, meioIncluir);
         await CarregarTransacoesAsync(vm);
 
         if (!ValidarFormulario(vm, out var tipo))
@@ -116,8 +122,7 @@ public class TransactionsController : Controller
             HttpResponseMessage response;
             if (vm.EditingId is Guid editId && editId != Guid.Empty)
             {
-                var accountId = vm.AccountIdEdicao != Guid.Empty ? vm.AccountIdEdicao : _contaPadraoId ?? Guid.Empty;
-                if (accountId == Guid.Empty)
+                if (vm.AccountIdEdicao == Guid.Empty)
                 {
                     vm.ErroModal = "Conta da transação não disponível.";
                     AplicarFiltrosEPaginar(vm);
@@ -133,19 +138,12 @@ public class TransactionsController : Controller
                     TransactionTypeKind = tipo,
                     PaymentMethodId = vm.Input.PaymentMethodId,
                     CategoryId = vm.Input.CategoryId,
-                    AccountId = accountId
+                    AccountId = vm.AccountIdEdicao
                 };
                 response = await _transactionCli.UpdateAsync(editId, update);
             }
             else
             {
-                if (_contaPadraoId is not Guid accountId || _usuarioPadraoId is not Guid userId)
-                {
-                    vm.ErroModal = "Conta padrão não disponível. Verifique se a API está em execução.";
-                    AplicarFiltrosEPaginar(vm);
-                    return View("Index", vm);
-                }
-
                 var create = new TransactionCreateDto
                 {
                     TransactionDescription = vm.Input.Descricao.Trim(),
@@ -154,8 +152,7 @@ public class TransactionsController : Controller
                     TransactionTypeKind = tipo,
                     PaymentMethodId = vm.Input.PaymentMethodId,
                     CategoryId = vm.Input.CategoryId,
-                    AccountId = accountId,
-                    UserId = userId
+                    UserId = userId.Value
                 };
                 response = await _transactionCli.CreateAsync(create);
             }
@@ -226,50 +223,39 @@ public class TransactionsController : Controller
         vm.Transacoes = list.Skip((vm.Pag - 1) * vm.TamanhoPagina).Take(vm.TamanhoPagina).ToList();
     }
 
-    private async Task CarregarContaPadraoAsync(TransactionIndexViewModel vm)
-    {
-        _contaPadraoId = null;
-        _usuarioPadraoId = null;
-        try
-        {
-            var contas = await _accountCli.ListAsync();
-            var conta = contas?.OrderBy(c => c.AccountId).FirstOrDefault();
-            if (conta == null)
-            {
-                vm.ApiMensagem ??= "Nenhuma conta encontrada. Verifique se a API e o seed foram executados.";
-                return;
-            }
-
-            _contaPadraoId = conta.AccountId;
-            _usuarioPadraoId = conta.UserId;
-        }
-        catch (Exception ex)
-        {
-            vm.ApiMensagem ??= $"Não foi possível carregar a conta padrão: {ex.Message}";
-        }
-    }
-
-    private async Task CarregarCategoriasAsync(TransactionIndexViewModel vm)
+    private async Task CarregarCategoriasAsync(TransactionIndexViewModel vm, Guid? incluirCategoriaId = null)
     {
         vm.CategoriasOpcoes.Clear();
         try
         {
             var data = await _categoryCli.ListAsync(
-                new DataFilterDto { Page = 1, PageSize = 200 });
+                new DataFilterDto { Page = 1, PageSize = 200 },
+                includeInactive: false);
 
-            if (data?.Result is { Count: > 0 })
+            if (data?.Result is not { Count: > 0 })
             {
-                foreach (var c in data.Result.OrderBy(c => c.CategoryName))
+                if (incluirCategoriaId is Guid incluirId && incluirId != Guid.Empty)
                 {
-                    vm.CategoriasOpcoes.Add(new CategoriaOpcaoVm(
-                        c.CategoryId,
-                        c.CategoryName ?? "—",
-                        CategoryIcons.Normalize(c.Icon)));
+                    await IncluirCategoriaOpcionalAsync(vm, incluirId);
                 }
+
+                if (vm.CategoriasOpcoes.Count == 0)
+                    vm.ApiMensagem ??= "Nenhuma categoria ativa cadastrada.";
                 return;
             }
 
-            vm.ApiMensagem ??= "Nenhuma categoria cadastrada.";
+            foreach (var c in data.Result
+                         .Where(c => c.IsActive)
+                         .OrderBy(c => c.CategoryName))
+            {
+                vm.CategoriasOpcoes.Add(new CategoriaOpcaoVm(
+                    c.CategoryId,
+                    c.CategoryName ?? "—",
+                    CategoryIcons.Normalize(c.Icon)));
+            }
+
+            if (incluirCategoriaId is Guid categoriaId && categoriaId != Guid.Empty)
+                await IncluirCategoriaOpcionalAsync(vm, categoriaId);
         }
         catch (Exception ex)
         {
@@ -277,7 +263,22 @@ public class TransactionsController : Controller
         }
     }
 
-    private async Task CarregarMeiosPagamentoAsync(TransactionIndexViewModel vm)
+    private async Task IncluirCategoriaOpcionalAsync(TransactionIndexViewModel vm, Guid categoriaId)
+    {
+        if (vm.CategoriasOpcoes.Any(c => c.Id == categoriaId))
+            return;
+
+        var categoria = await _categoryCli.GetByIdAsync(categoriaId);
+        if (categoria == null)
+            return;
+
+        vm.CategoriasOpcoes.Add(new CategoriaOpcaoVm(
+            categoria.CategoryId,
+            categoria.CategoryName ?? "—",
+            CategoryIcons.Normalize(categoria.Icon)));
+    }
+
+    private async Task CarregarMeiosPagamentoAsync(TransactionIndexViewModel vm, Guid? incluirMeioId = null)
     {
         vm.MeiosPagamentoOpcoes.Clear();
         try
@@ -293,11 +294,29 @@ public class TransactionsController : Controller
                         PaymentMethodIcons.Normalize(m.Icon)));
                 }
             }
+
+            if (incluirMeioId is Guid meioId && meioId != Guid.Empty)
+                await IncluirMeioPagamentoOpcionalAsync(vm, meioId);
         }
         catch (Exception ex)
         {
             vm.ApiMensagem ??= $"Não foi possível carregar meios de pagamento: {ex.Message}";
         }
+    }
+
+    private async Task IncluirMeioPagamentoOpcionalAsync(TransactionIndexViewModel vm, Guid meioId)
+    {
+        if (vm.MeiosPagamentoOpcoes.Any(m => m.Id == meioId))
+            return;
+
+        var meio = await _paymentMethodCli.GetByIdAsync(meioId);
+        if (meio == null)
+            return;
+
+        vm.MeiosPagamentoOpcoes.Add(new MeioPagamentoOpcaoVm(
+            meio.PaymentMethodId,
+            meio.Name,
+            PaymentMethodIcons.Normalize(meio.Icon)));
     }
 
     private async Task CarregarTransacoesAsync(TransactionIndexViewModel vm)
@@ -353,35 +372,80 @@ public class TransactionsController : Controller
 
     private void AtualizarResumos(TransactionIndexViewModel vm, IReadOnlyList<TransacaoListaVm> filtradas)
     {
+        var fmt = FinancialFormatContext.From(User);
+        var culture = fmt.Culture;
+
         if (filtradas.Count == 0)
         {
-            vm.ResumoSaldoMensal = "R$ 0,00";
+            vm.ResumoSaldoMensal = fmt.FormatCurrency(0);
+            vm.ResumoSaldoMensalNegativo = false;
+            vm.ResumoSaldoHint = "";
             vm.ResumoMaiorGasto = "—";
-            vm.AlertaOrcamento = "Nenhuma transação nos filtros atuais.";
+            vm.ResumoMaiorGastoHint = "";
+            vm.AlertaOrcamento = _localizer["Messages.BudgetNoTx"].Value;
             return;
         }
 
         var saldo = filtradas.Sum(t => t.IsReceita ? t.Valor : -t.Valor);
-        vm.ResumoSaldoMensal = saldo.ToString("C", PtBr);
+        vm.ResumoSaldoMensal = fmt.FormatCurrency(saldo);
+        vm.ResumoSaldoMensalNegativo = saldo < 0;
+        vm.ResumoSaldoHint = MontarHintSaldo(filtradas, culture);
 
-        var maiorDespesa = filtradas
-            .Where(t => !t.IsReceita)
-            .OrderByDescending(t => t.Valor)
-            .FirstOrDefault();
+        var despesas = filtradas.Where(t => !t.IsReceita).ToList();
+        var maiorDespesa = despesas.OrderByDescending(t => t.Valor).FirstOrDefault();
 
-        vm.ResumoMaiorGasto = maiorDespesa?.CategoriaNome ?? "—";
+        if (maiorDespesa != null)
+        {
+            vm.ResumoMaiorGasto = fmt.FormatCurrency(maiorDespesa.Valor);
+            var totalDespesas = despesas.Sum(t => t.Valor);
+            var share = totalDespesas > 0 ? maiorDespesa.Valor / totalDespesas : 0m;
+            var pctFormatted = share.ToString("P1", culture);
+            var shareText = _localizer["Transactions.BudgetShare", pctFormatted].Value;
+            vm.ResumoMaiorGastoHint = _localizer["Transactions.BiggestExpenseHint", maiorDespesa.CategoriaNome, shareText].Value;
+        }
+        else
+        {
+            vm.ResumoMaiorGasto = "—";
+            vm.ResumoMaiorGastoHint = _localizer["Messages.BudgetNoExpense"].Value;
+        }
 
-        var categoriaMaisGasta = filtradas
-            .Where(t => !t.IsReceita)
+        var categoriaMaisGasta = despesas
             .GroupBy(t => t.CategoriaNome)
             .OrderByDescending(g => g.Sum(t => t.Valor))
             .Select(g => g.Key)
             .FirstOrDefault();
 
         vm.AlertaOrcamento = categoriaMaisGasta != null
-            ? $"Maior volume de despesas na categoria «{categoriaMaisGasta}» (filtros atuais)."
-            : "Nenhuma despesa nos filtros atuais.";
+            ? _localizer["Messages.BudgetTopCategory", categoriaMaisGasta].Value
+            : _localizer["Messages.BudgetNoExpense"].Value;
     }
+
+    private string MontarHintSaldo(IReadOnlyList<TransacaoListaVm> filtradas, CultureInfo culture)
+    {
+        var fmt = FinancialFormatContext.From(User);
+        var now = DateTime.UtcNow;
+        var (inicioMes, fimMes) = fmt.GetFinancialMonthRange(now);
+        var (inicioAnterior, fimAnterior) = fmt.GetFinancialMonthRange(inicioMes.AddDays(-1));
+
+        var saldoMesAtual = SaldoNoPeriodo(filtradas, inicioMes, fimMes);
+        var saldoMesAnterior = SaldoNoPeriodo(filtradas, inicioAnterior, fimAnterior);
+
+        if (saldoMesAnterior == 0 && saldoMesAtual == 0)
+            return _localizer["Transactions.NoBalanceChange"].Value;
+
+        if (saldoMesAnterior == 0)
+            return _localizer["Transactions.NoPreviousMonthBalance"].Value;
+
+        var variacao = (saldoMesAtual - saldoMesAnterior) / Math.Abs(saldoMesAnterior);
+        var pctFormatted = variacao.ToString("P1", culture);
+        var trendKey = variacao >= 0 ? "Transactions.TrendUp" : "Transactions.TrendDown";
+        return $"{_localizer[trendKey, pctFormatted].Value} {_localizer["Transactions.VsPreviousMonth"].Value}";
+    }
+
+    private static decimal SaldoNoPeriodo(IEnumerable<TransacaoListaVm> transacoes, DateTime inicio, DateTime fim) =>
+        transacoes
+            .Where(t => t.Data >= inicio && t.Data < fim)
+            .Sum(t => t.IsReceita ? t.Valor : -t.Valor);
 
     private void PreencherFormularioEdicao(TransactionIndexViewModel vm, TransactionDto dto)
     {
@@ -405,19 +469,25 @@ public class TransactionsController : Controller
 
         if (string.IsNullOrWhiteSpace(vm.Input.Descricao) || vm.Input.Descricao.Length < 2)
         {
-            vm.ErroModal = "Informe uma descrição (mín. 2 caracteres).";
+            vm.ErroModal = _localizer["Messages.TxDescriptionRequired"].Value;
             return false;
         }
 
         if (vm.Input.Valor <= 0)
         {
-            vm.ErroModal = "Valor deve ser maior que zero.";
+            vm.ErroModal = _localizer["Messages.TxValueRequired"].Value;
             return false;
         }
 
         if (vm.Input.CategoryId == Guid.Empty)
         {
-            vm.ErroModal = "Selecione uma categoria.";
+            vm.ErroModal = _localizer["Messages.TxCategoryRequired"].Value;
+            return false;
+        }
+
+        if (vm.CategoriasOpcoes.All(c => c.Id != vm.Input.CategoryId))
+        {
+            vm.ErroModal = _localizer["Messages.TxCategoryInvalid"].Value;
             return false;
         }
 
@@ -427,13 +497,13 @@ public class TransactionsController : Controller
 
         if (vm.Input.PaymentMethodId == Guid.Empty)
         {
-            vm.ErroModal = "Selecione um meio de pagamento.";
+            vm.ErroModal = _localizer["Messages.TxPaymentRequired"].Value;
             return false;
         }
 
         if (vm.MeiosPagamentoOpcoes.All(m => m.Id != vm.Input.PaymentMethodId))
         {
-            vm.ErroModal = "Meio de pagamento inválido.";
+            vm.ErroModal = _localizer["Messages.TxPaymentInvalid"].Value;
             return false;
         }
 

@@ -1,7 +1,7 @@
 using System.Text.Json;
 using FinanceControl.Client.Services.Interfaces.Users;
 using FinanceControl.Contracts.Dtos.Users;
-using FinanceControl.Contracts.Filters;
+using FinanceControl.Web.Helpers;
 using FinanceControl.Web.Models.ViewModels.Profile;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,11 +23,21 @@ public class ProfileController(IUserCliService userCli) : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Salvar(ProfileViewModel vm)
     {
-        if (vm.Input.UserId == Guid.Empty)
+        var currentUserId = User.GetUserId();
+        if (currentUserId == null)
         {
-            vm.ErroPagina = "Nenhum usuário disponível para atualizar.";
+            vm.ErroPagina = "Sessão expirada. Faça login novamente.";
             return View("Index", vm);
         }
+
+        if (vm.Input.UserId != Guid.Empty && vm.Input.UserId != currentUserId)
+        {
+            vm.ErroPagina = "Não é permitido alterar outro usuário.";
+            await CarregarUsuarioAsync(vm);
+            return View("Index", vm);
+        }
+
+        vm.Input.UserId = currentUserId.Value;
 
         if (string.IsNullOrWhiteSpace(vm.Input.UserName) || vm.Input.UserName.Trim().Length < 3)
         {
@@ -101,12 +111,21 @@ public class ProfileController(IUserCliService userCli) : Controller
     private async Task CarregarUsuarioAsync(ProfileViewModel vm)
     {
         vm.TemUsuario = false;
+        var userId = User.GetUserId();
+        if (userId == null)
+        {
+            vm.ErroPagina ??= "Sessão expirada. Faça login novamente.";
+            return;
+        }
+
         try
         {
-            var data = await userCli.ListAsync(new DataFilterDto { Page = 1, PageSize = 50 });
-            var user = data?.Result?.OrderBy(u => u.UserId).FirstOrDefault();
+            var user = await userCli.GetByIdAsync(userId.Value);
             if (user == null)
+            {
+                vm.ErroPagina ??= "Usuário não encontrado.";
                 return;
+            }
 
             vm.TemUsuario = true;
             vm.Input = new UserUpdateDto

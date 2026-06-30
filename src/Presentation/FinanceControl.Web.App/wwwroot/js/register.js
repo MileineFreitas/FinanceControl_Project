@@ -7,6 +7,16 @@
     var bar = document.getElementById('fc-strength-bar');
     var label = document.getElementById('fc-strength-label');
 
+    function authLabels() {
+        var auth = (window.fcLocale && window.fcLocale.auth) || {};
+        return {
+            1: auth.passwordWeak || 'Weak',
+            2: auth.passwordMedium || 'Medium',
+            3: auth.passwordGood || 'Good',
+            4: auth.passwordStrong || 'Strong'
+        };
+    }
+
     fileInput?.addEventListener('change', function () {
         var f = fileInput.files && fileInput.files[0];
         if (!f || !img || !placeholder) return;
@@ -44,6 +54,7 @@
     pwd?.addEventListener('input', function () {
         var val = pwd.value || '';
         var score = strengthScore(val);
+        var labels = authLabels();
         if (!bar || !label) return;
         if (!val) {
             bar.hidden = true;
@@ -55,6 +66,6 @@
             var i = parseInt(el.getAttribute('data-bar'), 10);
             el.style.background = colors(i, score);
         });
-        label.textContent = score === 1 ? 'Fraca' : score === 2 ? 'Média' : score === 3 ? 'Boa' : score === 4 ? 'Forte' : '';
+        label.textContent = labels[score] || '';
     });
 })();

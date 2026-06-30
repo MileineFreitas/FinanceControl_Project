@@ -1,5 +1,4 @@
 using FinanceControl.Client.Services.Interfaces.Users;
-using FinanceControl.Contracts.Filters;
 using FinanceControl.Web.Helpers;
 using FinanceControl.Web.Models.ViewModels.Shared;
 using Microsoft.AspNetCore.Mvc;
@@ -11,20 +10,30 @@ public sealed class MainHeaderViewComponent(IUserCliService userCli) : ViewCompo
     public async Task<IViewComponentResult> InvokeAsync()
     {
         var model = new MainHeaderViewModel();
+        var userId = ViewContext.HttpContext.User.GetUserId();
+
+        if (userId == null)
+        {
+            model.UserName = ViewContext.HttpContext.User.GetUserDisplayName();
+            return View("~/Views/Shared/_MainHeader.cshtml", model);
+        }
 
         try
         {
-            var data = await userCli.ListAsync(new DataFilterDto { Page = 1, PageSize = 50 });
-            var user = data?.Result?.OrderBy(u => u.UserId).FirstOrDefault();
-
+            var user = await userCli.GetByIdAsync(userId.Value);
             if (user != null)
             {
                 model.UserName = user.UserName;
                 model.AvatarSrc = UserAvatarHelper.BuildAvatarSrc(user.ProfilePhoto, user.UserName);
             }
+            else
+            {
+                model.UserName = ViewContext.HttpContext.User.GetUserDisplayName();
+            }
         }
         catch
         {
+            model.UserName = ViewContext.HttpContext.User.GetUserDisplayName();
         }
 
         return View("~/Views/Shared/_MainHeader.cshtml", model);

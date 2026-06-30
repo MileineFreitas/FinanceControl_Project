@@ -1,17 +1,19 @@
 ### Finance Control API — testes manuais (REST Client / VS Code / Rider)
 ### Suba a API antes: `dotnet run --launch-profile http`
-### Ajuste @userId, @categoryId se necessário após criar usuário/categoria.
+### Substitua os GUIDs abaixo pelos valores retornados nas respostas.
 
 @host = http://localhost:5056
-@userId = 1
-@categoryId = 1
-@accountId = 1
+@userId = 00000000-0000-0000-0000-000000000001
+@categoryId = 00000000-0000-0000-0000-000000000002
+@accountId = 00000000-0000-0000-0000-000000000003
+@paymentMethodId = 00000000-0000-0000-0000-000000000004
+@transactionId = 00000000-0000-0000-0000-000000000005
 
-### --- Tipos de transação (somente leitura) ---
-GET {{host}}/api/TransactionTypes
+### --- Meios de pagamento: listar ---
+GET {{host}}/api/PaymentMethods
 
 ### --- Contas: listar ---
-GET {{host}}/api/Account
+GET {{host}}/api/Account?page=1&pageSize=100
 
 ### --- Contas: criar ---
 POST {{host}}/api/Account
@@ -20,34 +22,37 @@ Content-Type: application/json
 {
   "name": "Conta teste HTTP",
   "initialBalance": 100.00,
-  "userId": {{userId}}
+  "userId": "{{userId}}",
+  "isActive": true
 }
 
-### --- Contas: obter por id (troque o id) ---
-GET {{host}}/api/Account/2
+### --- Contas: obter por id ---
+GET {{host}}/api/Account/{{accountId}}
 
 ### --- Contas: atualizar ---
-PUT {{host}}/api/Account/2
+PUT {{host}}/api/Account/{{accountId}}
 Content-Type: application/json
 
 {
-  "accountId": 2,
+  "accountId": "{{accountId}}",
   "name": "Conta teste HTTP (editada)",
   "initialBalance": 100.00,
-  "currentBalance": 150.50
+  "currentBalance": 150.50,
+  "isActive": true
 }
 
 ### --- Categorias: listar ---
-GET {{host}}/api/Category
+GET {{host}}/api/Category?page=1&pageSize=100
 
-### --- Categorias: registrar (usa enum numérico: 1=Receita, 2=Despesa) ---
+### --- Categorias: registrar ---
 POST {{host}}/api/Category/registerCategory
 Content-Type: application/json
 
 {
   "categoryName": "Teste API",
   "categoryDescription": "Categoria criada pelo .http",
-  "type": 2
+  "icon": "shopping_cart",
+  "isActive": true
 }
 
 ### --- Categorias: atualizar ---
@@ -55,16 +60,17 @@ PUT {{host}}/api/Category/{{categoryId}}
 Content-Type: application/json
 
 {
-  "categoryId": {{categoryId}},
+  "categoryId": "{{categoryId}}",
   "categoryName": "Teste API (editada)",
   "description": "Descrição atualizada",
-  "transactionTypeId": 2
+  "icon": "shopping_cart",
+  "isActive": true
 }
 
-### --- Transações: listar (filtro opcional) ---
-GET {{host}}/api/Transaction?userId={{userId}}
+### --- Transações: listar ---
+GET {{host}}/api/Transaction?page=1&pageSize=100&userId={{userId}}
 
-### --- Transações: criar (status: 1=Pendente, 2=Pago — saldo só muda com Pago) ---
+### --- Transações: criar (transactionTypeKind: 1=Receita, 2=Despesa) ---
 POST {{host}}/api/Transaction
 Content-Type: application/json
 
@@ -72,40 +78,48 @@ Content-Type: application/json
   "transactionDescription": "Compra teste",
   "transactionValue": 25.90,
   "date": "2026-05-04T15:00:00Z",
-  "transactionTypeId": 2,
-  "categoryId": {{categoryId}},
-  "accountId": {{accountId}},
-  "userId": {{userId}},
-  "status": 2
+  "transactionTypeKind": 2,
+  "paymentMethodId": "{{paymentMethodId}}",
+  "categoryId": "{{categoryId}}",
+  "accountId": "{{accountId}}",
+  "userId": "{{userId}}"
 }
 
-### --- Transações: obter por id (troque @txId) ---
-@txId = 1
-GET {{host}}/api/Transaction/{{txId}}
+### --- Transações: obter por id ---
+GET {{host}}/api/Transaction/{{transactionId}}
 
 ### --- Transações: atualizar ---
-PUT {{host}}/api/Transaction/{{txId}}
+PUT {{host}}/api/Transaction/{{transactionId}}
 Content-Type: application/json
 
 {
-  "transactionId": {{txId}},
+  "transactionId": "{{transactionId}}",
   "transactionDescription": "Compra teste (editada)",
   "transactionValue": 30.00,
   "date": "2026-05-04T16:00:00Z",
-  "transactionTypeId": 2,
-  "categoryId": {{categoryId}},
-  "accountId": {{accountId}},
-  "status": 2
+  "transactionTypeKind": 2,
+  "paymentMethodId": "{{paymentMethodId}}",
+  "categoryId": "{{categoryId}}",
+  "accountId": "{{accountId}}"
 }
 
 ### --- Transações: excluir ---
-DELETE {{host}}/api/Transaction/{{txId}}
+DELETE {{host}}/api/Transaction/{{transactionId}}
 
-### --- Usuários (rota sem prefixo api): listar ---
-GET {{host}}/user
+### --- Usuários: listar ---
+GET {{host}}/User?page=1&pageSize=100
+
+### --- Usuários: login ---
+POST {{host}}/User/login
+Content-Type: application/json
+
+{
+  "email": "tester.api@example.com",
+  "password": "Senha1234!"
+}
 
 ### --- Usuários: registrar (senha mín. 8 caracteres) ---
-POST {{host}}/user/register
+POST {{host}}/User/register
 Content-Type: application/json
 
 {

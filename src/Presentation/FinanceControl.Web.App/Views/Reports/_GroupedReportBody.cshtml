@@ -1,0 +1,131 @@
+@model FinanceControl.Web.Models.ViewModels.Reports.GroupedReportViewModel
+@{
+    ViewData["Title"] = Model.PageTitle;
+    var cultura = FinancialFormatHelper.GetCulture(Model.Idioma, Model.Moeda);
+    var periodoCapitalizado = char.ToUpper(Model.PeriodoLabel[0], cultura) + Model.PeriodoLabel[1..];
+}
+
+<div class="rep-cat">
+    <header class="rep-cat__head">
+        <div>
+            <h1 class="rep-cat__title">@Model.PageTitle</h1>
+            <p class="rep-cat__sub">@Model.PageSubtitle</p>
+        </div>
+        <form method="get" class="rep-cat__filter" aria-label="@Localizer["Reports.PeriodFilter"]">
+            <label for="mes" class="rep-cat__filter-label">@Localizer["Reports.Period"]</label>
+            <select id="mes" name="mes" class="rep-cat__filter-select" onchange="this.form.submit()">
+                @foreach (var opt in Model.MonthOptions)
+                {
+                    if (opt.Selected)
+                    {
+                        <option value="@opt.Value" selected>@char.ToUpper(opt.Label[0], cultura)@opt.Label[1..]</option>
+                    }
+                    else
+                    {
+                        <option value="@opt.Value">@char.ToUpper(opt.Label[0], cultura)@opt.Label[1..]</option>
+                    }
+                }
+            </select>
+        </form>
+    </header>
+
+    @if (!string.IsNullOrEmpty(Model.ApiMensagem))
+    {
+        <p class="rep-cat__banner" role="status">@Model.ApiMensagem</p>
+    }
+
+    <p class="rep-cat__period">@Localizer["Reports.PeriodLabel", periodoCapitalizado]</p>
+
+    <div class="rep-cat__metrics" aria-label="@Localizer["Reports.PeriodTotals"]">
+        <article class="rep-metric rep-metric--income">
+            <p class="rep-metric__label">@Localizer["Type.Income"]</p>
+            <p class="rep-metric__value">@Model.TotalReceitasFmt</p>
+        </article>
+        <article class="rep-metric rep-metric--expense">
+            <p class="rep-metric__label">@Localizer["Type.Expense"]</p>
+            <p class="rep-metric__value">@Model.TotalDespesasFmt</p>
+        </article>
+        <article class="rep-metric @(Model.SaldoNegativo ? "rep-metric--expense" : "rep-metric--income")">
+            <p class="rep-metric__label">@Localizer["Reports.PeriodBalance"]</p>
+            <p class="rep-metric__value">@Model.SaldoFmt</p>
+        </article>
+    </div>
+
+    @if (!Model.TemDados)
+    {
+        <div class="rep-cat__empty">
+            <p>@Localizer["Reports.EmptyInPeriod", periodoCapitalizado]</p>
+            <p class="rep-cat__empty-hint">@Localizer["Reports.EmptyHint"]</p>
+        </div>
+    }
+    else
+    {
+        <div class="rep-cat__charts">
+            <section class="rep-panel" aria-labelledby="rep-doughnut-heading">
+                <div class="rep-panel__head">
+                    <h2 id="rep-doughnut-heading">@Model.DoughnutTitle</h2>
+                    <p>@Model.DoughnutSubtitle</p>
+                </div>
+                <div class="rep-panel__chart rep-panel__chart--doughnut">
+                    <canvas id="rep-chart-despesas" aria-label="@Model.DoughnutTitle"></canvas>
+                </div>
+            </section>
+
+            <section class="rep-panel" aria-labelledby="rep-bar-heading">
+                <div class="rep-panel__head">
+                    <h2 id="rep-bar-heading">@Model.BarTitle</h2>
+                    <p>@Model.BarSubtitle</p>
+                </div>
+                <div class="rep-panel__chart rep-panel__chart--bar">
+                    <canvas id="rep-chart-comparativo" aria-label="@Model.BarTitle"></canvas>
+                </div>
+            </section>
+        </div>
+
+        <section class="rep-panel rep-panel--table" aria-labelledby="rep-table-heading">
+            <div class="rep-panel__head">
+                <h2 id="rep-table-heading">@Model.TableTitle</h2>
+                <p>@Model.TableSubtitle</p>
+            </div>
+            <div class="rep-table-wrap">
+                <table class="rep-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">@Model.GroupColumnHeader</th>
+                            <th scope="col">@Localizer["Type.Income"]</th>
+                            <th scope="col">@Localizer["Type.Expense"]</th>
+                            <th scope="col">@Localizer["Reports.Balance"]</th>
+                            <th scope="col">@Localizer["Reports.TransactionsCount"]</th>
+                            <th scope="col">@Localizer["Reports.ExpensePercent"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var row in Model.Rows.Where(r => r.Receita > 0 || r.Despesa > 0))
+                        {
+                            <tr>
+                                <td>
+                                    <span class="rep-table__cat">
+                                        <span class="rep-table__icon" aria-hidden="true">@row.Icon</span>
+                                        <span>@row.GroupName</span>
+                                    </span>
+                                </td>
+                                <td class="rep-table__income">@row.ReceitaFmt</td>
+                                <td class="rep-table__expense">@row.DespesaFmt</td>
+                                <td class="@(row.Saldo < 0 ? "fc-balance--negative" : "fc-balance--positive")">@row.SaldoFmt</td>
+                                <td>@row.TransactionCount</td>
+                                <td>
+                                    <div class="rep-bar-cell">
+                                        <div class="rep-bar-cell__track" role="presentation">
+                                            <span class="rep-bar-cell__fill" style="width: @(Math.Min(row.DespesaPercent, 100).ToString("0.##", cultura))%"></span>
+                                        </div>
+                                        <span class="rep-bar-cell__pct">@row.DespesaPercent.ToString("0.#", cultura)%</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    }
+</div>

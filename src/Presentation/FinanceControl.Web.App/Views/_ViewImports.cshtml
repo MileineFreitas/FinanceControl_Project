@@ -1,11 +1,17 @@
 @using FinanceControl.Web
+@using FinanceControl.Web.Helpers
 @using FinanceControl.Web.Models.ViewModels
 @using FinanceControl.Web.Models.ViewModels.Auth
+@using FinanceControl.Web.Models.ViewModels.Account
 @using FinanceControl.Web.Models.ViewModels.Categories
 @using FinanceControl.Web.Models.ViewModels.Home
 @using FinanceControl.Web.Models.ViewModels.Register
 @using FinanceControl.Web.Models.ViewModels.PaymentMethods
 @using FinanceControl.Web.Models.ViewModels.Transactions
+@using FinanceControl.Web.Models.ViewModels.Reports
 @using FinanceControl.Contracts.Dtos.Categories
 @using FinanceControl.Contracts.Enumerators.Transactions
+@using FinanceControl.Web.Resources
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<SharedResources> Localizer
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers

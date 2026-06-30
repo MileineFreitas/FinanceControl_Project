@@ -87,12 +87,22 @@ public class TransactionRepository(FinanceDbContext context) : ITransactionRepos
     public Task<bool> CategoryExistsAsync(Guid categoryId) =>
         context.Categories.AnyAsync(c => c.CategoryId == categoryId);
 
+    public Task<bool> CategoryIsActiveAsync(Guid categoryId) =>
+        context.Categories.AnyAsync(c => c.CategoryId == categoryId && c.IsActive);
+
     public Task<bool> AccountExistsAsync(Guid accountId) =>
         context.Accounts.AnyAsync(a => a.AccountId == accountId);
 
     public Task<bool> UserExistsAsync(Guid userId) =>
         context.Users.AnyAsync(u => u.UserId == userId);
 
-    public Task<bool> PaymentMethodExistsAsync(Guid paymentMethodId) =>
-        context.PaymentMethods.AnyAsync(p => p.PaymentMethodId == paymentMethodId && p.IsActive);
+    public Task<bool> PaymentMethodExistsAsync(Guid paymentMethodId, bool requireActive = true) =>
+        requireActive
+            ? context.PaymentMethods.AnyAsync(p => p.PaymentMethodId == paymentMethodId && p.IsActive)
+            : context.PaymentMethods.AnyAsync(p => p.PaymentMethodId == paymentMethodId);
+
+    public async Task<IReadOnlyList<Transaction>> GetTrackedByUserIdAsync(Guid userId) =>
+        await context.Transactions
+            .Where(t => t.UserId == userId)
+            .ToListAsync();
 }

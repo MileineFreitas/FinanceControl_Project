@@ -1,71 +1,64 @@
-using FinanceControl.Client.Services.Interfaces;
 using FinanceControl.Client.Services.Interfaces.Accounts;
-using FinanceControl.Contracts.Dtos.Common;
+using FinanceControl.Client.Services.Interfaces.Categories;
+using FinanceControl.Client.Services.Interfaces.Transactions;
+using FinanceControl.Contracts.Dtos.Transactions;
 using FinanceControl.Contracts.Enumerators.Transactions;
+using FinanceControl.Contracts.Filters;
+using FinanceControl.Web.Helpers;
 using FinanceControl.Web.Models.ViewModels;
 using FinanceControl.Web.Models.ViewModels.Home;
+using FinanceControl.Web.Resources;
 using Microsoft.AspNetCore.Mvc;
-using System.Globalization;
-using System.Text.Json;
+using Microsoft.Extensions.Localization;
 
 namespace FinanceControl.Web.Controllers.Home;
 
 [Route("home")]
-public class HomeController : Controller
+public class HomeController(
+    ITransactionCliService transactionCli,
+    ICategoryCliService categoryCli,
+    IAccountCliService accountCli,
+    IStringLocalizer<SharedResources> localizer) : Controller
 {
-    private static readonly JsonSerializerOptions JsonOpts = new() { PropertyNameCaseInsensitive = true };
-    private static readonly CultureInfo PtBr = CultureInfo.GetCultureInfo("pt-BR");
-
-    private readonly IFinanceControlApiClient _api;
-    private readonly IAccountCliService _accountCli;
-
-    public HomeController(IFinanceControlApiClient api, IAccountCliService accountCli)
-    {
-        _api = api;
-        _accountCli = accountCli;
-    }
-
     [HttpGet("")]
     [HttpGet("Index")]
     public async Task<IActionResult> Index()
     {
-        var vm = new HomeIndexViewModel();
-        List<TxJson>? txs = null;
+        var fmt = FinancialFormatContext.From(User);
+        var vm = new HomeIndexViewModel
+        {
+            Idioma = fmt.Idioma,
+            Moeda = fmt.Moeda
+        };
+        IReadOnlyList<TransactionDto>? txs = null;
         try
         {
-            var resTx = await _api.GetTransactionsAsync();
-            if (resTx.IsSuccessStatusCode)
-            {
-                await using var stream = await resTx.Content.ReadAsStreamAsync();
-                var data = await JsonSerializer.DeserializeAsync<DataResultDto<TxJson>>(stream, JsonOpts);
-                txs = data?.Result;
-            }
-            else
-            {
-                vm.ApiMensagem = "Não foi possível carregar transações da API.";
-            }
+            var data = await transactionCli.ListAsync(new DataFilterDto { Page = 1, PageSize = 200 });
+            txs = data?.Result;
+            if (txs == null)
+                vm.ApiMensagem = localizer["Messages.ApiLoadTxError"].Value;
         }
         catch
         {
-            vm.ApiMensagem = "Não foi possível conectar à API. Verifique se o serviço está em execução.";
+            vm.ApiMensagem = localizer["Messages.ApiConnectError"].Value;
         }
 
         if (txs is not { Count: > 0 })
         {
-            await PreencherEstadoVazioAsync(vm);
+            await PreencherEstadoVazioAsync(vm, fmt);
             return View("Index", vm);
         }
 
         var nomePorCategoriaId = await CarregarNomesCategoriasAsync();
 
         var now = DateTime.UtcNow;
-        var inicioMes = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc);
-        var fimMes = inicioMes.AddMonths(1);
+        var (inicioMes, fimMes) = fmt.GetFinancialMonthRange(now);
 
         decimal gastosMes = 0, receitasMes = 0;
         foreach (var t in txs)
         {
-            if (t.Date < inicioMes || t.Date >= fimMes)
+            var date = t.Date.UtcDateTime;
+            if (date < inicioMes || date >= fimMes)
                 continue;
             if (t.TransactionTypeKind == TransactionTypeKind.Despesa)
                 gastosMes += t.TransactionValue;
@@ -78,23 +71,24 @@ public class HomeController : Controller
         vm.Metrics =
         [
             new DashboardMetricVm(
-                "Gasto total no mês",
-                gastosMes.ToString("C", PtBr),
-                "Despesas no mês vigente",
+                localizer["Home.MetricMonthlySpend"].Value,
+                fmt.FormatCurrency(gastosMes),
+                localizer["Home.TrendMonthlyExpenses"].Value,
                 true,
                 "chart"),
             new DashboardMetricVm(
-                "Receitas no mês",
-                receitasMes.ToString("C", PtBr),
-                "Entradas no mês vigente",
+                localizer["Home.MetricMonthlyIncome"].Value,
+                fmt.FormatCurrency(receitasMes),
+                localizer["Home.TrendMonthlyIncome"].Value,
                 false,
                 "bank"),
             new DashboardMetricVm(
-                "Saldo em contas",
-                saldoConta.ToString("C", PtBr),
-                "Soma do saldo atual das contas",
+                localizer["Home.MetricAccountBalance"].Value,
+                fmt.FormatCurrency(saldoConta),
+                localizer["Home.TrendAccountSum"].Value,
                 saldoConta < 0,
-                "rocket"),
+                "rocket",
+                IsSaldo: true),
         ];
 
         var ordered = txs.OrderByDescending(x => x.Date).ThenByDescending(x => x.TransactionId).ToList();
@@ -109,12 +103,15 @@ public class HomeController : Controller
             var isRec = t.TransactionTypeKind == TransactionTypeKind.Receita;
             var abs = Math.Abs(t.TransactionValue);
             var valorOrdenacao = isRec ? abs : -abs;
-            var valorFmt = (isRec ? "+ " : "- ") + abs.ToString("C", PtBr);
-            var sub = $"Conta {t.AccountId}";
-            var dataFmt = t.Date.ToString("dd MMM, yyyy HH:mm", PtBr);
+            var valorFmt = fmt.FormatSignedCurrency(abs, isRec);
+            var sub = string.IsNullOrWhiteSpace(t.AccountName)
+                ? $"{localizer["Common.Account"].Value} {t.AccountId}"
+                : t.AccountName;
+            var dataUtc = t.Date.UtcDateTime;
+            var dataFmt = fmt.FormatDateTimeLong(dataUtc);
             return new DashboardTxRowVm(
                 dataFmt,
-                t.Date.Ticks,
+                dataUtc.Ticks,
                 t.TransactionDescription ?? "—",
                 sub,
                 catNome,
@@ -127,20 +124,21 @@ public class HomeController : Controller
         return View("Index", vm);
     }
 
-    private async Task PreencherEstadoVazioAsync(HomeIndexViewModel vm)
+    private async Task PreencherEstadoVazioAsync(HomeIndexViewModel vm, FinancialFormatContext fmt)
     {
         var saldoConta = await ObterSaldoTotalContasAsync();
 
         vm.Metrics =
         [
-            new DashboardMetricVm("Gasto total no mês", 0m.ToString("C", PtBr), "—", false, "chart"),
-            new DashboardMetricVm("Receitas no mês", 0m.ToString("C", PtBr), "—", false, "bank"),
+            new DashboardMetricVm(localizer["Home.MetricMonthlySpend"].Value, fmt.FormatCurrency(0), "—", false, "chart"),
+            new DashboardMetricVm(localizer["Home.MetricMonthlyIncome"].Value, fmt.FormatCurrency(0), "—", false, "bank"),
             new DashboardMetricVm(
-                "Saldo em contas",
-                saldoConta.ToString("C", PtBr),
-                saldoConta == 0 ? "Cadastre uma conta para começar" : "Saldo atual das contas",
+                localizer["Home.MetricAccountBalance"].Value,
+                fmt.FormatCurrency(saldoConta),
+                saldoConta == 0 ? localizer["Home.RegisterAccountHint"].Value : localizer["Home.CurrentBalance"].Value,
                 saldoConta < 0,
-                "rocket"),
+                "rocket",
+                IsSaldo: true),
         ];
     }
 
@@ -148,7 +146,8 @@ public class HomeController : Controller
     {
         try
         {
-            var contas = await _accountCli.ListAsync();
+            var userId = User.GetUserId();
+            var contas = await accountCli.ListAsync(userId);
             return contas?.Sum(c => c.CurrentBalance) ?? 0m;
         }
         catch
@@ -157,13 +156,13 @@ public class HomeController : Controller
         }
     }
 
-    private static string ResolverNomeCategoria(TxJson t, IReadOnlyDictionary<Guid, string> nomePorCategoriaId)
+    private string ResolverNomeCategoria(TransactionDto t, IReadOnlyDictionary<Guid, string> nomePorCategoriaId)
     {
-        if (!string.IsNullOrWhiteSpace(t.Category?.CategoryName))
-            return t.Category.CategoryName.Trim();
+        if (!string.IsNullOrWhiteSpace(t.CategoryName))
+            return t.CategoryName.Trim();
         if (nomePorCategoriaId.TryGetValue(t.CategoryId, out var nome) && !string.IsNullOrWhiteSpace(nome))
             return nome.Trim();
-        return "Categoria";
+        return localizer["Common.Category"].Value;
     }
 
     private async Task<Dictionary<Guid, string>> CarregarNomesCategoriasAsync()
@@ -171,12 +170,7 @@ public class HomeController : Controller
         var map = new Dictionary<Guid, string>();
         try
         {
-            var res = await _api.GetCategoriesAsync();
-            if (!res.IsSuccessStatusCode)
-                return map;
-
-            await using var stream = await res.Content.ReadAsStreamAsync();
-            var data = await JsonSerializer.DeserializeAsync<DataResultDto<CategoryRowJson>>(stream, JsonOpts);
+            var data = await categoryCli.ListAsync(new DataFilterDto { Page = 1, PageSize = 200 });
             if (data?.Result == null)
                 return map;
             foreach (var c in data.Result)
@@ -200,28 +194,5 @@ public class HomeController : Controller
         if (s.Equals("Alimentação", StringComparison.OrdinalIgnoreCase)) return "shopping_cart";
         if (s.Equals("Lazer", StringComparison.OrdinalIgnoreCase)) return "movie";
         return "receipt_long";
-    }
-
-    private sealed class TxJson
-    {
-        public Guid TransactionId { get; set; }
-        public string? TransactionDescription { get; set; }
-        public decimal TransactionValue { get; set; }
-        public DateTime Date { get; set; }
-        public TransactionTypeKind TransactionTypeKind { get; set; }
-        public Guid CategoryId { get; set; }
-        public Guid AccountId { get; set; }
-        public CategoryMini? Category { get; set; }
-    }
-
-    private sealed class CategoryMini
-    {
-        public string? CategoryName { get; set; }
-    }
-
-    private sealed class CategoryRowJson
-    {
-        public Guid CategoryId { get; set; }
-        public string? CategoryName { get; set; }
     }
 }

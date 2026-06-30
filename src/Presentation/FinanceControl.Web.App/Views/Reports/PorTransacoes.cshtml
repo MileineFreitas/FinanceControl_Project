@@ -1,22 +1,145 @@
+@model FinanceControl.Web.Models.ViewModels.Reports.TransactionReportViewModel
 @{
-    ViewData["Title"] = "Relatório de transação";
+    ViewData["Title"] = Localizer["Reports.TxReportTitle"].Value;
+    var cultura = FinancialFormatHelper.GetCulture(Model.Idioma, Model.Moeda);
+    var periodoCapitalizado = char.ToUpper(Model.PeriodoLabel[0], cultura) + Model.PeriodoLabel[1..];
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/reports-category.css" asp-append-version="true" />
 }
 
-<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
-    <div>
-        <h2 class="mb-1">Relatório de transação</h2>
-        <p class="text-muted mb-0">Acompanhe as movimentações registradas e consulte o histórico transacional.</p>
+<div class="rep-cat">
+    <header class="rep-cat__head">
+        <div>
+            <h1 class="rep-cat__title">@Localizer["Reports.TxReportTitle"]</h1>
+            <p class="rep-cat__sub">@Localizer["Reports.TxReportSubtitle"]</p>
+        </div>
+        <form method="get" class="rep-cat__filter" aria-label="@Localizer["Reports.PeriodFilter"]">
+            <label for="mes" class="rep-cat__filter-label">@Localizer["Reports.Period"]</label>
+            <select id="mes" name="mes" class="rep-cat__filter-select" onchange="this.form.submit()">
+                @foreach (var opt in Model.MonthOptions)
+                {
+                    if (opt.Selected)
+                    {
+                        <option value="@opt.Value" selected>@char.ToUpper(opt.Label[0], cultura)@opt.Label[1..]</option>
+                    }
+                    else
+                    {
+                        <option value="@opt.Value">@char.ToUpper(opt.Label[0], cultura)@opt.Label[1..]</option>
+                    }
+                }
+            </select>
+        </form>
+    </header>
+
+    @if (!string.IsNullOrEmpty(Model.ApiMensagem))
+    {
+        <p class="rep-cat__banner" role="status">@Model.ApiMensagem</p>
+    }
+
+    <p class="rep-cat__period">@Localizer["Reports.PeriodWithCount", periodoCapitalizado, Model.TotalTransacoes]</p>
+
+    <div class="rep-cat__metrics rep-cat__metrics--four" aria-label="@Localizer["Reports.PeriodTotals"]">
+        <article class="rep-metric rep-metric--income">
+            <p class="rep-metric__label">@Localizer["Type.Income"]</p>
+            <p class="rep-metric__value">@Model.TotalReceitasFmt</p>
+        </article>
+        <article class="rep-metric rep-metric--expense">
+            <p class="rep-metric__label">@Localizer["Type.Expense"]</p>
+            <p class="rep-metric__value">@Model.TotalDespesasFmt</p>
+        </article>
+        <article class="rep-metric @(Model.SaldoNegativo ? "rep-metric--expense" : "rep-metric--income")">
+            <p class="rep-metric__label">@Localizer["Reports.PeriodBalance"]</p>
+            <p class="rep-metric__value">@Model.SaldoFmt</p>
+        </article>
+        <article class="rep-metric">
+            <p class="rep-metric__label">@Localizer["Reports.Entries"]</p>
+            <p class="rep-metric__value">@Model.TotalTransacoes</p>
+        </article>
     </div>
 
-    <a class="btn btn-outline-primary" href="~/relatorios">Voltar para relatórios</a>
+    @if (!Model.TemDados)
+    {
+        <div class="rep-cat__empty">
+            <p>@Localizer["Reports.EmptyInPeriod", periodoCapitalizado]</p>
+            <p class="rep-cat__empty-hint">@Localizer["Reports.EmptyHint"]</p>
+        </div>
+    }
+    else
+    {
+        <div class="rep-cat__charts">
+            <section class="rep-panel" aria-labelledby="rep-tipo-heading">
+                <div class="rep-panel__head">
+                    <h2 id="rep-tipo-heading">@Localizer["Reports.IncomeVsExpenses"]</h2>
+                    <p>@Localizer["Reports.IncomeVsExpensesSub"]</p>
+                </div>
+                <div class="rep-panel__chart rep-panel__chart--doughnut">
+                    <canvas id="rep-chart-tipo" aria-label="@Localizer["Reports.IncomeVsExpensesChart"]"></canvas>
+                </div>
+            </section>
+
+            <section class="rep-panel" aria-labelledby="rep-daily-heading">
+                <div class="rep-panel__head">
+                    <h2 id="rep-daily-heading">@Localizer["Reports.DailyMovement"]</h2>
+                    <p>@Localizer["Reports.DailyMovementSub"]</p>
+                </div>
+                <div class="rep-panel__chart rep-panel__chart--daily">
+                    <canvas id="rep-chart-diario" aria-label="@Localizer["Reports.DailyChart"]"></canvas>
+                </div>
+            </section>
+        </div>
+
+        <section class="rep-panel rep-panel--table" aria-labelledby="rep-tx-table-heading">
+            <div class="rep-panel__head">
+                <h2 id="rep-tx-table-heading">@Localizer["Reports.TxHistory"]</h2>
+                <p>@Localizer["Reports.TxHistorySub"]</p>
+            </div>
+            <div class="rep-table-wrap">
+                <table class="rep-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">@Localizer["Home.ColDate"]</th>
+                            <th scope="col">@Localizer["Home.ColDescription"]</th>
+                            <th scope="col">@Localizer["Home.ColCategory"]</th>
+                            <th scope="col">@Localizer["Reports.PaymentMethodCol"]</th>
+                            <th scope="col">@Localizer["Reports.TypeColumn"]</th>
+                            <th scope="col">@Localizer["Home.ColValue"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var row in Model.Rows)
+                        {
+                            <tr>
+                                <td>@row.DateFmt</td>
+                                <td>@row.Description</td>
+                                <td>@row.CategoryName</td>
+                                <td>@row.PaymentMethodName</td>
+                                <td>
+                                    <span class="rep-tag @(row.IsReceita ? "rep-tag--income" : "rep-tag--expense")">@row.TypeLabel</span>
+                                </td>
+                                <td class="@(row.IsReceita ? "rep-table__income" : "rep-table__expense")">@row.ValueFmt</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    }
 </div>
 
-<div class="card shadow-sm border-0">
-    <div class="card-body p-4">
-        <h5 class="card-title mb-2">Análise transacional</h5>
-        <p class="text-muted mb-0">
-            Esta visualização foi organizada para exibir o comportamento das transações, apoiando a leitura
-            do histórico de lançamentos e das movimentações financeiras cadastradas.
-        </p>
-    </div>
-</div>
+@section Scripts {
+    @if (Model.TemDados)
+    {
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" crossorigin="anonymous"></script>
+        <script>
+            window.repCharts = {
+                mode: 'transactions',
+                locale: '@Model.Idioma',
+                currency: '@Model.Moeda',
+                tipo: @Html.Raw(Model.ChartTipoJson),
+                diario: @Html.Raw(Model.ChartDiarioJson)
+            };
+        </script>
+        <script src="~/js/reports-charts.js" asp-append-version="true"></script>
+    }
+}

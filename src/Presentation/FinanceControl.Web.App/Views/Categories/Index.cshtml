@@ -1,6 +1,6 @@
 @model CategoryViewModel
 @{
-    ViewData["Title"] = "Categorias";
+    ViewData["Title"] = Localizer["Categories.Title"].Value;
     var showModal = Model.ModalAberto || !string.IsNullOrEmpty(Model.ErroModal);
 }
 @section Styles {
@@ -16,21 +16,20 @@
 
         <header class="wt-page-head">
             <div>
-                <p class="wt-page-kicker">FinanceControl</p>
-                <h1 class="wt-page-title">Categorias</h1>
-                <p class="wt-page-sub">Cadastre categorias para classificar seus lan�amentos. Receita ou despesa � definida na transa��o.</p>
+                <h1 class="wt-page-title">@Localizer["Categories.Title"]</h1>
+                <p class="wt-page-sub">@Localizer["Categories.Subtitle"]</p>
             </div>
             <button type="button" class="wt-btn wt-btn--primary wt-btn--glow" data-wt-modal-open="wt-cat-modal">
-                + Nova categoria
+                @Localizer["Categories.New"]
             </button>
         </header>
 
         <form method="get" class="wt-filters" style="margin-bottom:1rem">
             <div class="wt-field" style="flex:1">
-                <label for="busca">Buscar</label>
-                <input class="wt-input" id="busca" name="busca" value="@Model.Busca" placeholder="Nome da categoria..." />
+                <label for="busca">@Localizer["Common.Search"]</label>
+                <input class="wt-input" id="busca" name="busca" value="@Model.Busca" placeholder="@Localizer["Categories.SearchPlaceholder"]" />
             </div>
-            <button type="submit" class="wt-btn wt-btn--outline">Filtrar</button>
+            <button type="submit" class="wt-btn wt-btn--outline">@Localizer["Common.Filter"]</button>
         </form>
 
         <section class="wt-card-panel">
@@ -38,7 +37,7 @@
                 @if (Model.Categorias.Count == 0)
                 {
                     <p class="wt-empty-state">
-                        Nenhuma categoria encontrada. Cadastre a primeira com o botão acima ou ajuste os filtros.
+                        @Localizer["Categories.Empty"]
                     </p>
                 }
                 @foreach (var cat in Model.Categorias)
@@ -46,17 +45,17 @@
                     <div class="wt-cat-card">
                         <div class="wt-card-icon">@cat.Icone</div>
                         <div class="wt-card-name">@cat.Nome</div>
-                        @if (!string.IsNullOrWhiteSpace(cat.Descricao))
-                        {
-                            <p class="wt-hint" style="margin-top:.35rem">@cat.Descricao</p>
-                        }
+                        <p class="wt-hint wt-card-desc">@cat.Descricao</p>
+                        <p class="wt-hint wt-card-status">
+                            <span class="wt-badge @(cat.Status == "Ativo" ? "wt-badge--income" : "wt-badge--expense")">@cat.Status</span>
+                        </p>
                         @if (cat.CategoryId is Guid cid && cid != Guid.Empty)
                         {
-                            <div style="display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap">
-                                <a asp-action="Edit" asp-route-id="@cid" asp-route-busca="@Model.Busca" class="wt-btn wt-btn--ghost" title="Editar">?</a>
-                                <form method="post" asp-action="Delete" asp-route-id="@cid" asp-route-busca="@Model.Busca" class="js-category-delete" style="display:inline">
+                            <div class="wt-card-actions">
+                                <a asp-action="Edit" asp-route-id="@cid" asp-route-busca="@Model.Busca" class="wt-btn wt-btn--ghost" title="@Localizer["Common.Edit"]">✎</a>
+                                <form method="post" asp-action="Delete" asp-route-id="@cid" asp-route-busca="@Model.Busca" class="js-category-delete" style="display:inline" data-fc-confirm="@Localizer["Categories.DeleteConfirm"]">
                                     @Html.AntiForgeryToken()
-                                    <button type="submit" class="wt-btn wt-btn--outline">Excluir</button>
+                                    <button type="submit" class="wt-btn wt-btn--outline">@Localizer["Common.Delete"]</button>
                                 </form>
                             </div>
                         }
@@ -64,7 +63,7 @@
                 }
             </div>
             <div class="wt-pagination" style="margin-top:1rem">
-                <span>@Model.Categorias.Count categoria(s)</span>
+                <span>@Localizer["Categories.Count", Model.Categorias.Count]</span>
             </div>
         </section>
     </div>
@@ -81,7 +80,7 @@
             <input type="hidden" name="Busca" value="@Model.Busca" />
             <div class="wt-modal__head">
                 <h2 class="wt-modal__title">@(Model.EditingId.HasValue ? "Editar categoria" : "Nova categoria")</h2>
-                <button type="button" class="wt-modal__close" data-wt-close-modal>?</button>
+                <button type="button" class="wt-modal__close" data-wt-close-modal>✕</button>
             </div>
             <div class="wt-cat-form__fields">
                 <div class="wt-cat-form__field">
@@ -89,17 +88,29 @@
                     <input class="wt-input" asp-for="Input.CategoryName" placeholder="Ex.: Assinatura tech" />
                 </div>
                 <div class="wt-cat-form__field">
-                    <label class="wt-label" asp-for="Input.CategoryDescription">Descri��o</label>
-                    <textarea class="wt-input wt-textarea" asp-for="Input.CategoryDescription" rows="3" placeholder="Opcional"></textarea>
+                    <label class="wt-label" asp-for="Input.CategoryDescription">Descrição (opcional)</label>
+                    <textarea class="wt-input wt-textarea wt-textarea--auto" asp-for="Input.CategoryDescription" rows="1" placeholder="Ex.: detalhes sobre o uso desta categoria"></textarea>
                 </div>
                 <div class="wt-cat-form__field">
-                    <span class="wt-label">Selecionar �cone</span>
+                    <span class="wt-label">Status</span>
+                    <div class="wt-segment" role="radiogroup" aria-label="Status da categoria">
+                        <input type="radio" asp-for="Input.IsActive" id="cat-status-active" value="true" />
+                        <label for="cat-status-active">Ativo</label>
+                        <input type="radio" asp-for="Input.IsActive" id="cat-status-inactive" value="false" />
+                        <label for="cat-status-inactive">Inativo</label>
+                    </div>
+                    <p class="wt-hint" style="margin-top:.45rem">Itens inativos não aparecem em novos lançamentos.</p>
+                </div>
+                <div class="wt-cat-form__field">
+                    <span class="wt-label">Selecionar ícone</span>
                     <input type="hidden" asp-for="Input.Icon" id="category-icon-value" />
-                    <div class="wt-icone-grid" id="category-icon-grid" role="listbox" aria-label="�cones da categoria">
+                    <div class="wt-icone-grid" id="category-icon-grid" role="listbox" aria-label="Ícones da categoria">
                         @foreach (var icone in Model.IconesDisponiveis)
                         {
                             var selected = icone == Model.Input.Icon ? " wt-icone-opt--selected" : "";
-                            <span class="wt-icone-opt@selected" role="option" tabindex="0" data-category-icon="@icone" aria-label="�cone @icone" aria-selected="@(icone == Model.Input.Icon ? "true" : "false")">@icone</span>
+                            <button type="button" class="wt-icone-opt@(selected)" role="option" data-category-icon="@icone" aria-label="Ícone @icone" aria-selected="@(icone == Model.Input.Icon ? "true" : "false")">
+                                <span class="wt-icone-opt__glyph" aria-hidden="true">@icone</span>
+                            </button>
                         }
                     </div>
                 </div>
@@ -118,6 +129,5 @@
 
 @section Scripts {
     <script src="~/js/cadastros-wt.js" asp-append-version="true"></script>
-    <script src="~/js/categories.js" asp-append-version="true"></script>
 }
 

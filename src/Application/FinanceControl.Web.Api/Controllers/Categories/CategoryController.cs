@@ -10,11 +10,11 @@ namespace FinanceControl.API.Controllers.Categories;
 public class CategoryController(ICategoryAppService appService) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] DataFilterDto filter)
+    public async Task<IActionResult> Get([FromQuery] DataFilterDto filter, [FromQuery] bool includeInactive = true)
     {
         if (filter.Page < 1) filter.Page = 1;
         if (filter.PageSize < 1) filter.PageSize = 100;
-        return Ok(await appService.FilterAsync(filter));
+        return Ok(await appService.FilterAsync(filter, activeOnly: !includeInactive));
     }
 
     [HttpGet("{id:guid}", Name = "ObterCategoria")]

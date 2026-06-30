@@ -1,9 +1,11 @@
 using FinanceControl.Client.Services.Interfaces;
 using FinanceControl.Web.Models.ViewModels.Register;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceControl.Web.Controllers.Register;
 
+[AllowAnonymous]
 [Route("register")]
 public class RegisterController : Controller
 {

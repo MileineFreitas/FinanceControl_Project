@@ -11,7 +11,7 @@ public class AccountConfiguration : IEntityTypeConfiguration<Account>
         builder.ToTable("Accounts");
         builder.HasKey(a => a.AccountId);
         builder.Property(a => a.AccountId)
-            .HasDefaultValueSql("(UUID())")
+            .HasDefaultValueSql("NEWID()")
             .IsRequired();
         builder.Property(a => a.Name).HasMaxLength(120).IsRequired();
         builder.Property(a => a.InitialBalance).HasPrecision(18, 2);

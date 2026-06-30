@@ -11,16 +11,6 @@ public sealed class UserCliService(HttpClient httpClient) : IUserCliService
 {
     private const string BaseRoute = "User";
 
-    public async Task<LoginResponseDto?> LoginAsync(LoginRequestDto request)
-    {
-        var response = await httpClient.PostAsJsonAsync($"{BaseRoute}/login", request);
-        if (!response.IsSuccessStatusCode) return null;
-        return await response.Content.ReadFromJsonAsync<LoginResponseDto>();
-    }
-
-    public Task<HttpResponseMessage> RegisterAsync(RegisterUserDto dto) =>
-        httpClient.PostAsJsonAsync($"{BaseRoute}/register", dto);
-
     public async Task<DataResultDto<UserDto>?> ListAsync(DataFilterDto? filter = null)
     {
         filter ??= new DataFilterDto { Page = 1, PageSize = 200 };
@@ -34,6 +24,29 @@ public sealed class UserCliService(HttpClient httpClient) : IUserCliService
     public Task<HttpResponseMessage> UpdateAsync(Guid id, UserUpdateDto dto) =>
         httpClient.PutAsJsonAsync($"{BaseRoute}/{id}/user-update", dto);
 
+    public Task<HttpResponseMessage> UpdateFinancialPreferencesAsync(Guid id, UserFinancialPreferencesDto dto) =>
+        httpClient.PutAsJsonAsync($"{BaseRoute}/{id}/financial-preferences", dto);
+
+    public async Task<Guid?> GetSecurityStampAsync(Guid id)
+    {
+        var response = await httpClient.GetAsync($"{BaseRoute}/{id}/security-stamp");
+        if (!response.IsSuccessStatusCode) return null;
+
+        var payload = await response.Content.ReadFromJsonAsync<SecurityStampResponse>();
+        return payload?.SecurityStamp;
+    }
+
+    public Task<HttpResponseMessage> RevokeOtherSessionsAsync(Guid id) =>
+        httpClient.PostAsync($"{BaseRoute}/{id}/revoke-sessions", null);
+
     public Task<HttpResponseMessage> DeleteAsync(Guid id) =>
         httpClient.DeleteAsync($"{BaseRoute}/{id}");
+
+    public Task<HttpResponseMessage> DeleteAccountAsync(Guid id, string password) =>
+        httpClient.PostAsJsonAsync($"{BaseRoute}/{id}/delete-account", new DeleteAccountRequestDto { Password = password });
+
+    private sealed class SecurityStampResponse
+    {
+        public Guid SecurityStamp { get; set; }
+    }
 }

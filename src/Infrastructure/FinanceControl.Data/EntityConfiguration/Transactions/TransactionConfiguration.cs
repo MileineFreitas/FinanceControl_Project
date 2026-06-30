@@ -12,7 +12,7 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
 
         builder.HasKey(t => t.TransactionId);
         builder.Property(t => t.TransactionId)
-            .HasDefaultValueSql("(UUID())")
+            .HasDefaultValueSql("NEWID()")
             .IsRequired();
 
         builder.Property(t => t.TransactionDescription)

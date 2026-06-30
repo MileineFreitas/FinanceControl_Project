@@ -115,6 +115,16 @@ code {
     color: #c02d76;
 }
 
+.fc-balance--positive {
+    color: #4ade80;
+    font-weight: 500;
+}
+
+.fc-balance--negative {
+    color: #f87171;
+    font-weight: 500;
+}
+
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
     color: var(--bs-secondary-color);
     text-align: end;

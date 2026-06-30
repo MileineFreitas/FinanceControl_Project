@@ -69,8 +69,27 @@ public class UserRepository(FinanceDbContext context) : IUserRepository
         var entity = await context.Users.FirstOrDefaultAsync(u => u.UserId == id);
         if (entity == null) return false;
 
+        await using var transaction = await context.Database.BeginTransactionAsync();
+
+        await context.Transactions
+            .Where(t => t.UserId == id)
+            .ExecuteDeleteAsync();
+
+        await context.Accounts
+            .Where(a => a.UserId == id)
+            .ExecuteDeleteAsync();
+
+        await context.PaymentMethods
+            .Where(p => p.UserId == id)
+            .ExecuteDeleteAsync();
+
+        await context.Categories
+            .Where(c => c.UserId == id)
+            .ExecuteDeleteAsync();
+
         context.Users.Remove(entity);
         await context.SaveChangesAsync();
+        await transaction.CommitAsync();
         return true;
     }
 
@@ -80,4 +99,25 @@ public class UserRepository(FinanceDbContext context) : IUserRepository
 
     public Task<bool> EmailExistsAsync(string email) =>
         context.Users.AnyAsync(u => u.UserEmail == email);
+
+    public async Task<Guid?> GetSecurityStampAsync(Guid id)
+    {
+        var stamp = await context.Users
+            .AsNoTracking()
+            .Where(u => u.UserId == id)
+            .Select(u => (Guid?)u.SecurityStamp)
+            .FirstOrDefaultAsync();
+
+        return stamp;
+    }
+
+    public async Task<Guid?> RevokeOtherSessionsAsync(Guid id)
+    {
+        var entity = await context.Users.FirstOrDefaultAsync(u => u.UserId == id);
+        if (entity == null) return null;
+
+        entity.SecurityStamp = Guid.NewGuid();
+        await context.SaveChangesAsync();
+        return entity.SecurityStamp;
+    }
 }

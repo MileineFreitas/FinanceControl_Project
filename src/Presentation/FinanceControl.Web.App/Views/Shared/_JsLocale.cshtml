@@ -1,0 +1,56 @@
+@using System.Text.Json
+<script>
+window.fcLocale = {
+    searchPlaceholder: @Html.Raw(JsonSerializer.Serialize(Localizer["Header.SearchPlaceholder"].Value)),
+    searchEmpty: @Html.Raw(JsonSerializer.Serialize(Localizer["Header.SearchEmpty"].Value)),
+    loadingWait: @Html.Raw(JsonSerializer.Serialize(Localizer["Loading.Wait"].Value)),
+    dialog: {
+        info: @Html.Raw(JsonSerializer.Serialize(Localizer["Dialog.Info"].Value)),
+        success: @Html.Raw(JsonSerializer.Serialize(Localizer["Dialog.Success"].Value)),
+        error: @Html.Raw(JsonSerializer.Serialize(Localizer["Dialog.Error"].Value)),
+        confirm: @Html.Raw(JsonSerializer.Serialize(Localizer["Dialog.ConfirmTitle"].Value)),
+        ok: @Html.Raw(JsonSerializer.Serialize(Localizer["Common.Ok"].Value)),
+        cancel: @Html.Raw(JsonSerializer.Serialize(Localizer["Common.Cancel"].Value)),
+        confirmBtn: @Html.Raw(JsonSerializer.Serialize(Localizer["Common.Confirm"].Value)),
+        invalidFileTitle: @Html.Raw(JsonSerializer.Serialize(Localizer["Dialog.InvalidFileTitle"].Value)),
+        invalidFileMessage: @Html.Raw(JsonSerializer.Serialize(Localizer["Dialog.InvalidFileMessage"].Value)),
+        currentPasswordRequired: @Html.Raw(JsonSerializer.Serialize(Localizer["Dialog.CurrentPasswordRequired"].Value))
+    },
+    type: {
+        income: @Html.Raw(JsonSerializer.Serialize(Localizer["Type.Income"].Value)),
+        expense: @Html.Raw(JsonSerializer.Serialize(Localizer["Type.Expense"].Value))
+    },
+    auth: {
+        passwordWeak: @Html.Raw(JsonSerializer.Serialize(Localizer["Auth.PasswordWeak"].Value)),
+        passwordMedium: @Html.Raw(JsonSerializer.Serialize(Localizer["Auth.PasswordMedium"].Value)),
+        passwordGood: @Html.Raw(JsonSerializer.Serialize(Localizer["Auth.PasswordGood"].Value)),
+        passwordStrong: @Html.Raw(JsonSerializer.Serialize(Localizer["Auth.PasswordStrong"].Value))
+    },
+    reports: {
+        dayOfMonth: @Html.Raw(JsonSerializer.Serialize(Localizer["Reports.DayOfMonth"].Value))
+    },
+    categories: {
+        deleteConfirm: @Html.Raw(JsonSerializer.Serialize(Localizer["Categories.DeleteConfirm"].Value))
+    },
+    paymentMethods: {
+        deleteConfirm: @Html.Raw(JsonSerializer.Serialize(Localizer["PaymentMethods.DeleteConfirm"].Value))
+    },
+    transactions: {
+        deleteConfirm: @Html.Raw(JsonSerializer.Serialize(Localizer["Transactions.DeleteConfirm"].Value))
+    },
+    common: {
+        user: @Html.Raw(JsonSerializer.Serialize(Localizer["Common.User"].Value))
+    },
+    pages: [
+        { t: @Html.Raw(JsonSerializer.Serialize(Localizer["Nav.Dashboard"].Value)), u: '/home', k: 'dashboard home painel principal' },
+        { t: @Html.Raw(JsonSerializer.Serialize(Localizer["Nav.Transactions"].Value)), u: '/transacoes', k: 'transacoes transactions movimentacoes extrato' },
+        { t: @Html.Raw(JsonSerializer.Serialize(Localizer["Nav.Categories"].Value)), u: '/categorias', k: 'categorias categories classificacao' },
+        { t: @Html.Raw(JsonSerializer.Serialize(Localizer["Nav.PaymentMethods"].Value)), u: '/meios-pagamento', k: 'pagamento payment pix debito credito' },
+        { t: @Html.Raw(JsonSerializer.Serialize(Localizer["Nav.Investments"].Value)), u: '/dashboards/geral', k: 'investimentos investments portfolio' },
+        { t: @Html.Raw(JsonSerializer.Serialize(Localizer["Nav.Reports"].Value)), u: '/relatorios', k: 'relatorios reports exportar resumo' },
+        { t: @Html.Raw(JsonSerializer.Serialize(Localizer["Nav.ReportByPayment"].Value)), u: '/relatorios/por-meio-pagamento', k: 'relatorios meio pagamento' },
+        { t: @Html.Raw(JsonSerializer.Serialize(Localizer["Nav.ReportByCategory"].Value)), u: '/relatorios/por-categoria', k: 'relatorios categoria gastos receitas' },
+        { t: @Html.Raw(JsonSerializer.Serialize(Localizer["Nav.ReportByTransactions"].Value)), u: '/relatorios/por-transacoes', k: 'relatorios transacoes movimentacoes extrato' }
+    ]
+};
+</script>

@@ -1,22 +1,26 @@
+@model FinanceControl.Web.Models.ViewModels.Reports.GroupedReportViewModel
 @{
-    ViewData["Title"] = "Relatório por meio de pagamento";
+    ViewData["Title"] = Localizer["Reports.ByPaymentTitle"].Value;
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/reports-category.css" asp-append-version="true" />
 }
 
-<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
-    <div>
-        <h2 class="mb-1">Relatório por meio de pagamento</h2>
-        <p class="text-muted mb-0">Consulte as movimentações de acordo com a forma de pagamento utilizada.</p>
-    </div>
+<partial name="_GroupedReportBody" model="Model" />
 
-    <a class="btn btn-outline-primary" href="~/relatorios">Voltar para relatórios</a>
-</div>
-
-<div class="card shadow-sm border-0">
-    <div class="card-body p-4">
-        <h5 class="card-title mb-2">Análise por forma de pagamento</h5>
-        <p class="text-muted mb-0">
-            Esta área foi preparada para apresentar os dados financeiros agrupados por Pix, dinheiro,
-            cartão de crédito, cartão de débito e demais meios de pagamento cadastrados.
-        </p>
-    </div>
-</div>
+@section Scripts {
+    @if (Model.TemDados)
+    {
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" crossorigin="anonymous"></script>
+        <script>
+            window.repCharts = {
+                mode: 'grouped',
+                locale: '@Model.Idioma',
+                currency: '@Model.Moeda',
+                despesas: @Html.Raw(Model.ChartDespesasJson),
+                comparativo: @Html.Raw(Model.ChartComparativoJson)
+            };
+        </script>
+        <script src="~/js/reports-charts.js" asp-append-version="true"></script>
+    }
+}

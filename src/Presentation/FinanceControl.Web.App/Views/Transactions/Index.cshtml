@@ -1,7 +1,11 @@
 @model FinanceControl.Web.Models.ViewModels.Transactions.TransactionIndexViewModel
 @{
-    ViewData["Title"] = "Transações";
+    ViewData["Title"] = Localizer["Transactions.Title"].Value;
     var showModal = Model.ModalAberto || !string.IsNullOrEmpty(Model.ErroModal);
+    var fmtCtx = FinancialFormatContext.From(User);
+    var pagFrom = Model.TotalItens == 0 ? 0 : (Model.Pag - 1) * Model.TamanhoPagina + 1;
+    var pagTo = Math.Min(Model.Pag * Model.TamanhoPagina, Model.TotalItens);
+    var currencySymbol = fmtCtx.Culture.NumberFormat.CurrencySymbol;
 }
 @section Styles {
     <link rel="stylesheet" href="~/css/cadastros-wt.css" asp-append-version="true" />
@@ -11,12 +15,11 @@
     <div class="wt-cadastro__inner">
         <header class="wt-page-head">
             <div>
-                <p class="wt-page-kicker">FinanceControl</p>
-                <h1 class="wt-page-title">Transações</h1>
-                <p class="wt-page-sub">Histórico completo de movimentações financeiras.</p>
+                <h1 class="wt-page-title">@Localizer["Transactions.Title"]</h1>
+                <p class="wt-page-sub">@Localizer["Transactions.Subtitle"]</p>
             </div>
             <button type="button" class="wt-btn wt-btn--primary wt-btn--glow" data-wt-modal-open="wt-tx-modal">
-                + Cadastrar transação
+                @Localizer["Transactions.New"]
             </button>
         </header>
 
@@ -24,17 +27,17 @@
             <input type="hidden" name="OrdenarPor" value="@Model.OrdenarPor" />
             <input type="hidden" name="Ordem" value="@Model.Ordem" />
             <div class="wt-field">
-                <label for="FiltroTipo">Tipo</label>
+                <label for="FiltroTipo">@Localizer["Transactions.Type"]</label>
                 <select class="wt-select" id="FiltroTipo" name="FiltroTipo" onchange="this.form.submit()">
-                    <option value="" selected="@(string.IsNullOrEmpty(Model.FiltroTipo))">Todos</option>
-                    <option value="1" selected="@(Model.FiltroTipo == "1")">Receita</option>
-                    <option value="2" selected="@(Model.FiltroTipo == "2")">Despesa</option>
+                    <option value="" selected="@(string.IsNullOrEmpty(Model.FiltroTipo))">@Localizer["Common.All"]</option>
+                    <option value="1" selected="@(Model.FiltroTipo == "1")">@Localizer["Type.Income"]</option>
+                    <option value="2" selected="@(Model.FiltroTipo == "2")">@Localizer["Type.Expense"]</option>
                 </select>
             </div>
             <div class="wt-field">
-                <label for="FiltroCategoriaId">Categoria</label>
+                <label for="FiltroCategoriaId">@Localizer["Common.Category"]</label>
                 <select class="wt-select" id="FiltroCategoriaId" name="FiltroCategoriaId" onchange="this.form.submit()">
-                    <option value="">Todas</option>
+                    <option value="">@Localizer["Common.AllFem"]</option>
                     @foreach (var c in Model.CategoriasOpcoes)
                     {
                         <option value="@c.Id" selected="@(Model.FiltroCategoriaId == c.Id ? true : false)">@c.Icone @c.Nome</option>
@@ -42,10 +45,10 @@
                 </select>
             </div>
             <div class="wt-field" style="flex:1;min-width:12rem">
-                <label for="Busca">Buscar</label>
-                <input class="wt-input" type="search" id="Busca" name="Busca" value="@Model.Busca" placeholder="Descrição, categoria ou meio de pagamento..." />
+                <label for="Busca">@Localizer["Common.Search"]</label>
+                <input class="wt-input" type="search" id="Busca" name="Busca" value="@Model.Busca" placeholder="@Localizer["Transactions.SearchPlaceholder"]" />
             </div>
-            <button type="submit" class="wt-btn wt-btn--outline">Filtrar</button>
+            <button type="submit" class="wt-btn wt-btn--outline">@Localizer["Common.Filter"]</button>
         </form>
 
         <section class="wt-card-panel">
@@ -55,25 +58,25 @@
                         <tr>
                             <th>
                                 <a class="wt-th-sort @(Model.ColunaOrdenada("data") ? "is-active" : null)" asp-controller="Transactions" asp-action="Index" asp-all-route-data="@Model.RotasOrdenacao("data")">
-                                    Data <span class="wt-th-sort__icon">@Model.IconeOrdenacao("data")</span>
+                                    @Localizer["Home.ColDate"] <span class="wt-th-sort__icon">@Model.IconeOrdenacao("data")</span>
                                 </a>
                             </th>
                             <th>
                                 <a class="wt-th-sort @(Model.ColunaOrdenada("descricao") ? "is-active" : null)" asp-controller="Transactions" asp-action="Index" asp-all-route-data="@Model.RotasOrdenacao("descricao")">
-                                    Descrição <span class="wt-th-sort__icon">@Model.IconeOrdenacao("descricao")</span>
+                                    @Localizer["Home.ColDescription"] <span class="wt-th-sort__icon">@Model.IconeOrdenacao("descricao")</span>
                                 </a>
                             </th>
                             <th>
                                 <a class="wt-th-sort @(Model.ColunaOrdenada("categoria") ? "is-active" : null)" asp-controller="Transactions" asp-action="Index" asp-all-route-data="@Model.RotasOrdenacao("categoria")">
-                                    Categoria <span class="wt-th-sort__icon">@Model.IconeOrdenacao("categoria")</span>
+                                    @Localizer["Home.ColCategory"] <span class="wt-th-sort__icon">@Model.IconeOrdenacao("categoria")</span>
                                 </a>
                             </th>
                             <th style="text-align:right">
                                 <a class="wt-th-sort wt-th-sort--right @(Model.ColunaOrdenada("valor") ? "is-active" : null)" asp-controller="Transactions" asp-action="Index" asp-all-route-data="@Model.RotasOrdenacao("valor")">
-                                    Valor <span class="wt-th-sort__icon">@Model.IconeOrdenacao("valor")</span>
+                                    @Localizer["Home.ColValue"] <span class="wt-th-sort__icon">@Model.IconeOrdenacao("valor")</span>
                                 </a>
                             </th>
-                            <th style="text-align:right;width:6.5rem">Ações</th>
+                            <th style="text-align:right;width:6.5rem">@Localizer["Common.Actions"]</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -81,18 +84,19 @@
                         {
                             <tr>
                                 <td colspan="5" class="wt-empty-state">
-                                    Nenhuma transação encontrada. Cadastre a primeira com o botão acima ou ajuste os filtros.
+                                    @Localizer["Transactions.Empty"]
                                 </td>
                             </tr>
                         }
                         @foreach (var t in Model.Transacoes)
                         {
+                            var fmt = fmtCtx;
                             var badgeClass = t.IsReceita ? "wt-badge--income" : "wt-badge--expense";
                             var numClass = t.IsReceita ? "wt-num--receita" : "wt-num--despesa";
                             var abs = Math.Abs(t.Valor);
-                            var formatted = (t.IsReceita ? "+ " : "- ") + "R$ " + abs.ToString("N2");
+                            var formatted = fmt.FormatSignedCurrency(abs, t.IsReceita);
                             <tr>
-                                <td>@t.Data.ToString("dd MMM yyyy")</td>
+                                <td>@fmt.FormatDate(t.Data)</td>
                                 <td>@t.Descricao</td>
                                 <td><span class="wt-badge @badgeClass">@t.CategoriaNome</span></td>
                                 <td style="text-align:right" class="@numClass">@formatted</td>
@@ -109,9 +113,9 @@
                                                asp-route-FiltroTipo="@Model.FiltroTipo"
                                                asp-route-FiltroCategoriaId="@Model.FiltroCategoriaId"
                                                asp-route-Busca="@Model.Busca"
-                                               title="Editar">✎</a>
-                                            <form method="post" asp-controller="Transactions" asp-action="Excluir" asp-route-id="@t.Id" style="display:inline" onsubmit="return confirm('Excluir esta transação?');">
-                                                <button type="submit" class="wt-btn wt-btn--ghost" title="Excluir">🗑</button>
+                                               title="@Localizer["Common.Edit"]">✎</a>
+                                            <form method="post" asp-controller="Transactions" asp-action="Excluir" asp-route-id="@t.Id" style="display:inline" data-fc-confirm="@Localizer["Transactions.DeleteConfirm"]">
+                                                <button type="submit" class="wt-btn wt-btn--ghost" title="@Localizer["Common.Delete"]">🗑</button>
                                             </form>
                                         </div>
                                     }
@@ -126,7 +130,7 @@
                 </table>
             </div>
             <div class="wt-pagination">
-                <span>Mostrando @(Model.TotalItens == 0 ? 0 : (Model.Pag - 1) * Model.TamanhoPagina + 1)–@Math.Min(Model.Pag * Model.TamanhoPagina, Model.TotalItens) de @Model.TotalItens transações</span>
+                <span>@Localizer["Transactions.Pagination", pagFrom, pagTo, Model.TotalItens]</span>
                 <div class="wt-pagination__nums">
                     @if (Model.Pag > 1)
                     {
@@ -153,17 +157,23 @@
 
         <section class="wt-summary-grid">
             <div class="wt-summary-card wt-summary-card--accent">
-                <h3>Saldo mensal</h3>
-                <p class="wt-big">@Model.ResumoSaldoMensal</p>
-                <p class="wt-hint"><span class="wt-trend-up">↑ 12,5%</span> vs mês anterior</p>
+                <h3>@Localizer["Transactions.MonthlyBalance"]</h3>
+                <p class="wt-big @(Model.ResumoSaldoMensalNegativo ? "fc-balance--negative" : "fc-balance--positive")">@Model.ResumoSaldoMensal</p>
+                @if (!string.IsNullOrEmpty(Model.ResumoSaldoHint))
+                {
+                    <p class="wt-hint"><span class="wt-trend-up">@Model.ResumoSaldoHint</span></p>
+                }
             </div>
             <div class="wt-summary-card">
-                <h3>Maior gasto</h3>
+                <h3>@Localizer["Transactions.BiggestExpense"]</h3>
                 <p class="wt-big">@Model.ResumoMaiorGasto</p>
-                <p class="wt-hint">Representa 42% do seu orçamento.</p>
+                @if (!string.IsNullOrEmpty(Model.ResumoMaiorGastoHint))
+                {
+                    <p class="wt-hint">@Model.ResumoMaiorGastoHint</p>
+                }
             </div>
             <div class="wt-summary-card">
-                <h3>Alerta de orçamento</h3>
+                <h3>@Localizer["Transactions.BudgetAlert"]</h3>
                 <p class="wt-hint">@Model.AlertaOrcamento</p>
             </div>
         </section>
@@ -181,36 +191,36 @@
             }
             <div class="wt-modal__head">
                 <div>
-                    <h2 class="wt-modal__title">@(Model.ModoEdicao ? "Editar transação" : "Nova transação")</h2>
-                    <p class="wt-modal__sub">@(Model.ModoEdicao ? "Altere os dados do lançamento" : "Registro de movimento de capital")</p>
+                    <h2 class="wt-modal__title">@(Model.ModoEdicao ? Localizer["Transactions.EditTitle"] : Localizer["Transactions.NewTitle"])</h2>
+                    <p class="wt-modal__sub">@(Model.ModoEdicao ? Localizer["Transactions.EditSub"] : Localizer["Transactions.NewSub"])</p>
                 </div>
-                <button type="button" class="wt-modal__close" data-wt-close-modal="1" aria-label="Fechar">×</button>
+                <button type="button" class="wt-modal__close" data-wt-close-modal="1" aria-label="@Localizer["Common.Close"]">×</button>
             </div>
             <div class="wt-form-grid">
                 <div class="wt-form-row2">
                     <div>
-                        <label class="wt-label" for="tx-data">Data da transação</label>
+                        <label class="wt-label" for="tx-data">@Localizer["Transactions.TxDate"]</label>
                         <input class="wt-input" style="width:100%" type="date" id="tx-data" asp-for="Input.Data" />
                     </div>
                     <div>
-                        <span class="wt-label">Tipo de transação</span>
+                        <span class="wt-label">@Localizer["Transactions.TxType"]</span>
                         <div class="wt-segment">
                             <input type="radio" asp-for="Input.TipoTransacao" id="tipo-1" value="1" />
-                            <label for="tipo-1">Receita</label>
+                            <label for="tipo-1">@Localizer["Type.Income"]</label>
                             <input type="radio" asp-for="Input.TipoTransacao" id="tipo-2" value="2" />
-                            <label for="tipo-2">Despesa</label>
+                            <label for="tipo-2">@Localizer["Type.Expense"]</label>
                         </div>
                     </div>
                 </div>
                 <div>
-                    <label class="wt-label" asp-for="Input.Descricao">Descrição do lançamento</label>
-                    <input class="wt-input" style="width:100%" asp-for="Input.Descricao" placeholder="Ex: Pagamento consultoria financeira" />
+                    <label class="wt-label" asp-for="Input.Descricao">@Localizer["Transactions.TxDescription"]</label>
+                    <input class="wt-input" style="width:100%" asp-for="Input.Descricao" placeholder="@Localizer["Transactions.TxDescriptionPlaceholder"]" />
                 </div>
                 <div class="wt-form-row2">
                     <div>
-                        <label class="wt-label" asp-for="Input.PaymentMethodId">Meio de pagamento</label>
+                        <label class="wt-label" asp-for="Input.PaymentMethodId">@Localizer["Transactions.PaymentMethod"]</label>
                         <select class="wt-select" style="width:100%" asp-for="Input.PaymentMethodId">
-                            <option value="">Selecione…</option>
+                            <option value="">@Localizer["Common.Select"]</option>
                             @foreach (var m in Model.MeiosPagamentoOpcoes)
                             {
                                 <option value="@m.Id">@m.Icone @m.Nome</option>
@@ -218,14 +228,14 @@
                         </select>
                     </div>
                     <div>
-                        <label class="wt-label" asp-for="Input.Valor">Valor (R$)</label>
+                        <label class="wt-label" asp-for="Input.Valor">@Localizer["Transactions.AmountWithCurrency", currencySymbol]</label>
                         <input class="wt-input" style="width:100%" type="number" step="0.01" min="0.01" asp-for="Input.Valor" placeholder="0,00" />
                     </div>
                 </div>
                 <div>
-                    <label class="wt-label" asp-for="Input.CategoryId">Categoria</label>
+                    <label class="wt-label" asp-for="Input.CategoryId">@Localizer["Common.Category"]</label>
                     <select class="wt-select" style="width:100%" asp-for="Input.CategoryId">
-                        <option value="0">Selecione…</option>
+                        <option value="0">@Localizer["Common.Select"]</option>
                         @foreach (var c in Model.CategoriasOpcoes)
                         {
                             <option value="@c.Id">@c.Icone @c.Nome</option>
@@ -238,8 +248,8 @@
                 }
             </div>
             <div class="wt-modal__footer">
-                <button type="button" class="wt-btn wt-btn--outline" data-wt-close-modal>Cancelar</button>
-                <button type="submit" class="wt-btn wt-btn--primary wt-btn--glow">@(Model.ModoEdicao ? "Salvar alterações" : "Confirmar lançamento")</button>
+                <button type="button" class="wt-btn wt-btn--outline" data-wt-close-modal>@Localizer["Common.Cancel"]</button>
+                <button type="submit" class="wt-btn wt-btn--primary wt-btn--glow">@(Model.ModoEdicao ? Localizer["Common.Save"] : Localizer["Transactions.ConfirmEntry"])</button>
             </div>
         </form>
     </div>

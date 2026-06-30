@@ -69,10 +69,58 @@ public class UserController(IUserAppService appService) : ControllerBase
         }
     }
 
+    [HttpPut("{id:guid}/financial-preferences")]
+    public async Task<IActionResult> UpdateFinancialPreferences(Guid id, [FromBody] UserFinancialPreferencesDto dto)
+    {
+        if (dto == null) return BadRequest();
+        try
+        {
+            var updated = await appService.UpdateFinancialPreferencesAsync(id, dto);
+            return updated == null ? NotFound("Usuario não encontrado...") : Ok(updated);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
         var deleted = await appService.DeleteAsync(id);
         return deleted ? Ok("Usuario excluido") : NotFound("Id invalido");
+    }
+
+    [HttpPost("{id:guid}/delete-account")]
+    public async Task<IActionResult> DeleteAccount(Guid id, [FromBody] DeleteAccountRequestDto dto)
+    {
+        if (dto == null) return BadRequest("Requisição inválida...");
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
+        try
+        {
+            var deleted = await appService.DeleteAccountAsync(id, dto.Password);
+            return deleted ? Ok("Usuario excluido") : NotFound("Usuario não encontrado...");
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpGet("{id:guid}/security-stamp")]
+    public async Task<IActionResult> GetSecurityStamp(Guid id)
+    {
+        var stamp = await appService.GetSecurityStampAsync(id);
+        return stamp == null ? NotFound("Usuario não encontrado...") : Ok(new { securityStamp = stamp.Value });
+    }
+
+    [HttpPost("{id:guid}/revoke-sessions")]
+    public async Task<IActionResult> RevokeSessions(Guid id)
+    {
+        var stamp = await appService.RevokeOtherSessionsAsync(id);
+        return stamp == null
+            ? NotFound("Usuario não encontrado...")
+            : Ok(new RevokeSessionsResponseDto { SecurityStamp = stamp.Value });
     }
 }

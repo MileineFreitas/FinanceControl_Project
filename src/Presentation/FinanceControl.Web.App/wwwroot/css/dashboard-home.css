@@ -74,6 +74,14 @@
     letter-spacing: -0.02em;
 }
 
+.dash-metric__value.fc-balance--positive {
+    color: #4ade80;
+}
+
+.dash-metric__value.fc-balance--negative {
+    color: #f87171;
+}
+
 .dash-metric__trend {
     margin: 0;
     font-size: 0.78rem;
@@ -116,8 +124,10 @@
 
 .dash-panel__sub {
     margin: 0;
-    font-size: 0.82rem;
-    color: rgba(148, 163, 184, 0.85);
+    font-size: 0.85rem;
+    color: rgba(203, 213, 225, 0.88);
+    line-height: 1.5;
+    max-width: 42rem;
 }
 
 .dash-panel__tools {
@@ -325,8 +335,11 @@
 
 .dash-table__meta {
     margin: 0;
-    font-size: 0.72rem;
-    color: rgba(148, 163, 184, 0.85);
+    font-size: 0.75rem;
+    color: rgba(203, 213, 225, 0.88);
+    line-height: 1.35;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 .dash-badge {

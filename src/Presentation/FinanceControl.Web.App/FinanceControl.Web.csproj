@@ -13,4 +13,10 @@
     <ProjectReference Include="..\FinanceControl.Client.Services\FinanceControl.Client.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\SharedResources.*.resx">
+      <DependentUpon>SharedResources.resx</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>

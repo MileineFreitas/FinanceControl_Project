@@ -21,9 +21,13 @@ public interface ITransactionRepository
 
     Task<bool> CategoryExistsAsync(Guid categoryId);
 
+    Task<bool> CategoryIsActiveAsync(Guid categoryId);
+
     Task<bool> AccountExistsAsync(Guid accountId);
 
     Task<bool> UserExistsAsync(Guid userId);
 
-    Task<bool> PaymentMethodExistsAsync(Guid paymentMethodId);
+    Task<bool> PaymentMethodExistsAsync(Guid paymentMethodId, bool requireActive = true);
+
+    Task<IReadOnlyList<Transaction>> GetTrackedByUserIdAsync(Guid userId);
 }

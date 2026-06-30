@@ -10,6 +10,7 @@
 
 .wt-cadastro {
     width: 100%;
+    color: #e2e8f0;
 }
 
 .wt-cadastro__inner {
@@ -46,9 +47,9 @@
 .wt-page-sub {
     margin: 0;
     font-size: 0.9rem;
-    color: rgba(226, 232, 240, 0.65);
-    max-width: 36rem;
-    line-height: 1.5;
+    color: rgba(226, 232, 240, 0.88);
+    max-width: 42rem;
+    line-height: 1.55;
 }
 
 .wt-btn {
@@ -189,6 +190,20 @@
     resize: vertical;
     line-height: 1.45;
     font-family: inherit;
+}
+
+.wt-textarea--auto {
+    min-height: calc(0.875rem * 1.45 + 1rem + 2px);
+    max-height: 8rem;
+    resize: vertical;
+    overflow-y: hidden;
+    field-sizing: content;
+}
+
+@supports not (field-sizing: content) {
+    .wt-textarea--auto {
+        overflow-y: auto;
+    }
 }
 
 .wt-input:focus,
@@ -338,7 +353,7 @@
     gap: 0.75rem;
     padding: 0.85rem 1.1rem;
     font-size: 0.8rem;
-    color: rgba(148, 163, 184, 0.85);
+    color: rgba(203, 213, 225, 0.88);
 }
 
 .wt-pagination__nums {
@@ -408,11 +423,26 @@
     margin: 0 0 0.35rem;
 }
 
+.wt-summary-card .wt-big.fc-balance--positive {
+    color: #4ade80;
+}
+
+.wt-summary-card .wt-big.fc-balance--negative {
+    color: #f87171;
+}
+
+.wt-hint {
+    margin: 0;
+    font-size: 0.8rem;
+    line-height: 1.45;
+    color: rgba(203, 213, 225, 0.92);
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
 .wt-summary-card .wt-hint {
     font-size: 0.78rem;
-    color: rgba(148, 163, 184, 0.85);
-    margin: 0;
-    line-height: 1.45;
+    color: rgba(203, 213, 225, 0.88);
 }
 
 .wt-trend-up {
@@ -472,7 +502,7 @@
     font-weight: 600;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: rgba(148, 163, 184, 0.75);
+    color: rgba(203, 213, 225, 0.85);
 }
 
 .wt-modal__close {
@@ -632,11 +662,12 @@
 
 #categories-page .wt-cat-card,
 #payment-types-page .wt-cat-card {
-    flex: 0 0 168px;
-    width: 168px;
-    max-width: 168px;
+    flex: 1 1 200px;
+    width: auto;
+    min-width: 200px;
+    max-width: 240px;
     box-sizing: border-box;
-    padding: 0.95rem 0.85rem;
+    padding: 1rem 0.95rem;
 }
 
 .wt-cat-card {
@@ -691,13 +722,46 @@
 #categories-page .wt-cat-card .wt-card-name,
 #payment-types-page .wt-cat-card .wt-card-name {
     font-size: 0.9rem;
-    line-height: 1.3;
+    line-height: 1.35;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 #categories-page .wt-cat-card .wt-hint,
 #payment-types-page .wt-cat-card .wt-hint {
-    font-size: 0.72rem;
-    line-height: 1.35;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    color: rgba(203, 213, 225, 0.9);
+}
+
+#categories-page .wt-cat-card .wt-card-desc,
+#payment-types-page .wt-cat-card .wt-card-desc {
+    margin: 0.35rem 0 0;
+    min-height: calc(0.75rem * 1.4 * 2);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+#categories-page .wt-cat-card .wt-card-desc:empty::before,
+#payment-types-page .wt-cat-card .wt-card-desc:empty::before {
+    content: "\00a0";
+}
+
+#categories-page .wt-cat-card .wt-card-status,
+#payment-types-page .wt-cat-card .wt-card-status {
+    margin: 0.35rem 0 0;
+}
+
+#categories-page .wt-cat-card .wt-card-actions,
+#payment-types-page .wt-cat-card .wt-card-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    flex-wrap: wrap;
 }
 
 #categories-page .wt-cat-card .wt-btn,
@@ -777,6 +841,7 @@
     width: 100%;
     box-sizing: border-box;
     justify-items: center;
+    cursor: pointer;
 }
 
 @media (max-width: 520px) {
@@ -785,7 +850,9 @@
     }
 }
 
-.wt-icone-opt {
+.wt-icone-grid .wt-icone-opt,
+button.wt-icone-opt {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -794,16 +861,32 @@
     border: 2px solid transparent;
     border-radius: 8px;
     background: none;
-    cursor: pointer;
+    cursor: pointer !important;
     font-size: 1.5rem;
     line-height: 1;
     font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
     user-select: none;
-    transition: border-color 0.2s ease, background 0.2s ease, outline 0.2s ease;
+    -webkit-user-select: none;
+    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
     -webkit-tap-highlight-color: transparent;
+    appearance: none;
+    -webkit-appearance: none;
+    color: inherit;
+    min-width: 2.25rem;
+    min-height: 2.25rem;
 }
 
-.wt-icone-opt:hover {
+.wt-icone-opt__glyph {
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+    line-height: 1;
+    cursor: inherit;
+}
+
+.wt-icone-grid .wt-icone-opt:hover:not(.wt-icone-opt--selected),
+button.wt-icone-opt:hover:not(.wt-icone-opt--selected) {
+    cursor: pointer !important;
     border-color: rgba(65, 139, 224, 0.45);
     background: rgba(65, 139, 224, 0.1);
 }
@@ -813,9 +896,32 @@
     outline-offset: 2px;
 }
 
-.wt-icone-opt--selected {
-    border-color: #4189e0;
-    background: rgba(65, 139, 224, 0.18);
+.wt-icone-grid .wt-icone-opt.wt-icone-opt--selected,
+button.wt-icone-opt.wt-icone-opt--selected {
+    border-color: #7dd3fc;
+    background: rgba(65, 139, 224, 0.32);
+    box-shadow: 0 0 0 2px rgba(125, 211, 252, 0.35), 0 0 14px rgba(65, 139, 224, 0.45);
+    transform: scale(1.06);
+}
+
+.wt-icone-grid .wt-icone-opt.wt-icone-opt--selected::after,
+button.wt-icone-opt.wt-icone-opt--selected::after {
+    content: "✓";
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #7db8e8 0%, #a5b4fc 100%);
+    color: #0f172a;
+    font-size: 0.58rem;
+    font-weight: 800;
+    line-height: 15px;
+    text-align: center;
+    font-family: var(--fc-font-sans, "Inter", system-ui, sans-serif);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+    pointer-events: none;
 }
 
 .wt-bottom-grid {
